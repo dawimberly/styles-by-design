@@ -1,55 +1,24 @@
 <template>
-  <div
-    class="relative w-full flex items-center justify-center bg-cover bg-center py-12 md:py-20"
-    :style="{ backgroundImage: 'url(/kitchen.jpg)' }"
-  >
-    <!-- Solid overlay to dim the background -->
-    <div class="absolute inset-0 bg-black opacity-55"></div>
-
-    <!-- Content -->
-    <div class="relative z-10 text-center text-white py-6 md:py-20 px-4">
-      <h1
-        class="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg px-4 md:px-48"
-      >
-        San Antonio Custom Interiors
+  <section class="relative isolate min-h-[78vh] overflow-hidden">
+    <img :src="PHOTOS.kitchen" alt="Custom kitchen remodel in San Antonio" class="absolute inset-0 h-full w-full object-cover" />
+    <div class="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/55 to-ink/25" />
+    <div class="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-4 py-24 text-cream">
+      <p class="text-sm uppercase tracking-[0.28em] text-brass">{{ SITE.city }}</p>
+      <h1 class="mt-4 max-w-3xl font-serif text-5xl leading-tight md:text-7xl">
+        Kitchens, baths, and cabinetry built around how you live.
       </h1>
-      <h1
-        class="text-2xl md:text-4xl font-bold mb-8 md:mb-12 drop-shadow-lg px-4 md:px-48"
-      >
-        Kitchen, Bath, Cabinets, and More
-      </h1>
-      <p
-        class="text-base md:text-xl max-w-2xl mx-auto font-medium text-gray-300 drop-shadow-lg mb-6 md:mb-8 px-4 md:px-0"
-      >
-        Styles by Design is your one stop shop for all your custom interior
-        needs. We offer full kitchen &amp; bath remodels, custom cabinets,
-        flooring and stone, 3D rendering, interior painting and more.
+      <p class="mt-6 max-w-xl text-lg text-cream/85">
+        {{ SITE.name }} is a family-run studio for full kitchen and bath remodels, custom cabinets, stone, flooring,
+        painting, and 3D design — one team from consult to install.
       </p>
-      <p
-        class="text-xl md:text-2xl max-w-2xl mx-auto drop-shadow-lg mb-4 font-bold px-4 md:px-0"
-      >
-        Contact us today for a free consultation!
-      </p>
-      <p
-        class="text-2xl md:text-4xl max-w-2xl mx-auto drop-shadow-lg font-bold flex items-center justify-center gap-2"
-      >
-        <Phone class="phone-icon" size="32" /> 210-555-2928
-      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <NuxtLink to="/contact" class="rounded-full bg-brass px-6 py-3 font-medium text-ink hover:bg-sand">
+          Free consultation
+        </NuxtLink>
+        <a :href="SITE.phoneHref" class="rounded-full border border-cream/40 px-6 py-3 hover:bg-cream/10">
+          {{ SITE.phone }}
+        </a>
+      </div>
     </div>
-  </div>
+  </section>
 </template>
-
-<script setup>
-import { Phone } from "lucide-vue-next";
-</script>
-
-<style>
-.hero-button-main {
-  @apply mt-6 relative inline-block text-base sm:text-xl py-2 px-6 sm:py-3 md:px-10 cursor-pointer text-black font-bold rounded-md;
-}
-
-.phone-icon {
-  margin-top: -8px;
-  display: inline;
-}
-</style>

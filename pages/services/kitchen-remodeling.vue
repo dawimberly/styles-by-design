@@ -3,91 +3,55 @@
     subtitle="Services"
     :title="serviceData.title"
     :description="serviceData.description"
-    :mainFeatures="serviceData.mainFeatures"
-    :mainImage="serviceData.mainImage"
+    :main-features="serviceData.mainFeatures"
+    :main-image="serviceData.mainImage"
     :process="serviceData.process"
-    :galleryImages="serviceData.galleryImages"
+    :gallery-images="serviceData.galleryImages"
     :faqs="serviceData.faqs"
   />
 </template>
 
-<script setup>
-import ServiceDetail from "@/components/ServiceDetail.vue";
-
+<script setup lang="ts">
 const serviceData = {
-  title: "Kitchen Remodeling",
+  title: "Kitchen remodeling",
   description:
-    "Transform your kitchen into a stunning, functional space that reflects your style and meets your needs. Our comprehensive kitchen remodeling services combine expert craftsmanship with premium materials to create the kitchen of your dreams.",
+    "We rebuild kitchens as daily rooms: cooking, gathering, and storage planned together, with 3D drawings before we open a wall.",
   mainFeatures: [
-    "Custom cabinet design and installation",
-    "Premium countertop selection and installation",
-    "Expert kitchen layout optimization",
-    "Modern lighting and electrical updates",
-    "High-quality flooring installation",
-    "Professional appliance selection and installation",
+    "Custom cabinet design and install",
+    "Quartz, granite, and solid surface",
+    "Layout, lighting, and electrical",
+    "Flooring and backsplash",
+    "Appliance selection and fit",
   ],
-  mainImage: "https://placehold.co/800x600",
+  mainImage: PHOTOS.kitchen,
   process: [
-    {
-      title: "Design Consultation",
-      description:
-        "We begin with a thorough consultation to understand your vision, needs, and budget. Our designers will help you explore options and create a detailed plan.",
-    },
-    {
-      title: "Detailed Planning",
-      description:
-        "Our team develops comprehensive plans, including 3D renderings, material selections, and a detailed timeline for your project.",
-    },
-    {
-      title: "Expert Installation",
-      description:
-        "Our skilled craftsmen handle every aspect of the installation, ensuring the highest quality results and attention to detail.",
-    },
+    { title: "Consult", description: "Walk the room, talk through how you cook, and set a budget that is honest." },
+    { title: "Plan", description: "Drawings, finishes, and a schedule you can put on the fridge." },
+    { title: "Build", description: "One crew lead, daily updates, and a clean site until punch list is done." },
   ],
   galleryImages: [
-    {
-      src: "https://placehold.co/800x600",
-      alt: "Modern Kitchen Design",
-      description: "Contemporary kitchen with island",
-    },
-    {
-      src: "https://placehold.co/800x600",
-      alt: "Traditional Kitchen",
-      description: "Classic design with modern amenities",
-    },
-    {
-      src: "https://placehold.co/800x600",
-      alt: "Luxury Kitchen",
-      description: "High-end finishes and appliances",
-    },
+    { src: PHOTOS.kitchen, alt: "Modern kitchen", description: "Island kitchen with quartz" },
+    { src: PHOTOS.kitchenAfter, alt: "Remodeled kitchen", description: "Alamo Heights after" },
+    { src: PHOTOS.stone, alt: "Kitchen living", description: "Open plan finishes" },
   ],
   faqs: [
     {
-      question: "How long does a typical kitchen remodel take?",
-      answer:
-        "A typical kitchen remodel takes 6-8 weeks from demolition to completion. Timeline can vary based on the scope of work and material availability.",
+      question: "How long does a kitchen take?",
+      answer: "Most full remodels run 6–8 weeks after materials are locked. Additions or structural work take longer.",
     },
     {
-      question: "Can I use my kitchen during the remodel?",
-      answer:
-        "We recommend setting up a temporary kitchen space during the remodel. We'll work with you to maintain access to essential appliances when possible.",
+      question: "Can we cook during the job?",
+      answer: "We help set up a temporary kitchen. Access to water and a microwave is typical; the range is usually offline mid-job.",
     },
     {
-      question: "Do you handle all permits and inspections?",
-      answer:
-        "Yes, we handle all necessary permits and coordinate required inspections throughout the project.",
+      question: "Do you pull permits?",
+      answer: "Yes. We handle permits and inspections for electrical, plumbing, and structural work.",
     },
   ],
 };
 
-useHead({
-  title: "Kitchen Remodeling - Styles by Design",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Expert kitchen remodeling services in San Antonio. Custom cabinets, countertops, and complete renovations tailored to your style and budget.",
-    },
-  ],
+useSeoMeta({
+  title: "Kitchen remodeling",
+  description: "Custom kitchen remodeling in San Antonio: cabinets, counters, lighting, and full renovations.",
 });
 </script>

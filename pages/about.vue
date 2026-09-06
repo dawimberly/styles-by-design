@@ -1,77 +1,40 @@
 <template>
-  <PageHeader
-    subtitle="About"
-    title="Independently owned and family operated"
-  />
-  <div class="container mx-auto px-4 py-16">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <!-- Image Column -->
-      <div class="relative">
-        <img
-          src="https://placehold.co/600x800"
-          alt="Jon Styles"
-          class="rounded-lg shadow-xl w-full object-cover"
-        />
-      </div>
+  <PageHeader subtitle="About" title="Independently owned. Family run." />
 
-      <!-- Content Column -->
-      <div class="space-y-6">
-        <h2 class="text-3xl font-bold text-gray-900">Meet Jon Styles</h2>
-        <p class="text-lg text-gray-700 leading-relaxed">
-          With over 20 years of experience in custom interior design and
-          remodeling, Jon Styles has built a reputation for excellence in the
-          San Antonio area. As the founder of Styles by Design, Jon brings his
-          passion for craftsmanship and attention to detail to every project.
-        </p>
-        <p class="text-lg text-gray-700 leading-relaxed">
-          Together with his wife Maria, Jon has created a family-operated
-          business that treats every client like part of the family. Their
-          commitment to quality and personal service has made Styles by Design
-          one of San Antonio's most trusted names in custom interiors.
-        </p>
-        <div class="border-l-4 border-blue-500 pl-6 my-8">
-          <p class="text-xl text-gray-800 italic">
-            "Every home tells a story. Our job is to help you tell yours in the
-            most beautiful way possible."
-          </p>
-          <p class="mt-2 text-gray-600">- Jon Styles</p>
-        </div>
-        <h3 class="text-2xl font-bold text-gray-900 mt-8">
-          Community Involvement
-        </h3>
-        <p class="text-lg text-gray-700 leading-relaxed">
-          Beyond their work in interior design, Jon and Maria are passionate
-          advocates for children in the foster care system. As CASA (Court
-          Appointed Special Advocates) volunteers, they dedicate their time to
-          supporting and advocating for children navigating the foster care
-          system in San Antonio.
-        </p>
-        <div class="mt-8 space-y-4">
-          <h4 class="text-xl font-semibold text-gray-900">Certifications</h4>
-          <ul class="list-disc list-inside text-gray-700 space-y-2">
-            <li>
-              Licensed Interior Designer - Texas Board of Architectural
-              Examiners
-            </li>
-            <li>Certified Kitchen and Bath Designer</li>
-            <li>Member of National Kitchen and Bath Association</li>
-            <li>Certified Northville Cabinetry Installer</li>
-          </ul>
-        </div>
-      </div>
+  <div class="mx-auto grid max-w-6xl items-start gap-12 px-4 py-16 md:grid-cols-2">
+    <img :src="PHOTOS.portrait" alt="Jon Styles" class="h-[520px] w-full rounded-2xl object-cover shadow-xl" />
+    <div class="space-y-6 text-lg leading-relaxed text-ink/80">
+      <h2 class="font-serif text-4xl text-ink">Meet Jon Styles</h2>
+      <p>
+        More than twenty years in custom interiors and remodeling around San Antonio. Jon founded Styles by Design to
+        keep craftsmanship and jobsite manners in the same company.
+      </p>
+      <p>
+        With his wife Maria, the shop treats each house as if it were family: honest budgets, drawings before demo, and
+        a walkthrough that is not rushed.
+      </p>
+      <blockquote class="border-l-4 border-brass pl-6 font-serif text-2xl text-ink">
+        “Every home tells a story. Our job is to help you tell yours well.”
+        <cite class="mt-3 block text-base not-italic text-ink/60">— Jon Styles</cite>
+      </blockquote>
+      <h3 class="font-serif text-3xl text-ink">In the community</h3>
+      <p>
+        Jon and Maria volunteer with CASA, advocating for children in the Bexar County foster care system.
+      </p>
+      <h3 class="font-serif text-3xl text-ink">Credentials</h3>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>Licensed interior designer — Texas Board of Architectural Examiners</li>
+        <li>Certified Kitchen and Bath Designer</li>
+        <li>National Kitchen and Bath Association member</li>
+        <li>Certified Northville Cabinetry installer</li>
+      </ul>
     </div>
   </div>
 </template>
 
-<script setup>
-useHead({
-  title: "About Jon Styles - Styles by Design",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Meet Jon Styles, founder of Styles by Design, bringing over 20 years of experience in custom interior design to San Antonio homes.",
-    },
-  ],
+<script setup lang="ts">
+useSeoMeta({
+  title: "About",
+  description: "Meet Jon Styles of Styles by Design: twenty years of custom interiors in San Antonio.",
 });
 </script>

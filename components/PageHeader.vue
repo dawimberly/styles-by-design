@@ -1,31 +1,14 @@
 <template>
-  <div class="page-header py-16 text-left">
-    <div class="container mx-auto px-4 lg:px-0">
-      <p class="text-gray-400 text-lg mb-4 uppercase">{{ subtitle }}</p>
-      <h1 class="text-2xl md:text-4xl font-bold text-white">{{ title }}</h1>
+  <section class="relative overflow-hidden py-16 md:py-24">
+    <img :src="subtitle === 'Gallery' ? PHOTOS.living : PHOTOS.stone" alt="" class="absolute inset-0 h-full w-full object-cover" />
+    <div class="absolute inset-0 bg-ink/70" />
+    <div class="relative mx-auto max-w-6xl px-4">
+      <p class="text-sm uppercase tracking-[0.28em] text-brass">{{ subtitle }}</p>
+      <h1 class="mt-3 max-w-3xl font-serif text-4xl text-cream md:text-5xl">{{ title }}</h1>
     </div>
-  </div>
+  </section>
 </template>
 
-<script>
-export default {
-  props: {
-    subtitle: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-  },
-};
+<script setup lang="ts">
+defineProps<{ subtitle: string; title: string }>();
 </script>
-
-<style>
-.page-header {
-  /* background: url("~/assets/images/page-header-bg.jpg") no-repeat center; */
-  background: #333;
-  background-size: cover;
-}
-</style>

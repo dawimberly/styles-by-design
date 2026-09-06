@@ -1,55 +1,35 @@
 <template>
-  <div class="main">
+  <div class="min-h-screen bg-cream text-ink font-sans">
     <NuxtRouteAnnouncer />
-    <NuxtLoadingIndicator />
-    <!-- <NuxtWelcome /> -->
-    <div class="flex flex-col min-h-screen border-t border-yellow-300">
-      <AppHeader />
-      <main class="flex-grow">
-        <NuxtPage />
-      </main>
-      <AppFooter />
-    </div>
+    <NuxtLoadingIndicator color="#b08d57" />
+    <AppHeader />
+    <main>
+      <NuxtPage />
+    </main>
+    <AppFooter />
   </div>
 </template>
 
 <script setup lang="ts">
 useHead({
-  titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - Styles by Design` : "Styles by Design";
-  },
+  titleTemplate: (chunk) =>
+    chunk ? `${chunk} | ${SITE.name}` : `${SITE.name} | ${SITE.city}`,
 });
 </script>
 
 <style>
+html {
+  scroll-behavior: smooth;
+}
 body {
-  font-family: "Poppins", sans-serif;
-  background: #fff;
-  color: #111;
+  font-family: "Outfit", system-ui, sans-serif;
+  background: #f6f1e8;
+  color: #1c241f;
 }
-
-.main {
-  /* padding: 16px; */
-  /* background: #0c0f1b; */
-  /* min-height: 100vh; */
-}
-.gradient-button {
-  background: linear-gradient(to right, #525fb1, #5cb7e0);
-  transition: all 0.3s ease;
-}
-
-.gradient-button:hover {
-  background: linear-gradient(to right, #4a56a0, #4da5cc);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.gradient-button-yellow {
-  background: linear-gradient(to right, #f9b857, #fce680);
-  transition: all 1s ease-in-out;
-}
-
-.gradient-button-yellow:hover {
-  background: linear-gradient(to right, #e0a64e, #e3cd73);
-  transition: all 1s ease-in-out;
+h1,
+h2,
+h3,
+.font-serif {
+  font-family: "Cormorant Garamond", Georgia, serif;
 }
 </style>

@@ -1,209 +1,69 @@
 <template>
-  <PageHeader subtitle="Services" title="Custom Interiors in San Antonio, TX" />
+  <PageHeader subtitle="Services" title="Custom interiors across San Antonio" />
 
-  <div class="container mx-auto px-4 py-16">
-    <!-- Main Services -->
-    <div class="space-y-24">
-      <!-- Kitchen Remodeling -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div class="space-y-6">
-          <h2 class="text-3xl font-bold text-gray-900">Kitchen Remodeling</h2>
-          <p class="text-lg text-gray-700">
-            Transform your kitchen into a stunning, functional space. Our
-            comprehensive kitchen remodeling services include custom cabinetry,
-            countertop installation, lighting design, and complete renovations.
-          </p>
-          <ul class="list-disc list-inside text-gray-700 space-y-2">
-            <li>Custom cabinet design and installation</li>
-            <li>Countertop selection and installation</li>
-            <li>Kitchen layout optimization</li>
-            <li>Lighting and electrical updates</li>
-            <li>Flooring installation</li>
-            <li>Appliance selection and installation</li>
-          </ul>
-          <NuxtLink
-            to="/services/kitchen-remodeling"
-            class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Learn More
-          </NuxtLink>
-        </div>
-        <div class="relative h-[400px] rounded-lg overflow-hidden shadow-xl">
-          <img
-            src="https://placehold.co/800x600"
-            alt="Kitchen Remodeling"
-            class="w-full h-full object-cover"
-          />
-        </div>
+  <div class="mx-auto max-w-6xl space-y-24 px-4 py-16">
+    <article v-for="(item, i) in mains" :key="item.title" class="grid items-center gap-10 md:grid-cols-2">
+      <div :class="i % 2 === 1 ? 'md:order-2' : ''">
+        <h2 class="font-serif text-4xl">{{ item.title }}</h2>
+        <p class="mt-4 text-lg text-ink/75">{{ item.body }}</p>
+        <ul class="mt-4 space-y-1 text-ink/80">
+          <li v-for="f in item.features" :key="f">▸ {{ f }}</li>
+        </ul>
+        <NuxtLink :to="item.to" class="mt-6 inline-block rounded-full bg-ink px-5 py-2 text-cream">Learn more</NuxtLink>
       </div>
-
-      <!-- Bathroom Remodeling -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div
-          class="order-2 md:order-1 relative h-[400px] rounded-lg overflow-hidden shadow-xl"
-        >
-          <img
-            src="https://placehold.co/800x600"
-            alt="Bathroom Remodeling"
-            class="w-full h-full object-cover"
-          />
-        </div>
-        <div class="order-1 md:order-2 space-y-6">
-          <h2 class="text-3xl font-bold text-gray-900">Bath Remodeling</h2>
-          <p class="text-lg text-gray-700">
-            Create your perfect bathroom oasis with our custom remodeling
-            services. From luxury master baths to efficient guest bathrooms, we
-            handle every aspect of the transformation.
-          </p>
-          <ul class="list-disc list-inside text-gray-700 space-y-2">
-            <li>Custom shower and tub installation</li>
-            <li>Tile design and installation</li>
-            <li>Vanity and cabinet installation</li>
-            <li>Plumbing fixtures and updates</li>
-            <li>Lighting and electrical</li>
-            <li>Accessibility modifications</li>
-          </ul>
-          <NuxtLink
-            to="/services/bath-remodeling"
-            class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Learn More
-          </NuxtLink>
-        </div>
-      </div>
-
-      <!-- Custom Cabinetry -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div class="space-y-6">
-          <h2 class="text-3xl font-bold text-gray-900">Custom Cabinetry</h2>
-          <p class="text-lg text-gray-700">
-            As certified Northville Cabinetry installers, we offer premium
-            custom cabinet solutions for every room in your home. From kitchen
-            cabinets to built-in entertainment centers.
-          </p>
-          <ul class="list-disc list-inside text-gray-700 space-y-2">
-            <li>Kitchen cabinets and islands</li>
-            <li>Bathroom vanities</li>
-            <li>Built-in entertainment centers</li>
-            <li>Home office solutions</li>
-            <li>Custom storage solutions</li>
-            <li>Garage organization systems</li>
-          </ul>
-          <NuxtLink
-            to="/services/custom-cabinetry"
-            class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Learn More
-          </NuxtLink>
-        </div>
-        <div class="relative h-[400px] rounded-lg overflow-hidden shadow-xl">
-          <img
-            src="https://placehold.co/800x600"
-            alt="Custom Cabinetry"
-            class="w-full h-full object-cover"
-          />
-        </div>
-      </div>
-    </div>
-
-    <!-- Additional Services with gradient background -->
-    <div
-      class="mt-32 -mx-4 px-4 py-24 bg-gradient-to-t from-[rgb(215,223,232)] to-[rgb(244,246,248)]"
-    >
-      <div class="container mx-auto">
-        <h2 class="text-3xl font-bold text-gray-900 mb-12 text-center">
-          Additional Services
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div
-            v-for="service in additionalServices"
-            :key="service.title"
-            class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-          >
-            <h3 class="text-xl font-bold text-gray-900 mb-4">
-              {{ service.title }}
-            </h3>
-            <p class="text-gray-700 mb-4">{{ service.description }}</p>
-            <ul class="list-disc list-inside text-gray-700 space-y-2">
-              <li v-for="feature in service.features" :key="feature">
-                {{ feature }}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+      <img :src="item.image" :alt="item.title" class="h-80 w-full rounded-2xl object-cover shadow-lg" />
+    </article>
   </div>
+
+  <section class="bg-sand/40 py-20">
+    <div class="mx-auto max-w-6xl px-4">
+      <h2 class="text-center font-serif text-4xl">Also on the job</h2>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <article v-for="s in extras" :key="s.title" class="rounded-2xl bg-white p-8">
+          <h3 class="text-xl font-semibold">{{ s.title }}</h3>
+          <p class="mt-3 text-ink/70">{{ s.description }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
 </template>
 
-<script setup>
-const additionalServices = [
+<script setup lang="ts">
+const mains = [
   {
-    title: "Interior Painting",
-    description:
-      "Professional interior painting services with attention to detail and premium materials.",
-    features: [
-      "Color consultation",
-      "Surface preparation",
-      "Premium paints",
-      "Clean and efficient",
-    ],
+    title: "Kitchen remodeling",
+    body: "Full kitchen rebuilds: cabinets, counters, lighting, flooring, and appliances under one plan.",
+    features: ["Custom cabinets", "Stone and quartz", "Layout and lighting", "Appliance coordination"],
+    image: PHOTOS.kitchen,
+    to: "/services/kitchen-remodeling",
   },
   {
-    title: "Flooring Installation",
-    description:
-      "Expert installation of various flooring types to match your style and needs.",
-    features: ["Hardwood", "Tile", "Luxury vinyl", "Laminate"],
+    title: "Bath remodeling",
+    body: "Master suites and guest baths with tile, glass, vanities, and plumbing that last.",
+    features: ["Custom showers", "Tile and fixtures", "Vanities", "Accessibility options"],
+    image: PHOTOS.bath,
+    to: "/services/bath-remodeling",
   },
   {
-    title: "Stone & Countertops",
-    description:
-      "Premium stone and countertop installation for kitchens and bathrooms.",
-    features: ["Granite", "Quartz", "Marble", "Solid surface"],
-  },
-  {
-    title: "3D Rendering",
-    description:
-      "Visualize your project before construction with our 3D rendering services.",
-    features: [
-      "Kitchen design",
-      "Bathroom layouts",
-      "Cabinet configurations",
-      "Color visualization",
-    ],
-  },
-  {
-    title: "Home Additions",
-    description:
-      "Expand your living space with custom home additions and renovations.",
-    features: [
-      "Room additions",
-      "Garage conversions",
-      "Second story additions",
-      "Outdoor living",
-    ],
-  },
-  {
-    title: "Project Management",
-    description:
-      "Full-service project management to ensure your renovation runs smoothly.",
-    features: [
-      "Timeline planning",
-      "Contractor coordination",
-      "Budget management",
-      "Quality control",
-    ],
+    title: "Custom cabinetry",
+    body: "Certified Northville Cabinetry installers for kitchens, offices, and whole-home storage.",
+    features: ["Kitchens and islands", "Built-ins", "Offices and mudrooms", "Garage systems"],
+    image: PHOTOS.cabinets,
+    to: "/services/custom-cabinetry",
   },
 ];
 
-useHead({
-  title: "Our Services - Styles by Design",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Explore our full range of interior design and remodeling services including kitchen & bath remodels, custom cabinetry, and more in San Antonio.",
-    },
-  ],
+const extras = [
+  { title: "Interior painting", description: "Prep, color consult, and premium paint with a clean jobsite." },
+  { title: "Flooring", description: "Hardwood, tile, luxury vinyl, and laminate installed to the room." },
+  { title: "Stone & counters", description: "Granite, quartz, marble, and solid surface." },
+  { title: "3D rendering", description: "See the kitchen or bath before demolition starts." },
+  { title: "Home additions", description: "Rooms, conversions, and outdoor living that match the house." },
+  { title: "Project management", description: "Schedule, trades, budget, and walkthrough in one conversation." },
+];
+
+useSeoMeta({
+  title: "Services",
+  description: "Kitchen and bath remodeling, custom cabinetry, stone, flooring, and project management in San Antonio.",
 });
 </script>

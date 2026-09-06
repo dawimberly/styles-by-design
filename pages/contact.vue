@@ -1,146 +1,62 @@
 <template>
-  <PageHeader
-    subtitle="Contact Us"
-    title="We'd love to work with you on your next project"
-  />
-  <div class="container mx-auto py-16 px-4 relative">
-    <div class="absolute inset-0 z-0">
-      <!-- <img
-        src="@/assets/images/blur-transparent.png"
-        alt="Background"
-        class="w-full h-full object-cover"
-      /> -->
-    </div>
-    <div>
-      <p class="text-lg text-center mb-8">
-        Fill out the form below and we'll get back to you as soon as possible.
-      </p>
-    </div>
-    <div class="relative z-10">
-      <div
-        class="max-w-2xl mx-auto bg-gray-900 bg-opacity-10 p-8 rounded-lg shadow-lg border border-gray-400"
-      >
-        <form
-          @submit.prevent="handleSubmit"
-          class="space-y-6"
-          name="contact-page"
-          netlify
-        >
-          <input type="hidden" name="form-name" value="contact-page" />
-          <div>
-            <label
-              for="name"
-              class="block text-sm font-medium text-gray-800 mb-1"
-              >Name</label
-            >
-            <input
-              type="text"
-              id="name"
-              name="name"
-              v-model="name"
-              required
-              class="w-full px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label
-              for="email"
-              class="block text-sm font-medium text-gray-800 mb-1"
-              >Email</label
-            >
-            <input
-              type="email"
-              id="email"
-              v-model="email"
-              name="email"
-              required
-              class="w-full px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label
-              for="message"
-              class="block text-sm font-medium text-gray-800 mb-1"
-              >Message</label
-            >
-            <textarea
-              id="message"
-              v-model="message"
-              rows="6"
-              name="message"
-              required
-              class="w-full px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            ></textarea>
-          </div>
-          <div>
-            <button
-              type="submit"
-              class="w-full gradient-button text-white font-bold py-2 px-4 rounded transition-all duration-300"
-            >
-              Send Message
-            </button>
-          </div>
-        </form>
+  <PageHeader subtitle="Contact" title="Tell us about the room you want next." />
+
+  <div class="mx-auto grid max-w-6xl gap-12 px-4 py-16 md:grid-cols-5">
+    <aside class="md:col-span-2 space-y-6">
+      <p class="text-lg text-ink/75">Free consults. We typically reply the same business day.</p>
+      <a :href="SITE.phoneHref" class="block font-serif text-4xl text-moss">{{ SITE.phone }}</a>
+      <p class="text-ink/70">{{ SITE.city }} and nearby Hill Country towns.</p>
+    </aside>
+
+    <form class="md:col-span-3 space-y-5 rounded-2xl bg-white p-8 shadow-sm" @submit.prevent="submit">
+      <div>
+        <label class="text-sm font-medium" for="name">Name</label>
+        <input id="name" v-model="name" required class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3" />
       </div>
-    </div>
+      <div>
+        <label class="text-sm font-medium" for="email">Email</label>
+        <input id="email" v-model="email" type="email" required class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3" />
+      </div>
+      <div>
+        <label class="text-sm font-medium" for="phone">Phone</label>
+        <input id="phone" v-model="phone" class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3" />
+      </div>
+      <div>
+        <label class="text-sm font-medium" for="message">Project</label>
+        <textarea id="message" v-model="message" rows="5" required class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3" />
+      </div>
+      <p v-if="status === 'ok'" class="text-moss">Thanks — we will be in touch shortly.</p>
+      <p v-else-if="status === 'err'" class="text-red-700">Could not send. Call us or try again.</p>
+      <button type="submit" class="rounded-full bg-ink px-6 py-3 text-cream" :disabled="status === 'sending'">
+        {{ status === "sending" ? "Sending…" : "Send message" }}
+      </button>
+    </form>
   </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
-
+<script setup lang="ts">
 const name = ref("");
 const email = ref("");
+const phone = ref("");
 const message = ref("");
+const status = ref<"idle" | "sending" | "ok" | "err">("idle");
 
-const handleSubmit = async () => {
-  const formData = new URLSearchParams();
-  formData.append("form-name", "contact-page");
-  formData.append("name", name.value);
-  formData.append("email", email.value);
-  formData.append("message", message.value);
-
+async function submit() {
+  status.value = "sending";
   try {
-    const response = await fetch("/", {
+    await $fetch("/api/contact", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formData.toString(),
+      body: { name: name.value, email: email.value, phone: phone.value, message: message.value },
     });
-
-    if (response.ok) {
-      // Clear form fields
-      name.value = "";
-      email.value = "";
-      message.value = "";
-      alert("Thank you for your message. We'll get back to you soon!");
-    } else {
-      throw new Error("Form submission failed");
-    }
-  } catch (error) {
-    console.error("Error submitting form", error, JSON.stringify(error));
+    name.value = email.value = phone.value = message.value = "";
+    status.value = "ok";
+  } catch {
+    status.value = "err";
   }
-};
+}
 
-useHead({
+useSeoMeta({
   title: "Contact",
-  meta: [
-    {
-      name: "description",
-      content: "Contact Sugar Cube Studio. We'd love to hear from you!",
-    },
-    { property: "og:title", content: "Contact Sugar Cube Studio" },
-    {
-      property: "og:description",
-      content:
-        "Get in touch with Sugar Cube Studio. We're here to answer your questions and hear your feedback.",
-    },
-    {
-      property: "og:url",
-      content: "https://sugarcubestudio.netlify.app/contact",
-    },
-    { property: "og:type", content: "website" },
-  ],
+  description: `Request a free consultation with ${SITE.name} in ${SITE.city}.`,
 });
 </script>
-
-<style scoped></style>

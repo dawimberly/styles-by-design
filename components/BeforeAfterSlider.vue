@@ -1,87 +1,56 @@
 <template>
   <div
-    class="relative max-w-3xl mx-auto rounded-lg overflow-hidden shadow-xl cursor-col-resize h-[400px]"
-    @mousemove="handleMouseMove"
-    @touchmove="handleTouchMove"
-    ref="container"
+    class="relative h-[420px] cursor-col-resize overflow-hidden rounded-2xl shadow-xl select-none"
+    ref="el"
+    @pointerdown="start"
+    @pointermove="move"
+    @pointerup="stop"
+    @pointerleave="stop"
   >
-    <img
-      :src="afterImage"
-      :alt="afterAlt"
-      class="absolute inset-0 w-full h-full object-cover"
-    />
+    <img :src="afterImage" :alt="afterAlt" class="absolute inset-0 h-full w-full object-cover" />
     <img
       :src="beforeImage"
       :alt="beforeAlt"
-      class="absolute inset-0 w-full h-full object-cover"
-      :style="{
-        clipPath: `inset(0 ${100 - (position / containerWidth) * 100}% 0 0)`,
-      }"
+      class="absolute inset-0 h-full w-full object-cover"
+      :style="{ clipPath: `inset(0 ${100 - pct}% 0 0)` }"
     />
+    <div class="absolute inset-y-0 w-0.5 bg-white" :style="{ left: `${pct}%` }" />
     <div
-      class="absolute top-0 right-0 h-full w-1 bg-white"
-      :style="{ left: `${position}px` }"
-    ></div>
-    <div
-      class="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded"
-    >
-      Before
-    </div>
-    <div
-      class="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded"
-    >
-      After
-    </div>
+      class="absolute top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-ink/70"
+      :style="{ left: `${pct}%` }"
+    />
+    <span class="absolute left-4 top-4 rounded bg-black/50 px-3 py-1 text-sm text-white">Before</span>
+    <span class="absolute right-4 top-4 rounded bg-black/50 px-3 py-1 text-sm text-white">After</span>
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
+<script setup lang="ts">
+defineProps<{
+  beforeImage: string;
+  afterImage: string;
+  beforeAlt?: string;
+  afterAlt?: string;
+}>();
 
-const props = defineProps({
-  beforeImage: {
-    type: String,
-    required: true,
-  },
-  afterImage: {
-    type: String,
-    required: true,
-  },
-  beforeAlt: {
-    type: String,
-    default: "Before",
-  },
-  afterAlt: {
-    type: String,
-    default: "After",
-  },
-});
+const el = ref<HTMLElement | null>(null);
+const dragging = ref(false);
+const pct = ref(50);
 
-const position = ref(0);
-const container = ref(null);
-const containerWidth = ref(0);
-
-const handleMouseMove = (e) => {
-  if (!container.value) return;
-  const rect = container.value.getBoundingClientRect();
-  containerWidth.value = rect.width;
-  position.value = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-};
-
-const handleTouchMove = (e) => {
-  if (!container.value || !e.touches[0]) return;
-  e.preventDefault();
-  const rect = container.value.getBoundingClientRect();
-  containerWidth.value = rect.width;
-  position.value = Math.max(
-    0,
-    Math.min(e.touches[0].clientX - rect.left, rect.width)
-  );
-};
-</script>
-
-<style scoped>
-.before-image {
-  transition: width 0.05s ease-out;
+function setFromEvent(e: PointerEvent) {
+  if (!el.value) return;
+  const rect = el.value.getBoundingClientRect();
+  pct.value = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
 }
-</style>
+
+function start(e: PointerEvent) {
+  dragging.value = true;
+  el.value?.setPointerCapture(e.pointerId);
+  setFromEvent(e);
+}
+function move(e: PointerEvent) {
+  if (dragging.value) setFromEvent(e);
+}
+function stop() {
+  dragging.value = false;
+}
+</script>

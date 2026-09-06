@@ -3,91 +3,55 @@
     subtitle="Services"
     :title="serviceData.title"
     :description="serviceData.description"
-    :mainFeatures="serviceData.mainFeatures"
-    :mainImage="serviceData.mainImage"
+    :main-features="serviceData.mainFeatures"
+    :main-image="serviceData.mainImage"
     :process="serviceData.process"
-    :galleryImages="serviceData.galleryImages"
+    :gallery-images="serviceData.galleryImages"
     :faqs="serviceData.faqs"
   />
 </template>
 
-<script setup>
-import ServiceDetail from "@/components/ServiceDetail.vue";
-
+<script setup lang="ts">
 const serviceData = {
-  title: "Custom Cabinetry",
+  title: "Custom cabinetry",
   description:
-    "As certified Northville Cabinetry installers, we provide premium custom cabinet solutions for every room in your home. From kitchen cabinets to entertainment centers, we create beautiful, functional storage that perfectly fits your space and style.",
+    "Certified Northville Cabinetry installers. Kitchens, offices, mudrooms, and built-ins that line up with the architecture instead of fighting it.",
   mainFeatures: [
-    "Custom kitchen cabinets and islands",
-    "Bathroom vanities and storage",
-    "Built-in entertainment centers",
-    "Home office solutions",
-    "Mudroom and laundry organization",
-    "Garage storage systems",
+    "Kitchen cabinets and islands",
+    "Bath vanities",
+    "Entertainment and library walls",
+    "Home offices",
+    "Garage organization",
   ],
-  mainImage: "https://placehold.co/800x600",
+  mainImage: PHOTOS.cabinets,
   process: [
-    {
-      title: "Design Consultation",
-      description:
-        "We assess your space and discuss your storage needs, style preferences, and budget to create the perfect custom solution.",
-    },
-    {
-      title: "Custom Design",
-      description:
-        "Our designers create detailed plans and 3D renderings to help you visualize your custom cabinetry before production begins.",
-    },
-    {
-      title: "Professional Installation",
-      description:
-        "Our certified installers ensure your custom cabinetry is perfectly fitted and finished to the highest standards.",
-    },
+    { title: "Fit", description: "We measure twice and talk through how you actually store things." },
+    { title: "Draw", description: "Door styles, finishes, and hardware on a 3D model before production." },
+    { title: "Set", description: "Certified install, scribing, and hardware adjustment until every door hangs true." },
   ],
   galleryImages: [
-    {
-      src: "https://placehold.co/800x600",
-      alt: "Kitchen Cabinets",
-      description: "Custom kitchen with premium finishes",
-    },
-    {
-      src: "https://placehold.co/800x600",
-      alt: "Entertainment Center",
-      description: "Built-in entertainment solution",
-    },
-    {
-      src: "https://placehold.co/800x600",
-      alt: "Home Office",
-      description: "Custom office storage and workspace",
-    },
+    { src: PHOTOS.cabinets, alt: "Kitchen cabinets", description: "Painted kitchen cabinets" },
+    { src: PHOTOS.office, alt: "Office", description: "Built-in desk wall" },
+    { src: PHOTOS.kitchenAfter, alt: "Island", description: "Custom island" },
   ],
   faqs: [
     {
-      question: "What cabinet lines do you offer?",
-      answer:
-        "We are certified Northville Cabinetry installers, offering their complete line of premium custom cabinets. We can accommodate various styles and budgets within their extensive collection.",
+      question: "What lines do you install?",
+      answer: "We are certified Northville Cabinetry installers and can spec their full range of styles and price points.",
     },
     {
-      question: "How long does custom cabinetry take?",
-      answer:
-        "Custom cabinetry typically takes 6-8 weeks from design approval to installation completion. This includes production time and professional installation.",
+      question: "How long from approval to install?",
+      answer: "Most cabinet jobs are 6–8 weeks including production and install.",
     },
     {
-      question: "Do you offer financing options?",
-      answer:
-        "Yes, we offer various financing options to help make your custom cabinetry project more affordable. Ask about our current financing specials during your consultation.",
+      question: "Do you finance?",
+      answer: "Yes. Ask during consult and we will walk through current options.",
     },
   ],
 };
 
-useHead({
-  title: "Custom Cabinetry - Styles by Design",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Premium custom cabinetry solutions in San Antonio. Certified Northville Cabinetry installers offering kitchen cabinets, entertainment centers, and storage solutions.",
-    },
-  ],
+useSeoMeta({
+  title: "Custom cabinetry",
+  description: "Custom cabinetry in San Antonio. Certified Northville Cabinetry for kitchens, offices, and storage.",
 });
 </script>
