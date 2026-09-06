@@ -109,7 +109,7 @@ const reviews = [
 ];
 
 useSeoMeta({
-  title: `${SITE.name} | Custom interiors in ${SITE.city}`,
+  title: `Custom interiors in ${SITE.city}`,
   description: SITE.tagline,
   ogTitle: SITE.name,
   ogDescription: SITE.tagline,
