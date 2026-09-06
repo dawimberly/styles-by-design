@@ -11,12 +11,12 @@
         </NuxtLink>
       </nav>
 
-      <a
-        :href="SITE.phoneHref"
+      <NuxtLink
+        to="/contractors"
         class="hidden items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-cream md:inline-flex"
       >
-        Call {{ SITE.phone }}
-      </a>
+        Contractor portal
+      </NuxtLink>
 
       <button class="md:hidden" type="button" aria-label="Menu" @click="open = !open">
         <Menu v-if="!open" class="h-6 w-6" />
@@ -35,6 +35,7 @@
         {{ link.text }}
       </NuxtLink>
       <a :href="SITE.phoneHref" class="mt-3 inline-block font-medium text-moss">{{ SITE.phone }}</a>
+      <NuxtLink to="/contractors" class="mt-2 block font-medium text-moss" @click="open = false">Contractor portal</NuxtLink>
     </div>
   </header>
 </template>

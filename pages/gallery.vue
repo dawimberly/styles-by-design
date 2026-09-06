@@ -4,9 +4,9 @@
   <div class="mx-auto max-w-6xl px-4 py-16">
     <div class="grid items-start gap-10 md:grid-cols-5">
       <div class="md:col-span-2">
-        <h2 class="font-serif text-4xl">Alamo Heights kitchen</h2>
+        <h2 class="font-serif text-4xl">Kitchen remodel</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          Dated 1990s plan rebuilt as an entertainment kitchen: custom cabinets, quartz, and a waterfall island. Drag to compare.
+          A tired everyday kitchen rebuilt with custom cabinets, quartz, and a farmhouse sink. Left is before; right is after.
         </p>
       </div>
       <div class="md:col-span-3">
@@ -41,6 +41,6 @@ const items = [
 
 useSeoMeta({
   title: "Gallery",
-  description: "Kitchen, bath, and cabinetry projects from Styles by Design in San Antonio.",
+  description: "Designed kitchens, baths, and interiors from Styles by Design in San Antonio.",
 });
 </script>

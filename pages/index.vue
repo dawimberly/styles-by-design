@@ -25,9 +25,9 @@
     <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-2">
       <div>
         <p class="text-sm uppercase tracking-[0.28em] text-moss">Featured project</p>
-        <h2 class="mt-3 font-serif text-4xl">Alamo Heights kitchen</h2>
+        <h2 class="mt-3 font-serif text-4xl">Designed kitchen</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          A 1990s kitchen rebuilt as an entertainment space: custom cabinetry, quartz, and a waterfall island. Drag the slider to see the change.
+          We design the finish. Your contractor orders the boxes from our price list and builds the room.
         </p>
         <NuxtLink to="/gallery" class="mt-6 inline-block text-moss">See the gallery →</NuxtLink>
       </div>
@@ -71,22 +71,22 @@
 <script setup lang="ts">
 const services = [
   {
-    title: "Kitchen remodeling",
-    blurb: "Layouts, cabinets, stone, lighting, and appliances as one plan.",
+    title: "Kitchen design",
+    blurb: "Layouts, finishes, lighting, and a cabinet takeoff your contractor can order from our list.",
     image: PHOTOS.kitchen,
     to: "/services/kitchen-remodeling",
   },
   {
-    title: "Bath remodeling",
-    blurb: "Showers, tile, vanities, and spa-level details that still function daily.",
+    title: "Bath design",
+    blurb: "Showers, tile, vanities, and a clear spec package — not a construction crew.",
     image: PHOTOS.bath,
     to: "/services/bath-remodeling",
   },
   {
-    title: "Custom cabinetry",
-    blurb: "Northville cabinetry for kitchens, offices, mudrooms, and storage.",
+    title: "Contractor cabinets",
+    blurb: "Trade pricing on stock Northville SKUs from the estimator. 20% off MSRP.",
     image: PHOTOS.cabinets,
-    to: "/services/custom-cabinetry",
+    to: "/contractors",
   },
 ];
 
@@ -94,7 +94,7 @@ const reviews = [
   {
     name: "Sarah J.",
     place: "Alamo Heights",
-    text: "They treated the kitchen like a real living room, not a showroom. Every drawer and light was thought through.",
+    title: "They designed the kitchen like a real living room, not a showroom. Our GC used their cabinet list and the job moved.",
   },
   {
     name: "Michael C.",

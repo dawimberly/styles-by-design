@@ -1,5 +1,5 @@
 <template>
-  <PageHeader subtitle="Services" title="Custom interiors across San Antonio" />
+  <PageHeader subtitle="Services" title="We design spaces. We do not build custom cabinets." />
 
   <div class="mx-auto max-w-6xl space-y-24 px-4 py-16">
     <article v-for="(item, i) in mains" :key="item.title" class="grid items-center gap-10 md:grid-cols-2">
@@ -9,7 +9,7 @@
         <ul class="mt-4 space-y-1 text-ink/80">
           <li v-for="f in item.features" :key="f">▸ {{ f }}</li>
         </ul>
-        <NuxtLink :to="item.to" class="mt-6 inline-block rounded-full bg-ink px-5 py-2 text-cream">Learn more</NuxtLink>
+        <NuxtLink :to="item.to" class="mt-6 inline-block rounded-full bg-ink px-5 py-2 text-cream">{{ item.cta }}</NuxtLink>
       </div>
       <img :src="item.image" :alt="item.title" class="h-80 w-full rounded-2xl object-cover shadow-lg" />
     </article>
@@ -17,7 +17,7 @@
 
   <section class="bg-sand/40 py-20">
     <div class="mx-auto max-w-6xl px-4">
-      <h2 class="text-center font-serif text-4xl">Also on the job</h2>
+      <h2 class="text-center font-serif text-4xl">Design deliverables</h2>
       <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <article v-for="s in extras" :key="s.title" class="rounded-2xl bg-white p-8">
           <h3 class="text-xl font-semibold">{{ s.title }}</h3>
@@ -31,39 +31,42 @@
 <script setup lang="ts">
 const mains = [
   {
-    title: "Kitchen remodeling",
-    body: "Full kitchen rebuilds: cabinets, counters, lighting, flooring, and appliances under one plan.",
-    features: ["Custom cabinets", "Stone and quartz", "Layout and lighting", "Appliance coordination"],
+    title: "Kitchen design",
+    body: "Plans, finishes, lighting, and a cabinet takeoff pulled from the same estimator list contractors use in the portal.",
+    features: ["Space planning", "Finish and fixture specs", "3D views", "Stock cabinet SKUs, not custom boxes"],
     image: PHOTOS.kitchen,
     to: "/services/kitchen-remodeling",
+    cta: "Kitchen design",
   },
   {
-    title: "Bath remodeling",
-    body: "Master suites and guest baths with tile, glass, vanities, and plumbing that last.",
-    features: ["Custom showers", "Tile and fixtures", "Vanities", "Accessibility options"],
+    title: "Bath design",
+    body: "Showers, tile, vanities, and lighting as a spec package for your builder.",
+    features: ["Layout", "Tile and glass", "Vanity SKUs from the list", "Lighting"],
     image: PHOTOS.bath,
     to: "/services/bath-remodeling",
+    cta: "Bath design",
   },
   {
-    title: "Custom cabinetry",
-    body: "Certified Northville Cabinetry installers for kitchens, offices, and whole-home storage.",
-    features: ["Kitchens and islands", "Built-ins", "Offices and mudrooms", "Garage systems"],
+    title: "Trade cabinet sales",
+    body: "Licensed contractors buy discounted stock cabinets from the Northville list already loaded in our estimator. We are not a custom cabinet shop.",
+    features: ["190 SKUs", "Nine finishes", "20% off MSRP", "Quote from the portal"],
     image: PHOTOS.cabinets,
-    to: "/services/custom-cabinetry",
+    to: "/contractors",
+    cta: "Open contractor portal",
   },
 ];
 
 const extras = [
-  { title: "Interior painting", description: "Prep, color consult, and premium paint with a clean jobsite." },
-  { title: "Flooring", description: "Hardwood, tile, luxury vinyl, and laminate installed to the room." },
-  { title: "Stone & counters", description: "Granite, quartz, marble, and solid surface." },
-  { title: "3D rendering", description: "See the kitchen or bath before demolition starts." },
-  { title: "Home additions", description: "Rooms, conversions, and outdoor living that match the house." },
-  { title: "Project management", description: "Schedule, trades, budget, and walkthrough in one conversation." },
+  { title: "3D rendering", description: "See the room before demolition." },
+  { title: "Finish boards", description: "Paint, stone, hardware, and lighting in one package." },
+  { title: "Estimator takeoff", description: "Cabinet SKUs match Flip Fixer so the GC is not guessing." },
+  { title: "Color", description: "Whole-home palettes that hold up in San Antonio light." },
+  { title: "Furniture & styling", description: "Pieces that fit the architecture, not a catalog dump." },
+  { title: "Builder coordination", description: "We stay with the drawings. Your contractor runs the jobsite." },
 ];
 
 useSeoMeta({
   title: "Services",
-  description: "Kitchen and bath remodeling, custom cabinetry, stone, flooring, and project management in San Antonio.",
+  description: "Interior design for kitchens, baths, and homes in San Antonio. Contractors order discounted stock cabinets from our estimator list.",
 });
 </script>

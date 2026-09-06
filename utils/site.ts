@@ -1,11 +1,11 @@
 export const SITE = {
   name: "Styles by Design",
   city: "San Antonio, TX",
-  phone: "210-555-2928",
-  phoneHref: "tel:+12105552928",
-  email: "hello@stylesbydesign.example",
+  phone: "(210) 436-9117",
+  phoneHref: "tel:+12104369117",
+  email: "Jon@TheFlipFixer.com",
   url: "https://styles-by-design.vercel.app",
-  tagline: "Custom interiors for kitchens, baths, and cabinetry",
+  tagline: "Interior design for kitchens, baths, and whole homes",
 };
 
 export const AREAS = [
@@ -25,7 +25,7 @@ export const AREAS = [
 
 export const PHOTOS = {
   kitchen: "/kitchen.jpg",
-  kitchenAfter: "/images/work/after.jpg",
+  kitchenAfter: "/kitchen.jpg",
   kitchenBefore: "/images/work/before.jpg",
   bath: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1600&q=80",
   bathDetail:
@@ -38,6 +38,5 @@ export const PHOTOS = {
     "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80",
   stone:
     "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
-  portrait:
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80",
+  portrait: "/images/jon.jpg",
 };

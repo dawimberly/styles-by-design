@@ -8,6 +8,9 @@ export default defineNuxtConfig({
       { name: "Outfit", provider: "google", weights: [300, 400, 500, 600, 700] },
     ],
   },
+  runtimeConfig: {
+    contractorPin: process.env.CONTRACTOR_PIN || "420420",
+  },
   app: {
     head: {
       htmlAttrs: { lang: "en" },

@@ -13,45 +13,45 @@
 
 <script setup lang="ts">
 const serviceData = {
-  title: "Kitchen remodeling",
+  title: "Kitchen design",
   description:
-    "We rebuild kitchens as daily rooms: cooking, gathering, and storage planned together, with 3D drawings before we open a wall.",
+    "We design kitchens as daily rooms: layout, finishes, lighting, and a stock-cabinet takeoff from the estimator. Your contractor builds and orders boxes through the trade portal. We do not fabricate custom cabinets.",
   mainFeatures: [
-    "Custom cabinet design and install",
-    "Quartz, granite, and solid surface",
-    "Layout, lighting, and electrical",
-    "Flooring and backsplash",
-    "Appliance selection and fit",
+    "Space planning and 3D",
+    "Finish, stone, and lighting specs",
+    "Stock cabinet SKUs from the estimator list",
+    "Appliance coordination",
+    "Drawings your GC can bid",
   ],
   mainImage: PHOTOS.kitchen,
   process: [
-    { title: "Consult", description: "Walk the room, talk through how you cook, and set a budget that is honest." },
-    { title: "Plan", description: "Drawings, finishes, and a schedule you can put on the fridge." },
-    { title: "Build", description: "One crew lead, daily updates, and a clean site until punch list is done." },
+    { title: "Consult", description: "Walk the room and how you cook." },
+    { title: "Design", description: "Drawings, finishes, and SKUs locked to the price list." },
+    { title: "Handoff", description: "Your builder builds. Cabinets order at trade price from the portal." },
   ],
   galleryImages: [
     { src: PHOTOS.kitchen, alt: "Modern kitchen", description: "Island kitchen with quartz" },
-    { src: PHOTOS.kitchenAfter, alt: "Remodeled kitchen", description: "Alamo Heights after" },
+    { src: PHOTOS.kitchenAfter, alt: "Remodeled kitchen", description: "White shaker kitchen after" },
     { src: PHOTOS.stone, alt: "Kitchen living", description: "Open plan finishes" },
   ],
   faqs: [
     {
-      question: "How long does a kitchen take?",
-      answer: "Most full remodels run 6–8 weeks after materials are locked. Additions or structural work take longer.",
+      question: "Do you install the kitchen?",
+      answer: "No. We design. A licensed contractor builds. They can buy the cabinets from our portal.",
     },
     {
-      question: "Can we cook during the job?",
-      answer: "We help set up a temporary kitchen. Access to water and a microwave is typical; the range is usually offline mid-job.",
+      question: "Can I get custom cabinets?",
+      answer: "We specify stock Northville SKUs from the estimator. We are not a custom cabinet shop.",
     },
     {
-      question: "Do you pull permits?",
-      answer: "Yes. We handle permits and inspections for electrical, plumbing, and structural work.",
+      question: "How do contractors order?",
+      answer: "The contractor portal uses the same price list as Flip Fixer, at 20% off MSRP.",
     },
   ],
 };
 
 useSeoMeta({
-  title: "Kitchen remodeling",
-  description: "Custom kitchen remodeling in San Antonio: cabinets, counters, lighting, and full renovations.",
+  title: "Kitchen design",
+  description: "Kitchen interior design in San Antonio. Stock cabinets ordered by your contractor from our estimator list.",
 });
 </script>
