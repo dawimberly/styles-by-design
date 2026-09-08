@@ -11,7 +11,7 @@
         :to="card.to"
         class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand"
       >
-        <img :src="card.image" :alt="card.title" class="h-52 w-full object-cover transition duration-500 group-hover:scale-105" />
+        <img :src="card.image" :alt="card.title" class="h-64 w-full object-cover transition duration-700 group-hover:scale-105" />
         <div class="p-6">
           <h3 class="font-serif text-2xl">{{ card.title }}</h3>
           <p class="mt-2 text-ink/70">{{ card.blurb }}</p>
@@ -27,7 +27,8 @@
         <p class="text-sm uppercase tracking-[0.28em] text-moss">Featured project</p>
         <h2 class="mt-3 font-serif text-4xl">Designed kitchen</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          We design the finish. Your contractor orders the boxes from our price list and builds the room.
+          Same kitchen: dated dark wood on the left, white shaker and stone on the right. Install typically runs through
+          The Flip Fixer.
         </p>
         <NuxtLink to="/gallery" class="mt-6 inline-block text-moss">See the gallery →</NuxtLink>
       </div>
@@ -72,13 +73,13 @@
 const services = [
   {
     title: "Kitchen design",
-    blurb: "Layouts, finishes, lighting, and a cabinet takeoff your contractor can order from our list.",
+    blurb: "Layouts, finishes, lighting, and a cabinet takeoff. Install is typically The Flip Fixer.",
     image: PHOTOS.kitchen,
     to: "/services/kitchen-remodeling",
   },
   {
     title: "Bath design",
-    blurb: "Showers, tile, vanities, and a clear spec package — not a construction crew.",
+    blurb: "Showers, tile, vanities, and a spec package. Our installers usually run through The Flip Fixer.",
     image: PHOTOS.bath,
     to: "/services/bath-remodeling",
   },
@@ -94,7 +95,7 @@ const reviews = [
   {
     name: "Sarah J.",
     place: "Alamo Heights",
-    title: "They designed the kitchen like a real living room, not a showroom. Our GC used their cabinet list and the job moved.",
+    text: "They designed the kitchen like a real living room, not a showroom. Our GC used their cabinet list and the job moved.",
   },
   {
     name: "Michael C.",
@@ -113,7 +114,7 @@ useSeoMeta({
   description: SITE.tagline,
   ogTitle: SITE.name,
   ogDescription: SITE.tagline,
-  ogImage: `${SITE.url}/kitchen.jpg`,
+  ogImage: `${SITE.url}${PHOTOS.kitchen}`,
   ogUrl: SITE.url,
   twitterCard: "summary_large_image",
 });

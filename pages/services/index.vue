@@ -1,5 +1,5 @@
 <template>
-  <PageHeader subtitle="Services" title="We design spaces. We do not build custom cabinets." />
+  <PageHeader subtitle="Services" title="Design under Styles by Design. Install typically through The Flip Fixer." />
 
   <div class="mx-auto max-w-6xl space-y-24 px-4 py-16">
     <article v-for="(item, i) in mains" :key="item.title" class="grid items-center gap-10 md:grid-cols-2">
@@ -32,7 +32,7 @@
 const mains = [
   {
     title: "Kitchen design",
-    body: "Plans, finishes, lighting, and a cabinet takeoff pulled from the same estimator list contractors use in the portal.",
+    body: "Plans, finishes, lighting, and a cabinet takeoff from the estimator list. Install is typically our crews under The Flip Fixer.",
     features: ["Space planning", "Finish and fixture specs", "3D views", "Stock cabinet SKUs, not custom boxes"],
     image: PHOTOS.kitchen,
     to: "/services/kitchen-remodeling",
@@ -40,7 +40,7 @@ const mains = [
   },
   {
     title: "Bath design",
-    body: "Showers, tile, vanities, and lighting as a spec package for your builder.",
+    body: "Showers, tile, vanities, and lighting as a spec package. Our installers usually run the job through The Flip Fixer.",
     features: ["Layout", "Tile and glass", "Vanity SKUs from the list", "Lighting"],
     image: PHOTOS.bath,
     to: "/services/bath-remodeling",
@@ -62,7 +62,7 @@ const extras = [
   { title: "Estimator takeoff", description: "Cabinet SKUs match Flip Fixer so the GC is not guessing." },
   { title: "Color", description: "Whole-home palettes that hold up in San Antonio light." },
   { title: "Furniture & styling", description: "Pieces that fit the architecture, not a catalog dump." },
-  { title: "Builder coordination", description: "We stay with the drawings. Your contractor runs the jobsite." },
+  { title: "Builder coordination", description: "Install is typically The Flip Fixer. Outside GCs can still buy cabinets from the portal." },
 ];
 
 useSeoMeta({

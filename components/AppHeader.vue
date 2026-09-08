@@ -2,7 +2,7 @@
   <header class="sticky top-0 z-50 border-b border-sand/80 bg-cream/90 backdrop-blur-md">
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
       <NuxtLink to="/" class="flex items-center gap-3">
-        <img src="@/assets/images/logosbd.jpg" alt="Styles by Design" class="h-12 w-auto md:h-14" />
+        <img src="@/assets/images/logosbd.png" alt="Styles by Design" class="h-12 w-auto md:h-14" />
       </NuxtLink>
 
       <nav class="hidden items-center gap-8 text-sm font-medium tracking-wide text-ink/80 md:flex">
@@ -11,12 +11,22 @@
         </NuxtLink>
       </nav>
 
-      <NuxtLink
-        to="/contractors"
-        class="hidden items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-cream md:inline-flex"
-      >
-        Contractor portal
-      </NuxtLink>
+      <div class="hidden items-center gap-2 md:flex">
+        <a
+          :href="SITE.flipFixerUrl"
+          class="rounded-full bg-brass px-4 py-2 text-sm font-medium text-ink hover:bg-sand"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Need a Contractor
+        </a>
+        <NuxtLink
+          to="/contractors"
+          class="rounded-full bg-ink px-4 py-2 text-sm font-medium text-cream"
+        >
+          Contractor portal
+        </NuxtLink>
+      </div>
 
       <button class="md:hidden" type="button" aria-label="Menu" @click="open = !open">
         <Menu v-if="!open" class="h-6 w-6" />
@@ -35,6 +45,7 @@
         {{ link.text }}
       </NuxtLink>
       <a :href="SITE.phoneHref" class="mt-3 inline-block font-medium text-moss">{{ SITE.phone }}</a>
+      <a :href="SITE.flipFixerUrl" class="mt-2 block font-medium text-moss" target="_blank" rel="noreferrer">Need a Contractor</a>
       <NuxtLink to="/contractors" class="mt-2 block font-medium text-moss" @click="open = false">Contractor portal</NuxtLink>
     </div>
   </header>

@@ -6,6 +6,8 @@ export const SITE = {
   email: "Jon@TheFlipFixer.com",
   url: "https://styles-by-design.vercel.app",
   tagline: "Interior design for kitchens, baths, and whole homes",
+  flipFixer: "The Flip Fixer",
+  flipFixerUrl: "https://theflipfixer.com",
 };
 
 export const AREAS = [
@@ -23,20 +25,74 @@ export const AREAS = [
   "Stone Oak",
 ];
 
+export const PHOTO_CREDIT = "Cabinet photography courtesy of Northville Cabinetry.";
+
+/** Northville door + kitchen photos keyed to catalog finish names. */
+export const FINISH_PHOTOS: Record<string, { door: string; room: string }> = {
+  "Elegant White (Shaker)": {
+    door: "/images/northville/door-elegant-white.jpg",
+    room: "/images/northville/kitchen-hero.jpg",
+  },
+  "Grey Shaker": {
+    door: "/images/northville/door-grey-shaker.jpg",
+    room: "/images/northville/kitchen-grey.jpg",
+  },
+  "Espresso Shaker": {
+    door: "/images/northville/door-espresso-shaker.jpg",
+    room: "/images/northville/kitchen-espresso.jpg",
+  },
+  "Value Espresso": {
+    door: "/images/northville/door-value-espresso.jpg",
+    room: "/images/northville/kitchen-espresso.jpg",
+  },
+  "Blue Shaker": {
+    door: "/images/northville/door-blue-shaker.jpg",
+    room: "/images/northville/kitchen-blue.jpg",
+  },
+  "Metallic Shaker": {
+    door: "/images/northville/door-metallic-shaker.jpg",
+    room: "/images/northville/kitchen-metallic.jpg",
+  },
+  "Antique White (Raised Panel)": {
+    door: "/images/northville/door-antique-white.jpg",
+    room: "/images/northville/kitchen-antique.jpg",
+  },
+  "Midnight Espresso (Raised Panel)": {
+    door: "/images/northville/door-midnight-espresso.jpg",
+    room: "/images/northville/kitchen-midnight-2.jpg",
+  },
+  "Cognac (Raised Panel)": {
+    door: "/images/northville/door-cognac.jpg",
+    room: "/images/northville/kitchen-cognac.jpg",
+  },
+};
+
+export function finishPhotos(finish: string) {
+  return (
+    FINISH_PHOTOS[finish] || {
+      door: "/images/northville/door-elegant-white.jpg",
+      room: "/images/northville/kitchen-hero.jpg",
+    }
+  );
+}
+
 export const PHOTOS = {
-  kitchen: "/kitchen.jpg",
-  kitchenAfter: "/kitchen.jpg",
+  kitchen: "/images/northville/kitchen-glossy.jpg",
+  kitchenAfter: "/images/work/after.jpg",
   kitchenBefore: "/images/work/before.jpg",
-  bath: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1600&q=80",
-  bathDetail:
-    "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1600&q=80",
-  cabinets:
-    "https://images.unsplash.com/photo-1556912173-46c356be29bc?auto=format&fit=crop&w=1600&q=80",
-  office:
-    "https://images.unsplash.com/photo-1600489000022-c2086d71084d?auto=format&fit=crop&w=1600&q=80",
-  living:
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80",
-  stone:
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
+  kitchenHero: "/images/northville/kitchen-hero.jpg",
+  bath: "/images/northville/bath-grey.jpg",
+  bathDetail: "/images/northville/vanity-antique.jpg",
+  cabinets: "/images/northville/kitchen-grey.jpg",
+  office: "/images/northville/closet.jpg",
+  living: "/images/northville/kitchen-midnight-2.jpg",
+  stone: "/images/northville/kitchen-wood.jpg",
+  cream: "/images/northville/kitchen-cream.jpg",
+  greyIsland: "/images/northville/kitchen-grey-island.jpg",
+  blue: "/images/northville/kitchen-blue.jpg",
+  espresso: "/images/northville/kitchen-espresso.jpg",
+  cognac: "/images/northville/kitchen-cognac.jpg",
+  metallic: "/images/northville/kitchen-metallic.jpg",
+  antique: "/images/northville/kitchen-antique.jpg",
   portrait: "/images/jon.jpg",
 };

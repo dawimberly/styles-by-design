@@ -1,12 +1,13 @@
 <template>
-  <PageHeader subtitle="Gallery" title="Recent kitchens, baths, and built-ins" />
+  <PageHeader subtitle="Gallery" title="Northville kitchens, baths, and closets we specify" />
 
   <div class="mx-auto max-w-6xl px-4 py-16">
     <div class="grid items-start gap-10 md:grid-cols-5">
       <div class="md:col-span-2">
-        <h2 class="font-serif text-4xl">Kitchen remodel</h2>
+        <h2 class="font-serif text-4xl">Same kitchen, before and after</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          A tired everyday kitchen rebuilt with custom cabinets, quartz, and a farmhouse sink. Left is before; right is after.
+          Dark wood and butcher block on the left. White shaker, stone counters, and a farmhouse sink on the right.
+          Cabinets from the Northville list; install typically through The Flip Fixer.
         </p>
       </div>
       <div class="md:col-span-3">
@@ -19,11 +20,14 @@
       </div>
     </div>
 
-    <h2 class="mt-24 font-serif text-4xl">More from the shop</h2>
+    <h2 class="mt-24 font-serif text-4xl">Finishes from the Northville list</h2>
+    <p class="mt-3 max-w-2xl text-ink/70">{{ PHOTO_CREDIT }}</p>
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <figure v-for="item in items" :key="item.src" class="group overflow-hidden rounded-2xl bg-white shadow-sm">
-        <img :src="item.src" :alt="item.alt" class="h-56 w-full object-cover transition duration-500 group-hover:scale-105" />
-        <figcaption class="p-4 font-medium">{{ item.description }}</figcaption>
+      <figure v-for="item in items" :key="item.src" class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/80">
+        <img :src="item.src" :alt="item.alt" class="h-64 w-full object-cover transition duration-700 group-hover:scale-105" />
+        <figcaption class="p-4">
+          <p class="font-medium">{{ item.description }}</p>
+        </figcaption>
       </figure>
     </div>
   </div>
@@ -31,16 +35,19 @@
 
 <script setup lang="ts">
 const items = [
-  { src: PHOTOS.kitchen, alt: "Kitchen island", description: "Kitchen with island" },
-  { src: PHOTOS.bath, alt: "Bathroom", description: "Walk-in shower" },
-  { src: PHOTOS.cabinets, alt: "Cabinets", description: "Custom cabinets" },
-  { src: PHOTOS.office, alt: "Office", description: "Built-in office" },
-  { src: PHOTOS.bathDetail, alt: "Vanity", description: "Double vanity" },
-  { src: PHOTOS.stone, alt: "Living kitchen", description: "Open living kitchen" },
+  { src: PHOTOS.kitchen, alt: "Glossy white kitchen", description: "Glossy White frameless" },
+  { src: PHOTOS.greyIsland, alt: "Grey shaker kitchen", description: "Grey Shaker" },
+  { src: PHOTOS.bath, alt: "Grey shaker bath", description: "Grey Shaker bath" },
+  { src: PHOTOS.bathDetail, alt: "Antique white vanity", description: "Antique White vanity" },
+  { src: PHOTOS.office, alt: "Northville closet", description: "Closet line" },
+  { src: PHOTOS.stone, alt: "Natural wood kitchen", description: "Natural Wood" },
+  { src: PHOTOS.blue, alt: "Blue shaker kitchen", description: "Blue Shaker" },
+  { src: PHOTOS.espresso, alt: "Espresso shaker kitchen", description: "Espresso Shaker" },
+  { src: PHOTOS.cognac, alt: "Cognac kitchen", description: "Cognac" },
 ];
 
 useSeoMeta({
   title: "Gallery",
-  description: "Designed kitchens, baths, and interiors from Styles by Design in San Antonio.",
+  description: "Northville cabinetry finishes specified by Styles by Design in San Antonio.",
 });
 </script>

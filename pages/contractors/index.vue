@@ -3,7 +3,7 @@
   <div class="mx-auto max-w-xl px-4 py-16">
     <p class="text-ink/75 leading-relaxed">
       Licensed remodelers and builders can order Northville stock cabinets at 20% off published MSRP. Prices match the
-      list already loaded in the Flip Fixer estimator.
+      Flip Fixer estimator. Styles by Design is the design brand; install on our jobs is typically Flip Fixer crews.
     </p>
     <form class="mt-8 space-y-4 rounded-2xl bg-white p-8 shadow-sm" @submit.prevent="login">
       <label class="block text-sm font-medium" for="pin">Trade PIN</label>

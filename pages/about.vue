@@ -6,12 +6,14 @@
     <div class="space-y-6 text-lg leading-relaxed text-ink/80">
       <h2 class="font-serif text-4xl text-ink">Meet Jon Styles</h2>
       <p>
-        More than twenty years designing interiors around San Antonio. Jon founded Styles by Design as a design studio:
-        spaces first, then a spec your builder can execute.
+        More than twenty years designing interiors around San Antonio. Jon founded Styles by Design as the design brand:
+        spaces first, then a spec that can be installed. Install is typically our own crews, run through The Flip Fixer
+        — different name on the truck, same people who have been doing the work.
       </p>
       <p>
         With his wife Maria, they treat each house as family: honest budgets, drawings before demo, and a handoff that
-        does not leave the GC guessing. They do not run a custom cabinet shop.
+        does not leave the jobsite guessing. They do not run a custom cabinet shop. Stock boxes come from the Northville
+        / estimator list. Outside licensed contractors can still buy from the trade portal.
       </p>
       <blockquote class="border-l-4 border-brass pl-6 font-serif text-2xl text-ink">
         “Every home tells a story. Our job is to help you tell yours well.”

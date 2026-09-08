@@ -50,8 +50,13 @@ export function flattenSkus() {
 }
 
 export const COOKIE_NAME = "sbd_contractor";
+export const EMPLOYEE_COOKIE = "sbd_employee";
 
 export function pinFromRuntime() {
   const config = useRuntimeConfig();
   return String(config.contractorPin || "420420");
+}
+
+export function employeePinFromRuntime() {
+  return String(useRuntimeConfig().employeePin || pinFromRuntime()).trim();
 }

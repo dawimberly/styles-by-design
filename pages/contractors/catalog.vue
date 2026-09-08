@@ -22,6 +22,30 @@
       </select>
     </div>
 
+    <div class="mt-4 flex flex-wrap gap-2">
+      <button
+        v-for="f in catalog?.finishes || []"
+        :key="f"
+        type="button"
+        class="flex items-center gap-2 rounded-full border px-2 py-1 text-left text-xs"
+        :class="f === finish ? 'border-ink bg-ink text-cream' : 'border-sand bg-white text-ink'"
+        @click="finish = f"
+      >
+        <img :src="finishPhotos(f).door" :alt="''" class="h-8 w-8 rounded-full object-cover" />
+        <span>{{ f }}</span>
+      </button>
+    </div>
+
+    <figure class="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm">
+      <div class="grid gap-0 md:grid-cols-[minmax(0,1fr)_11rem]">
+        <img :src="selectedLook.room" :alt="`${finish} kitchen`" class="h-64 w-full object-cover md:h-80" />
+        <img :src="selectedLook.door" :alt="`${finish} door`" class="h-40 w-full object-cover md:h-80" />
+      </div>
+      <figcaption class="border-t border-sand px-4 py-3 text-sm text-ink/70">
+        {{ finish }} — door sample and a Northville kitchen in this finish. SKUs share this look.
+      </figcaption>
+    </figure>
+
     <div class="mt-8 overflow-x-auto rounded-2xl bg-white shadow-sm">
       <table class="min-w-full text-left text-sm">
         <thead class="border-b border-sand text-ink/60">
@@ -31,7 +55,7 @@
             <th class="px-4 py-3">MSRP</th>
             <th class="px-4 py-3">Trade</th>
             <th class="px-4 py-3">Save</th>
-            <th class="px-4 py-3"></th>
+            <th class="px-4 py-3 whitespace-nowrap">Qty</th>
           </tr>
         </thead>
         <tbody>
@@ -42,7 +66,35 @@
             <td class="px-4 py-3 text-moss">${{ item.net.toFixed(2) }}</td>
             <td class="px-4 py-3">${{ item.save.toFixed(2) }}</td>
             <td class="px-4 py-3">
-              <button class="text-sm font-medium text-ink" type="button" @click="add(item)">Add</button>
+              <div class="inline-flex items-center rounded-full border border-sand bg-cream">
+                <button
+                  class="px-2.5 py-1 text-lg leading-none text-ink disabled:opacity-30"
+                  type="button"
+                  :disabled="qtyOf(item.sku) <= 0"
+                  :aria-label="`Decrease ${item.sku}`"
+                  @click="bump(item, -1)"
+                >
+                  −
+                </button>
+                <input
+                  class="w-14 border-x border-sand bg-white py-1 text-center tabular-nums outline-none"
+                  type="number"
+                  min="0"
+                  max="999"
+                  :value="qtyOf(item.sku)"
+                  :aria-label="`${item.sku} quantity`"
+                  @input="onQtyInput(item, $event)"
+                />
+                <button
+                  class="px-2.5 py-1 text-lg leading-none text-ink disabled:opacity-30"
+                  type="button"
+                  :disabled="qtyOf(item.sku) >= 999"
+                  :aria-label="`Increase ${item.sku}`"
+                  @click="bump(item, 1)"
+                >
+                  +
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -50,12 +102,26 @@
     </div>
 
     <section class="mt-12 rounded-2xl bg-white p-8 shadow-sm">
-      <h2 class="font-serif text-3xl">Quote cart</h2>
-      <p v-if="!cart.length" class="mt-4 text-ink/60">Add SKUs to request a trade quote.</p>
+      <h2 class="font-serif text-3xl">Order cart</h2>
+      <p class="mt-2 max-w-2xl text-ink/70">
+        You pay Styles by Design. After Stripe confirms funds, studio staff confirm payment in the employee portal and
+        send the Cabinets To Go work order to Divya at Dura Stone.
+      </p>
+      <p v-if="!cart.length" class="mt-4 text-ink/60">Set quantities to build an order.</p>
       <ul v-else class="mt-4 space-y-3">
         <li v-for="line in cart" :key="line.sku" class="flex items-center justify-between gap-4">
-          <span>{{ line.sku }} · ${{ line.net.toFixed(2) }}</span>
-          <input v-model.number="line.qty" min="1" type="number" class="w-20 rounded border border-sand px-2 py-1" />
+          <span class="flex min-w-0 items-center gap-3">
+            <img :src="selectedLook.door" alt="" class="h-12 w-12 shrink-0 rounded object-cover" />
+            <span>{{ line.sku }} · ${{ line.net.toFixed(2) }}</span>
+          </span>
+          <input
+            :value="line.qty"
+            min="0"
+            max="999"
+            type="number"
+            class="w-20 rounded border border-sand px-2 py-1"
+            @input="setQtyFromCart(line.sku, $event)"
+          />
         </li>
       </ul>
       <p v-if="cart.length" class="mt-4 font-medium">Trade total ${{ cartTotal.toFixed(2) }}</p>
@@ -65,15 +131,61 @@
         <input v-model="name" class="rounded-lg border border-sand px-4 py-3" placeholder="Your name" />
         <input v-model="email" type="email" required class="rounded-lg border border-sand px-4 py-3" placeholder="Email" />
         <input v-model="phone" class="rounded-lg border border-sand px-4 py-3" placeholder="Phone" />
-        <textarea v-model="notes" class="md:col-span-2 rounded-lg border border-sand px-4 py-3" rows="3" placeholder="Job notes, address, finish if mixed" />
+        <select v-model="fulfillment" required class="rounded-lg border border-sand px-4 py-3 md:col-span-2">
+          <option value="drop_ship">Drop-ship to this address (Cabinets To Go account)</option>
+          <option value="delivery">Deliver to this jobsite</option>
+        </select>
+        <input
+          v-model="zip"
+          required
+          maxlength="5"
+          inputmode="numeric"
+          pattern="[0-9]{5}"
+          class="rounded-lg border border-sand px-4 py-3"
+          placeholder="ZIP"
+          @input="clearVerified"
+          @blur="lookupPostal"
+        />
+        <select v-model="state" required class="rounded-lg border border-sand px-4 py-3" @change="clearVerified">
+          <option value="" disabled>State</option>
+          <option v-for="s in US_STATES" :key="s.code" :value="s.code">{{ s.name }}</option>
+        </select>
+        <input v-model="city" required class="rounded-lg border border-sand px-4 py-3" placeholder="City" @input="clearVerified" />
+        <input
+          v-model="street"
+          required
+          class="rounded-lg border border-sand px-4 py-3 md:col-span-2"
+          placeholder="Ship-to street"
+          @input="clearVerified"
+        />
+        <div class="md:col-span-2 flex flex-wrap items-center gap-3">
+          <button class="rounded-full border border-ink px-5 py-2 text-sm" type="button" :disabled="checkingAddress" @click="verifyAddress">
+            {{ checkingAddress ? "Checking postal address…" : "Verify postal address" }}
+          </button>
+          <p v-if="addressOk" class="text-sm text-moss">Verified: {{ addressOk }}</p>
+        </div>
+        <textarea v-model="notes" class="md:col-span-2 rounded-lg border border-sand px-4 py-3" rows="3" placeholder="Unit/apt, gate codes, unload notes, mixed finishes" />
+        <ol class="md:col-span-2 list-decimal space-y-1 pl-5 text-sm text-ink/70">
+          <li>Verify the ship-to ZIP and street.</li>
+          <li>Pay Styles by Design.</li>
+          <li>Staff confirm funds and send the work order to Divya.</li>
+        </ol>
         <p v-if="quoteMsg" class="md:col-span-2 text-moss">{{ quoteMsg }}</p>
-        <button class="rounded-full bg-ink px-6 py-3 text-cream" type="submit">Request quote</button>
+        <button class="rounded-full bg-ink px-6 py-3 text-cream" type="submit" :disabled="paying || !addressOk">
+          {{ paying ? "Opening checkout…" : "Pay Styles by Design" }}
+        </button>
+        <p class="md:col-span-2 text-sm text-ink/50">
+          Card payment goes to Styles by Design. Staff then confirm funds and email Divya the work order for drop-ship
+          or delivery to this address.
+        </p>
       </form>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
+import { finishPhotos } from "../../utils/site";
+
 definePageMeta({ middleware: "contractor" });
 
 const q = ref("");
@@ -84,7 +196,15 @@ const name = ref("");
 const email = ref("");
 const phone = ref("");
 const notes = ref("");
+const street = ref("");
+const city = ref("");
+const state = ref("");
+const zip = ref("");
+const fulfillment = ref<"drop_ship" | "delivery">("drop_ship");
 const quoteMsg = ref("");
+const paying = ref(false);
+const checkingAddress = ref(false);
+const addressOk = ref("");
 
 type Item = {
   sku: string;
@@ -107,11 +227,61 @@ const { data: catalog } = await useFetch("/api/contractors/catalog", {
 });
 
 const cartTotal = computed(() => cart.value.reduce((sum, line) => sum + line.net * line.qty, 0));
+const selectedLook = computed(() => finishPhotos(finish.value));
 
-function add(item: Item) {
+let zipLookup = "";
+
+watch(zip, (value) => {
+  const code = digitsZip(value);
+  if (code !== value) {
+    zip.value = code;
+    return;
+  }
+  if (code.length !== 5) {
+    zipLookup = "";
+    addressOk.value = "";
+    return;
+  }
+  if (code !== zipLookup) addressOk.value = "";
+  lookupPostal();
+});
+
+const MAX_QTY = 999;
+
+function clampQty(value: number) {
+  if (!Number.isFinite(value) || value < 0) return 0;
+  return Math.min(MAX_QTY, Math.floor(value));
+}
+
+function qtyOf(sku: string) {
+  return cart.value.find((line) => line.sku === sku)?.qty ?? 0;
+}
+
+function setQty(item: Item, qty: number) {
+  const next = clampQty(qty);
   const existing = cart.value.find((line) => line.sku === item.sku);
-  if (existing) existing.qty += 1;
-  else cart.value.push({ sku: item.sku, name: item.name, net: item.net, qty: 1 });
+  if (next === 0) {
+    cart.value = cart.value.filter((line) => line.sku !== item.sku);
+    return;
+  }
+  if (existing) existing.qty = next;
+  else cart.value.push({ sku: item.sku, name: item.name, net: item.net, qty: next });
+}
+
+function bump(item: Item, delta: number) {
+  setQty(item, qtyOf(item.sku) + delta);
+}
+
+function onQtyInput(item: Item, event: Event) {
+  setQty(item, Number((event.target as HTMLInputElement).value));
+}
+
+function setQtyFromCart(sku: string, event: Event) {
+  const line = cart.value.find((entry) => entry.sku === sku);
+  if (!line) return;
+  const next = clampQty(Number((event.target as HTMLInputElement).value));
+  if (next === 0) cart.value = cart.value.filter((entry) => entry.sku !== sku);
+  else line.qty = next;
 }
 
 async function logout() {
@@ -119,21 +289,92 @@ async function logout() {
   await navigateTo("/contractors");
 }
 
+function clearVerified() {
+  addressOk.value = "";
+}
+
+async function lookupPostal() {
+  const code = digitsZip(zip.value);
+  zip.value = code;
+  if (code.length !== 5 || zipLookup === code) return;
+  zipLookup = code;
+  addressOk.value = "";
+  try {
+    const res = await $fetch<{ city: string; state: string; zip: string }>("/api/contractors/address", {
+      method: "POST",
+      credentials: "include",
+      body: { mode: "zip", zip: code },
+    });
+    city.value = res.city;
+    state.value = res.state;
+    zip.value = res.zip;
+    zipLookup = res.zip;
+  } catch (error: unknown) {
+    zipLookup = "";
+    const err = error as { data?: { statusMessage?: string }; statusMessage?: string };
+    quoteMsg.value = err.data?.statusMessage || err.statusMessage || "ZIP could not be verified.";
+  }
+}
+
+async function verifyAddress() {
+  quoteMsg.value = "";
+  checkingAddress.value = true;
+  clearVerified();
+  try {
+    const res = await $fetch<{ matched: string; street: string; city: string; state: string; zip: string }>(
+      "/api/contractors/address",
+      {
+        method: "POST",
+        credentials: "include",
+        body: { street: street.value, city: city.value, state: state.value, zip: zip.value },
+      },
+    );
+    street.value = res.street;
+    city.value = res.city;
+    state.value = res.state;
+    zip.value = res.zip;
+    addressOk.value = res.matched;
+  } catch (error: unknown) {
+    const err = error as { data?: { statusMessage?: string }; statusMessage?: string };
+    quoteMsg.value = err.data?.statusMessage || err.statusMessage || "Address could not be verified.";
+  } finally {
+    checkingAddress.value = false;
+  }
+}
+
 async function submitQuote() {
-  const res = await $fetch<{ message: string }>("/api/contractors/quote", {
-    method: "POST",
-    body: {
-      company: company.value,
-      name: name.value,
-      email: email.value,
-      phone: phone.value,
-      finish: finish.value,
-      notes: notes.value,
-      lines: cart.value,
-    },
-  });
-  quoteMsg.value = res.message;
-  cart.value = [];
+  quoteMsg.value = "";
+  if (!addressOk.value) {
+    quoteMsg.value = "Verify the postal address before paying.";
+    return;
+  }
+  paying.value = true;
+  try {
+    const res = await $fetch<{ url: string }>("/api/contractors/checkout", {
+      method: "POST",
+      credentials: "include",
+      body: {
+        company: company.value,
+        name: name.value,
+        email: email.value,
+        phone: phone.value,
+        finish: finish.value,
+        notes: notes.value,
+        street: street.value,
+        city: city.value,
+        state: state.value,
+        zip: zip.value,
+        fulfillment: fulfillment.value,
+        lines: cart.value,
+      },
+    });
+    await navigateTo(res.url, { external: true });
+  } catch (error: unknown) {
+    const err = error as { data?: { statusMessage?: string }; statusMessage?: string };
+    quoteMsg.value = err.data?.statusMessage || err.statusMessage || "Checkout failed. Stripe may not be connected yet.";
+  } finally {
+    paying.value = false;
+  }
 }
 
 useSeoMeta({ title: "Cabinet catalog" });

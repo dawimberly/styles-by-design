@@ -15,7 +15,7 @@
 const serviceData = {
   title: "Bath design",
   description:
-    "From powder room to master suite: showers, tile, glass, and vanities specified as a design package for your builder.",
+    "From powder room to master suite: showers, tile, glass, and vanities specified as a design package. Install is typically our crews under The Flip Fixer.",
   mainFeatures: [
     "Layout and 3D",
     "Tile, glass, and fixture specs",
@@ -27,17 +27,17 @@ const serviceData = {
   process: [
     { title: "Measure", description: "We map what can stay versus what should go." },
     { title: "Specify", description: "Tile, glass, fixtures, and a 3D view." },
-    { title: "Handoff", description: "Your contractor builds from the package." },
+    { title: "Handoff", description: "Install typically runs through The Flip Fixer from the design package." },
   ],
   galleryImages: [
-    { src: PHOTOS.bath, alt: "Spa bath", description: "Walk-in shower" },
-    { src: PHOTOS.bathDetail, alt: "Vanity", description: "Custom vanity" },
-    { src: PHOTOS.living, alt: "Suite", description: "Master bath suite" },
+    { src: PHOTOS.bath, alt: "Grey bath", description: "Grey Shaker bath" },
+    { src: PHOTOS.bathDetail, alt: "Vanity", description: "Antique White vanity" },
+    { src: PHOTOS.antique, alt: "Antique white kitchen", description: "Antique White kitchen" },
   ],
   faqs: [
     {
       question: "Do you remodel the bath yourselves?",
-      answer: "We design. A licensed contractor performs the work.",
+      answer: "Usually yes — our installers, billed and run through The Flip Fixer. An outside licensed contractor can also build from the package.",
     },
     {
       question: "Can vanities come from your list?",
@@ -45,7 +45,7 @@ const serviceData = {
     },
     {
       question: "Do you design curbless showers?",
-      answer: "Yes, as a design spec. Your contractor executes waterproofing and tile.",
+      answer: "Yes, as a design spec. Waterproofing and tile are typically Flip Fixer install, or your contractor if you bring one.",
     },
   ],
 };

@@ -15,7 +15,7 @@
 const serviceData = {
   title: "Kitchen design",
   description:
-    "We design kitchens as daily rooms: layout, finishes, lighting, and a stock-cabinet takeoff from the estimator. Your contractor builds and orders boxes through the trade portal. We do not fabricate custom cabinets.",
+    "We design kitchens as daily rooms: layout, finishes, lighting, and a stock-cabinet takeoff from the estimator. Install is typically our own crews, run through The Flip Fixer. Outside contractors can order boxes at trade price. We do not fabricate custom cabinets.",
   mainFeatures: [
     "Space planning and 3D",
     "Finish, stone, and lighting specs",
@@ -27,17 +27,17 @@ const serviceData = {
   process: [
     { title: "Consult", description: "Walk the room and how you cook." },
     { title: "Design", description: "Drawings, finishes, and SKUs locked to the price list." },
-    { title: "Handoff", description: "Your builder builds. Cabinets order at trade price from the portal." },
+    { title: "Handoff", description: "Install typically goes through The Flip Fixer. Cabinets order at trade price from the portal." },
   ],
   galleryImages: [
-    { src: PHOTOS.kitchen, alt: "Modern kitchen", description: "Island kitchen with quartz" },
-    { src: PHOTOS.kitchenAfter, alt: "Remodeled kitchen", description: "White shaker kitchen after" },
-    { src: PHOTOS.stone, alt: "Kitchen living", description: "Open plan finishes" },
+    { src: PHOTOS.kitchen, alt: "Glossy white kitchen", description: "Glossy White" },
+    { src: PHOTOS.greyIsland, alt: "Grey shaker kitchen", description: "Grey Shaker island" },
+    { src: PHOTOS.stone, alt: "Natural wood kitchen", description: "Natural Wood" },
   ],
   faqs: [
     {
       question: "Do you install the kitchen?",
-      answer: "No. We design. A licensed contractor builds. They can buy the cabinets from our portal.",
+      answer: "Install is typically our own crews, scheduled through The Flip Fixer. You can also use an outside licensed contractor, who can buy cabinets from our portal.",
     },
     {
       question: "Can I get custom cabinets?",
