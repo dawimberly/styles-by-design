@@ -48,12 +48,41 @@
       </button>
       <p class="text-sm text-ink/50">{{ hint }}</p>
     </div>
+
+    <div class="flex flex-wrap items-end gap-3 border-t border-sand/70 pt-4">
+      <label class="text-sm">
+        <span class="mb-1 block font-medium text-ink/70">Island width (in)</span>
+        <input
+          v-model.number="islandW"
+          type="number"
+          min="24"
+          step="1"
+          class="w-28 rounded-lg border border-sand bg-cream px-3 py-2"
+        />
+      </label>
+      <label class="text-sm">
+        <span class="mb-1 block font-medium text-ink/70">Island depth (in)</span>
+        <input
+          v-model.number="islandD"
+          type="number"
+          min="18"
+          step="1"
+          class="w-28 rounded-lg border border-sand bg-cream px-3 py-2"
+        />
+      </label>
+      <button type="button" class="rounded-full border border-ink px-5 py-2 text-sm" @click="placeIsland">
+        Add island rectangle
+      </button>
+      <p class="text-sm text-ink/50">Optional freestanding box — not a fifth room shape.</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { LAYOUT_SHAPES, buildLayout, type LayoutShapeId } from "../utils/kitchen-layouts";
+import { LAYOUT_SHAPES, buildIsland, buildLayout, type LayoutShapeId } from "../utils/kitchen-layouts";
 import type { PlanFootprint, PlanLine } from "../utils/kitchen-plan";
+
+const emit = defineEmits<{ placed: [] }>();
 
 const lines = defineModel<PlanLine[]>("lines", { default: () => [] });
 const footprints = defineModel<PlanFootprint[]>("footprints", { default: () => [] });
@@ -61,6 +90,8 @@ const footprints = defineModel<PlanFootprint[]>("footprints", { default: () => [
 const picked = ref<LayoutShapeId>("ell");
 const aInches = ref(120);
 const bInches = ref(96);
+const islandW = ref(72);
+const islandD = ref(36);
 
 const labelA = computed(() => {
   if (picked.value === "single") return "Run length (in)";
@@ -77,12 +108,16 @@ const labelB = computed(() => {
 
 const hint = computed(() => {
   if (picked.value === "single") return "One wall across the sheet.";
-  if (picked.value === "galley") return "Two parallel walls. Keep 48\"+ between faces if people walk through.";
+  if (picked.value === "galley") return 'Two parallel walls. Keep 48"+ between faces if people walk through.';
   if (picked.value === "u") return "U opens toward the top of the sheet.";
   return "L meets at the lower-left corner.";
 });
 
 function place() {
+  if (lines.value.length) {
+    const ok = window.confirm("Replace existing walls with this layout?");
+    if (!ok) return;
+  }
   const next = buildLayout({
     shape: picked.value,
     aInches: aInches.value,
@@ -90,5 +125,11 @@ function place() {
   });
   lines.value = next.lines;
   footprints.value = next.footprint ? [next.footprint] : [];
+  emit("placed");
+}
+
+function placeIsland() {
+  footprints.value = [...footprints.value, buildIsland(islandW.value, islandD.value)];
+  emit("placed");
 }
 </script>

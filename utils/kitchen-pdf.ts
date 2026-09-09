@@ -15,8 +15,18 @@ const PAGE_W = 1224;
 const PAGE_H = 792;
 const MARGIN = 36;
 
+/** Helvetica content streams must stay ASCII - strip smart punctuation. */
+function asciiPdf(text: string) {
+  return text
+    .replace(/[\u2010-\u2015]/g, "-")
+    .replace(/[\u2018\u2019\u2032]/g, "'")
+    .replace(/[\u201C\u201D\u2033]/g, '"')
+    .replace(/\u00B0/g, " deg")
+    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, "?");
+}
+
 function pdfEscape(text: string) {
-  return text.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+  return asciiPdf(text).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
 }
 
 function hexRgb(hex: string): [number, number, number] {
@@ -194,7 +204,7 @@ function sheetWalls(opts: PlanPdfOpts) {
   const p = new PageStream();
   p.fill("#f7f3ea");
   p.rect(0, 0, PAGE_W, PAGE_H, "f");
-  header(p, opts.title || "Kitchen plan", `${opts.studio || "Styles by Design"}  |  Page 1 - Walls and room  |  6\" grid, bold = 1'`, 1, 4);
+  header(p, opts.title || "Kitchen plan", `${opts.studio || "Styles by Design"}  |  Page 1 - Walls and room  |  6" grid, bold = 1'`, 1, 4);
   const L = layout();
   drawGrid(p, L);
   drawFootprints(p, opts.footprints, L);
@@ -231,16 +241,17 @@ function sheetUtilities(opts: PlanPdfOpts) {
   p.text(sx, y, 11, "Utility callouts", "F2");
   y -= 16;
   points.forEach((item, i) => {
-    const n = String(i + 1);
+    const n = i + 1;
+    const mark = `${markFor(item.labelId)}${n}`;
     const cx = L.mapX(item.xInches + item.widthInches / 2);
     const cy = L.mapY(item.yInches + item.depthInches / 2);
     p.fill(item.labelId === "outlet" ? "#e2c15a" : "#5b8fa8");
     p.stroke("#1f2a24");
     p.width(1);
-    p.circle(cx, cy, 8, "B");
+    p.circle(cx, cy, 10, "B");
     p.fill("#1f2a24");
-    p.text(cx - 3, cy - 3, 9, n);
-    p.text(sx, y, 8, `${n}  ${markFor(item.labelId)}  ${labelMeta(item.labelId).name}`);
+    p.text(cx - 8, cy - 3, 8, mark);
+    p.text(sx, y, 8, `${mark}  ${labelMeta(item.labelId).name}`);
     y -= 11;
     p.text(sx + 12, y, 7, `@ ${inchesToFeetInches(item.xInches)}, ${inchesToFeetInches(item.yInches)}`);
     y -= 13;

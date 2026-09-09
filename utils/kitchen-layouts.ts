@@ -56,3 +56,22 @@ export function buildLayout(input: LayoutInput): { lines: PlanLine[]; footprint:
 
   return { lines, footprint: footprintFromWallLines(lines, COLOR) };
 }
+
+/** Island is a freestanding rectangle, not a room-shape template. */
+export function buildIsland(widthInches = 72, depthInches = 36): PlanFootprint {
+  const w = Math.min(Math.max(24, widthInches), BOARD_WIDTH_IN - PAD * 2) / 6;
+  const d = Math.min(Math.max(18, depthInches), BOARD_HEIGHT_IN - PAD * 2) / 6;
+  const x = (BOARD_WIDTH_IN / 6 - w) / 2;
+  const y = (BOARD_HEIGHT_IN / 6 - d) / 2;
+  return {
+    id: crypto.randomUUID(),
+    points: [
+      { x, y },
+      { x: x + w, y },
+      { x: x + w, y: y + d },
+      { x, y: y + d },
+    ],
+    closed: true,
+    color: FOOTPRINT_COLORS[1]?.value || COLOR,
+  };
+}

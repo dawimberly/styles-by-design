@@ -41,8 +41,13 @@
           place extra walls by hand.
         </p>
       </div>
-      <KitchenLayoutStarter v-model:lines="planLines" v-model:footprints="planFootprints" />
+      <KitchenLayoutStarter
+        v-model:lines="planLines"
+        v-model:footprints="planFootprints"
+        @placed="onLayoutPlaced"
+      />
       <KitchenPlanBoard
+        ref="wallsBoard"
         phase="walls"
         v-model:footprints="planFootprints"
         v-model:items="planItems"
@@ -227,6 +232,7 @@ const step = ref<PlanStepId>(1);
 const planFootprints = ref<PlanFootprint[]>([]);
 const planItems = ref<PlanItem[]>([]);
 const planLines = ref<PlanLine[]>([]);
+const wallsBoard = ref<{ scrollToWalls?: () => void } | null>(null);
 const name = ref("");
 const email = ref("");
 const phone = ref("");
@@ -254,6 +260,10 @@ function goTo(id: PlanStepId) {
   if (!canGoTo(id)) return;
   step.value = id;
   msg.value = "";
+}
+
+function onLayoutPlaced() {
+  nextTick(() => wallsBoard.value?.scrollToWalls?.());
 }
 
 function summarize() {
@@ -289,8 +299,9 @@ function summarize() {
   lines.push(takeoffSummary(appliances));
   lines.push(
     "",
+    "Attach kitchen-plan.pdf (Download plan PDF) to this email — do not attach an SVG.",
     role.value === "designer"
-      ? "Please keep this design with the cabinet purchase email for San Antonio shipping. PDF plan attached separately."
+      ? "Please keep this design with the cabinet purchase email for San Antonio shipping."
       : "Please reply with an install quote and options we can negotiate.",
   );
   return lines.join("\n");

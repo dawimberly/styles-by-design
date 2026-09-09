@@ -210,6 +210,75 @@ export function snapItemToNearestWall(item: PlanItem, lines: PlanLine[], maxDist
   return { ...item, ...placed };
 }
 
+/** Distance along a wall from the wall start to the item's origin. */
+export function alongWall(item: Pick<PlanItem, "xInches" | "yInches">, line: PlanLine) {
+  const rad = (line.angleDeg * Math.PI) / 180;
+  return (item.xInches - line.xInches) * Math.cos(rad) + (item.yInches - line.yInches) * Math.sin(rad);
+}
+
+function sameRunLayer(a: PlanItem, b: PlanItem) {
+  const aWall = a.labelId === "wall-cab";
+  const bWall = b.labelId === "wall-cab";
+  return aWall === bWall;
+}
+
+function isStockBox(item: PlanItem) {
+  return labelMeta(item.labelId).category === "appliance";
+}
+
+/** Stick to a neighboring box edge on the same wall when within a few inches. */
+export function snapToNeighborBoxes(item: PlanItem, others: PlanItem[], lines: PlanLine[], tol = 3): PlanItem {
+  if (!item.wallId) return item;
+  const line = lines.find((l) => l.id === item.wallId);
+  if (!line) return item;
+  let along = alongWall(item, line);
+  const siblings = others.filter(
+    (o) => o.id !== item.id && o.wallId === item.wallId && isStockBox(o) && sameRunLayer(o, item),
+  );
+  let best: { along: number; dist: number } | null = null;
+  for (const sib of siblings) {
+    const s0 = alongWall(sib, line);
+    const s1 = s0 + sib.widthInches;
+    for (const edge of [s0 - item.widthInches, s1]) {
+      const dist = Math.abs(along - edge);
+      if (dist <= tol && (!best || dist < best.dist)) best = { along: edge, dist };
+    }
+  }
+  if (!best) return item;
+  const placed = placeOnWall(line, best.along, item.widthInches, item.depthInches);
+  return { ...item, ...placed };
+}
+
+/** Snap to nearest wall, then neighbor edges, then shift so two stock boxes do not share a run segment. */
+export function settleStockItem(item: PlanItem, others: PlanItem[], lines: PlanLine[], maxDist = 24): PlanItem {
+  if (!isStockBox(item) || !lines.length) return item;
+  let next = snapItemToNearestWall(item, lines, maxDist);
+  next = snapToNeighborBoxes(next, others, lines);
+  if (!next.wallId) return next;
+  const line = lines.find((l) => l.id === next.wallId);
+  if (!line) return next;
+
+  const siblings = others.filter(
+    (o) => o.id !== next.id && o.wallId === next.wallId && isStockBox(o) && sameRunLayer(o, next),
+  );
+  let along = alongWall(next, line);
+  for (let guard = 0; guard < 48; guard++) {
+    let pushed = false;
+    for (const sib of siblings) {
+      const s0 = alongWall(sib, line);
+      const s1 = s0 + sib.widthInches;
+      if (along < s1 && along + next.widthInches > s0) {
+        along = s1;
+        pushed = true;
+      }
+    }
+    if (!pushed) break;
+  }
+  along = Math.max(0, Math.min(Math.max(0, line.lengthInches - next.widthInches), along));
+  const placed = placeOnWall(line, along, next.widthInches, next.depthInches);
+  return { ...next, ...placed, sku: next.sku || guessSku(next) };
+}
+
 export function fillWallWithStock(line: PlanLine, kind: "base" | "wall"): PlanItem[] {
   const packed = packWallRun(line.lengthInches, kind);
   const labelId: PlanLabelId = kind === "wall" ? "wall-cab" : "base-cab";
@@ -228,7 +297,7 @@ export function fillWallWithStock(line: PlanLine, kind: "base" | "wall"): PlanIt
       widthInches: mod.width,
       depthInches: depth,
       rotationDeg: pos.rotationDeg,
-      note: mod.filler ? "Filler — cut on site" : undefined,
+      note: mod.filler ? "Filler - cut on site" : undefined,
     });
     along += mod.width;
   }

@@ -147,7 +147,7 @@
       </template>
     </div>
 
-    <div class="overflow-auto rounded-2xl border border-sand bg-[#f7f3ea] p-3 shadow-sm">
+    <div ref="scrollEl" class="overflow-auto rounded-2xl border border-sand bg-[#f7f3ea] p-3 shadow-sm">
       <div
         ref="boardEl"
         class="relative mx-auto touch-none select-none"
@@ -245,8 +245,16 @@
           @contextmenu.stop.prevent="undefined"
         />
 
+        <!-- Utilities ghost under cabinets (true 6" footprint kept in data). -->
         <div
-          v-for="item in items"
+          v-for="mark in utilityMarks"
+          :key="`ghost-${mark.item.id}`"
+          class="pointer-events-none absolute z-[15] rounded-sm border border-ink/25 opacity-35"
+          :style="itemStyle(mark.item)"
+        />
+
+        <div
+          v-for="item in boxItems"
           :key="item.id"
           class="absolute z-20 flex items-center justify-center overflow-hidden rounded border border-ink/20 px-1 text-center text-[10px] font-medium leading-tight text-ink"
           :class="[
@@ -258,12 +266,30 @@
           @pointerdown.stop="phase !== 'walls' ? startItemDrag(item, $event) : undefined"
           @contextmenu.stop.prevent="phase !== 'walls' ? openItemMenu(item, $event) : undefined"
         >
-          {{ labelMeta(item.labelId).name }}
+          {{ item.sku || labelMeta(item.labelId).name }}
           <span class="mt-0.5 block text-[9px] font-normal text-ink/60">
             {{ inchesToFeetInches(item.widthInches) }}×{{ inchesToFeetInches(item.depthInches) }}
             <template v-if="item.rotationDeg"> · {{ Math.round(item.rotationDeg) }}°</template>
           </span>
         </div>
+
+        <!-- Readable E/P badges above cabinets; coordinates stay on the 6" cell. -->
+        <button
+          v-for="mark in utilityMarks"
+          :key="`badge-${mark.item.id}`"
+          type="button"
+          class="absolute z-30 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-ink text-[11px] font-bold shadow"
+          :class="[
+            phase !== 'walls' && itemEditable(mark.item) ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none',
+            menu?.kind === 'item' && menu.id === mark.item.id ? 'ring-2 ring-moss' : '',
+          ]"
+          :style="badgeStyle(mark.item)"
+          :title="`${mark.mark}${mark.n} · ${labelMeta(mark.item.labelId).name}`"
+          @pointerdown.stop="phase !== 'walls' ? startItemDrag(mark.item, $event) : undefined"
+          @contextmenu.stop.prevent="phase !== 'walls' ? openItemMenu(mark.item, $event) : undefined"
+        >
+          {{ mark.mark }}{{ mark.n }}
+        </button>
       </div>
       <p class="mt-2 text-xs text-ink/50">
         Board {{ inchesToFeetInches(cellsToInches(PLAN_COLS)) }} wide ×
@@ -406,6 +432,7 @@
 import {
   BOARD_HEIGHT_IN,
   BOARD_WIDTH_IN,
+  CELL_INCHES,
   CELLS_PER_FOOT,
   FOOTPRINT_COLORS,
   INCH_PX,
@@ -436,6 +463,7 @@ import {
   type PlanLine,
   type PlanPoint,
 } from "../utils/kitchen-plan";
+import { defaultSkuForLabel, settleStockItem } from "../utils/kitchen-stock";
 
 type MenuKind = "item" | "footprint" | "point" | "line";
 type ContextMenu = {
@@ -462,6 +490,7 @@ const items = defineModel<PlanItem[]>("items", { default: () => [] });
 const lines = defineModel<PlanLine[]>("lines", { default: () => [] });
 
 const boardEl = ref<HTMLElement | null>(null);
+const scrollEl = ref<HTMLElement | null>(null);
 const activeLabel = ref<PlanLabelId>("outlet");
 const placeWidthIn = ref(applyLabelDefaults("outlet").widthInches);
 const placeDepthIn = ref(applyLabelDefaults("outlet").depthInches);
@@ -496,6 +525,23 @@ let dragOffsetY = 0;
 
 const closedFootprints = computed(() => footprints.value.filter((f) => f.closed && f.points.length >= 3));
 const openFootprints = computed(() => footprints.value.filter((f) => !f.closed && f.points.length >= 1));
+
+function isPointUtility(item: PlanItem) {
+  return item.labelId === "outlet" || item.labelId === "plumbing";
+}
+
+const boxItems = computed(() => items.value.filter((item) => !isPointUtility(item)));
+
+const utilityMarks = computed(() => {
+  let n = 0;
+  const out: { item: PlanItem; n: number; mark: string }[] = [];
+  for (const item of items.value) {
+    if (!isPointUtility(item)) continue;
+    n += 1;
+    out.push({ item, n, mark: item.labelId === "outlet" ? "E" : "P" });
+  }
+  return out;
+});
 
 const pointHandles = computed(() => {
   const list: { key: string; footprintId: string; pointIndex: number; x: number; y: number; color: string }[] = [];
@@ -561,6 +607,41 @@ function itemStyle(item: PlanItem) {
     transformOrigin: "top left",
   };
 }
+
+function badgeStyle(item: PlanItem) {
+  return {
+    left: `${(item.xInches + item.widthInches / 2) * INCH_PX}px`,
+    top: `${(item.yInches + item.depthInches / 2) * INCH_PX}px`,
+    backgroundColor: labelMeta(item.labelId).color,
+  };
+}
+
+function scrollToWalls() {
+  const scroller = scrollEl.value;
+  if (!scroller || !lines.value.length) {
+    scroller?.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+    return;
+  }
+  let minX = Infinity;
+  let minY = Infinity;
+  for (const line of lines.value) {
+    const e = lineEndpoints(line);
+    minX = Math.min(minX, e.x1, e.x2);
+    minY = Math.min(minY, e.y1, e.y2);
+  }
+  for (const fp of footprints.value) {
+    for (const p of fp.points) {
+      minX = Math.min(minX, p.x * CELL_INCHES);
+      minY = Math.min(minY, p.y * CELL_INCHES);
+    }
+  }
+  const pad = 48;
+  const left = Math.max(0, minX * INCH_PX - pad);
+  const top = Math.max(0, minY * INCH_PX - pad);
+  scroller.scrollTo({ left, top, behavior: "smooth" });
+}
+
+defineExpose({ scrollToWalls });
 
 function polyPoints(fp: PlanFootprint) {
   return fp.points.map((p) => `${p.x * PLAN_CELL_PX},${p.y * PLAN_CELL_PX}`).join(" ");
@@ -886,18 +967,27 @@ function onPlaceBoardDown(event: PointerEvent) {
   if (tool.value === "place") {
     const widthInches = Math.max(1, Number(placeWidthIn.value) || 1);
     const depthInches = Math.max(1, Number(placeDepthIn.value) || 1);
-    items.value = [
-      ...items.value,
-      {
-        id: crypto.randomUUID(),
-        labelId: activeLabel.value,
-        xInches: inches.x,
-        yInches: inches.y,
-        widthInches,
-        depthInches,
-        rotationDeg: Number(placeRotation.value) || 0,
-      },
-    ];
+    const draft: PlanItem = {
+      id: crypto.randomUUID(),
+      labelId: activeLabel.value,
+      xInches: inches.x,
+      yInches: inches.y,
+      widthInches,
+      depthInches,
+      rotationDeg: Number(placeRotation.value) || 0,
+    };
+    if (labelMeta(draft.labelId).category === "appliance") {
+      const sku = defaultSkuForLabel(draft.labelId);
+      if (sku) {
+        draft.sku = sku.sku;
+        draft.widthInches = sku.width;
+        draft.depthInches = sku.depth;
+      }
+      const settled = settleStockItem(draft, items.value, lines.value);
+      items.value = [...items.value, settled];
+    } else {
+      items.value = [...items.value, draft];
+    }
   }
 }
 
@@ -924,6 +1014,17 @@ function startItemDrag(item: PlanItem, event: PointerEvent) {
     });
   };
   const onUp = () => {
+    if (dragKind === "item" && dragId) {
+      const current = items.value.find((i) => i.id === dragId);
+      if (current && labelMeta(current.labelId).category === "appliance") {
+        const settled = settleStockItem(
+          current,
+          items.value.filter((i) => i.id !== current.id),
+          lines.value,
+        );
+        patchItem(current.id, settled);
+      }
+    }
     dragKind = null;
     dragId = null;
     window.removeEventListener("pointermove", onMove);
