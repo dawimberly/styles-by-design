@@ -6,9 +6,9 @@
 
   <div class="mx-auto max-w-6xl space-y-8 px-4 py-12">
     <p class="max-w-3xl text-lg leading-relaxed text-ink/75">
-      Build the kitchen in order: one typed line per wall, then utilities, then appliances and cabinets. Each grid
-      square is 6" (bold square = 1'). Package the design into the same email as the cabinet purchase for San Antonio
-      shipping. {{ SITE.preferredContractorOffer }}
+      Start from a single wall, galley, L, or U, then add utilities and stock cabinets. Each grid square is 6" (bold
+      square = 1'). Package the design into the same email as the cabinet purchase for San Antonio shipping.
+      {{ SITE.preferredContractorOffer }}
     </p>
 
     <ol class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -37,10 +37,11 @@
       <div>
         <h2 class="font-serif text-3xl">Step 1 — Walls</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          Place one line for each wall. Type the real length in inches (not only 6" steps), set the angle, click the
-          board, then drag or rotate as needed. Use Recognize room when the walls form a rectangle to fill the floor.
+          Start from a single wall, galley, L, or U — type the real lengths — then tweak on the sheet. You can still
+          place extra walls by hand.
         </p>
       </div>
+      <KitchenLayoutStarter v-model:lines="planLines" v-model:footprints="planFootprints" />
       <KitchenPlanBoard
         phase="walls"
         v-model:footprints="planFootprints"
@@ -102,6 +103,7 @@
         v-model:items="planItems"
         v-model:lines="planLines"
       />
+      <KitchenRunTools v-model:lines="planLines" v-model:items="planItems" />
       <div class="flex flex-wrap items-center justify-between gap-3">
         <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(2)">← Back</button>
         <button type="button" class="rounded-full bg-ink px-6 py-3 text-cream" @click="goTo(4)">
