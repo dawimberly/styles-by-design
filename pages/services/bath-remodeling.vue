@@ -13,45 +13,49 @@
 
 <script setup lang="ts">
 const serviceData = {
-  title: "Bath remodeling",
+  title: "Bath design",
   description:
-    "From a guest powder room to a master suite: showers, tile, glass, and storage designed for how you actually start the day.",
+    "From powder room to master suite: showers, tile, glass, and vanities specified as a design package. Use our preferred contractor for a 10% discount when you build, or bring your own licensed contractor.",
   mainFeatures: [
-    "Custom showers and tubs",
-    "Tile, glass, and waterproofing",
-    "Vanities and lighting",
-    "Plumbing and fixtures",
-    "Accessibility upgrades",
+    "Layout and 3D",
+    "Tile, glass, and fixture specs",
+    "Vanity SKUs from the estimator list",
+    "Lighting",
+    "Accessibility planning",
   ],
   mainImage: PHOTOS.bath,
   process: [
-    { title: "Measure", description: "We map plumbing, vents, and what can stay versus what should go." },
-    { title: "Specify", description: "Tile, glass, fixtures, and a 3D view so there are no surprises on grout day." },
-    { title: "Install", description: "Waterproofing first, then finishes. We do not rush wet work." },
+    { title: "Measure", description: "We map what can stay versus what should go." },
+    { title: "Specify", description: "Tile, glass, fixtures, and a 3D view." },
+    {
+      title: "Handoff",
+      description: "Build from the design package with our preferred contractor (10% discount) or your own GC.",
+    },
   ],
   galleryImages: [
-    { src: PHOTOS.bath, alt: "Spa bath", description: "Walk-in shower" },
-    { src: PHOTOS.bathDetail, alt: "Vanity", description: "Custom vanity" },
-    { src: PHOTOS.living, alt: "Suite", description: "Master bath suite" },
+    { src: PHOTOS.bath, alt: "Grey bath", description: "Grey Shaker bath" },
+    { src: PHOTOS.bathDetail, alt: "Vanity", description: "Antique White vanity" },
+    { src: PHOTOS.antique, alt: "Antique white kitchen", description: "Antique White kitchen" },
   ],
   faqs: [
     {
-      question: "How long is a bath remodel?",
-      answer: "A typical hall bath is 3–4 weeks. A full master suite with custom tile is often 5–7 weeks.",
+      question: "Do you remodel the bath yourselves?",
+      answer:
+        "Styles by Design designs the package. Use our preferred contractor for a 10% discount, or have an outside licensed contractor build from the drawings.",
     },
     {
-      question: "Can you keep a working bathroom?",
-      answer: "If the house has a second bath, we sequence so one remains usable. We will tell you up front if that is not possible.",
+      question: "Can vanities come from your list?",
+      answer: "Yes. Stock vanities and cabinets are on the estimator list and the contractor portal.",
     },
     {
-      question: "Do you do walk-in and curbless showers?",
-      answer: "Yes. We design for daily use and, when needed, for aging-in-place.",
+      question: "Do you design curbless showers?",
+      answer: "Yes, as a design spec. Waterproofing and tile are handled by the preferred contractor or your contractor if you bring one.",
     },
   ],
 };
 
 useSeoMeta({
-  title: "Bath remodeling",
+  title: "Bath design",
   description: "Bathroom remodeling in San Antonio: custom showers, tile, vanities, and accessibility work.",
 });
 </script>

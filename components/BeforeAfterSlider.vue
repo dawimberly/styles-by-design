@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative h-[420px] cursor-col-resize overflow-hidden rounded-2xl shadow-xl select-none"
+    class="relative h-[480px] cursor-col-resize overflow-hidden rounded-2xl shadow-xl select-none md:h-[560px]"
     ref="el"
     @pointerdown="start"
     @pointermove="move"

@@ -1,6 +1,10 @@
 # Styles by Design
 
-Custom interiors site for a San Antonio kitchen, bath, and cabinetry studio. Nuxt 3, Tailwind, deployed on Vercel.
+Interior design studio site (San Antonio). Contractors buy discounted stock cabinets from the estimator price list.
+
+## Contractor portal
+
+PIN is `CONTRACTOR_PIN`. Open `/contractors`.
 
 ## Local
 

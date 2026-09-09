@@ -1,6 +1,6 @@
 <template>
   <section class="relative overflow-hidden py-16 md:py-24">
-    <img :src="subtitle === 'Gallery' ? PHOTOS.living : PHOTOS.stone" alt="" class="absolute inset-0 h-full w-full object-cover" />
+    <img :src="PHOTOS.kitchen" alt="" class="absolute inset-0 h-full w-full object-cover" />
     <div class="absolute inset-0 bg-ink/70" />
     <div class="relative mx-auto max-w-6xl px-4">
       <p class="text-sm uppercase tracking-[0.28em] text-brass">{{ subtitle }}</p>
