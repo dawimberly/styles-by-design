@@ -73,7 +73,7 @@
       <button type="button" class="rounded-full border border-ink px-5 py-2 text-sm" @click="placeIsland">
         Add island rectangle
       </button>
-      <p class="text-sm text-ink/50">Optional freestanding box — not a fifth room shape.</p>
+      <p class="text-sm text-ink/50">Adds a box in the middle of the sheet — drag it into place on the grid.</p>
     </div>
   </div>
 </template>
