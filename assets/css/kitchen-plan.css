@@ -1,20 +1,20 @@
-/* Kitchen plan sheet — keep both scrollbars visible on the drawing pane. */
-.kitchen-plan-page .overflow-auto {
+/* Kitchen drawing pane — 24' x 20' sheet sits inside a scrolling frame. */
+.overflow-auto.rounded-2xl.border.border-sand {
   max-height: 70vh;
   min-height: 28rem;
   overflow: scroll !important;
   scrollbar-gutter: stable;
 }
-.kitchen-plan-page .overflow-auto::-webkit-scrollbar {
+.overflow-auto.rounded-2xl.border.border-sand::-webkit-scrollbar {
   width: 14px;
   height: 14px;
 }
-.kitchen-plan-page .overflow-auto::-webkit-scrollbar-thumb {
+.overflow-auto.rounded-2xl.border.border-sand::-webkit-scrollbar-thumb {
   background: #1f2a24;
   border-radius: 999px;
   border: 3px solid #f7f3ea;
 }
-.kitchen-plan-page .overflow-auto::-webkit-scrollbar-track,
-.kitchen-plan-page .overflow-auto::-webkit-scrollbar-corner {
+.overflow-auto.rounded-2xl.border.border-sand::-webkit-scrollbar-track,
+.overflow-auto.rounded-2xl.border.border-sand::-webkit-scrollbar-corner {
   background: #e8dfd0;
 }
