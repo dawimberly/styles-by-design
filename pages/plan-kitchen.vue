@@ -6,9 +6,9 @@
 
   <div class="mx-auto max-w-6xl space-y-8 px-4 py-12">
     <p class="max-w-3xl text-lg leading-relaxed text-ink/75">
-      Start from a single wall, galley, L, or U, then add utilities and stock cabinets. Each grid square is 6" (bold
-      square = 1'). Package the design into the same email as the cabinet purchase for San Antonio shipping.
-      {{ SITE.preferredContractorOffer }}
+      Start from a layout shape (L, U, galley, or single), optionally add an island, then utilities and stock cabinets.
+      Each grid square is 6" (bold square = 1'). Package the design into the same email as the cabinet purchase for San
+      Antonio shipping. {{ SITE.preferredContractorOffer }}
     </p>
 
     <ol class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -98,8 +98,9 @@
       <div>
         <h2 class="font-serif text-3xl">Step 3 — Appliances & cabinets</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          Pick a Northville stock SKU, snap it to a wall, or fill a whole run with boxes plus filler. Standard sizes
-          load automatically; tweak inches and rotation anytime.
+          Start with a standard sink · dishwasher · range · fridge set (same idea as guided retail tools), then fill
+          remaining runs with Northville stock. Drag to fine-tune; no finish picker or 3D showroom — this stays a
+          supplier plan.
         </p>
       </div>
       <KitchenPlanBoard

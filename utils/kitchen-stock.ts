@@ -304,6 +304,75 @@ export function fillWallWithStock(line: PlanLine, kind: "base" | "wall"): PlanIt
   return out;
 }
 
+const STARTER_SKUS = [
+  { sku: "SB36", labelId: "sink" as PlanLabelId, width: 36, depth: 24 },
+  { sku: "DW24", labelId: "dishwasher" as PlanLabelId, width: 24, depth: 24 },
+  { sku: "RG30", labelId: "range" as PlanLabelId, width: 30, depth: 24 },
+  { sku: "RF36", labelId: "fridge" as PlanLabelId, width: 36, depth: 30 },
+];
+
+function pickPrimaryWall(lines: PlanLine[]) {
+  const byLabel = lines.find((l) => /south|run|back/i.test(l.label || ""));
+  if (byLabel) return byLabel;
+  return [...lines].sort((a, b) => b.lengthInches - a.lengthInches)[0] || null;
+}
+
+function pickSecondaryWall(lines: PlanLine[], primary: PlanLine) {
+  const others = lines.filter((l) => l.id !== primary.id);
+  if (!others.length) return null;
+  return [...others].sort((a, b) => b.lengthInches - a.lengthInches)[0];
+}
+
+/**
+ * Guided starter set (Cabinets.com-style): every layout gets sink, DW, fridge, and a freestanding range.
+ * Placed on walls for the supplier plan — drag afterward to fine-tune.
+ */
+export function placeStandardAppliances(lines: PlanLine[]): PlanItem[] {
+  if (!lines.length) return [];
+  const primary = pickPrimaryWall(lines);
+  if (!primary) return [];
+  const secondary = pickSecondaryWall(lines, primary);
+  const out: PlanItem[] = [];
+
+  const needPrimary = STARTER_SKUS.slice(0, secondary ? 3 : 4);
+  let along = Math.max(0, (primary.lengthInches - needPrimary.reduce((s, m) => s + m.width, 0)) / 2);
+  for (const mod of needPrimary) {
+    if (along + mod.width > primary.lengthInches + 0.1) break;
+    const pos = placeOnWall(primary, along, mod.width, mod.depth);
+    out.push({
+      id: crypto.randomUUID(),
+      labelId: mod.labelId,
+      sku: mod.sku,
+      wallId: primary.id,
+      xInches: pos.xInches,
+      yInches: pos.yInches,
+      widthInches: mod.width,
+      depthInches: mod.depth,
+      rotationDeg: pos.rotationDeg,
+    });
+    along += mod.width;
+  }
+
+  if (secondary) {
+    const fridge = STARTER_SKUS[3];
+    const along2 = Math.max(0, secondary.lengthInches - fridge.width - 6);
+    const pos = placeOnWall(secondary, along2, fridge.width, fridge.depth);
+    out.push({
+      id: crypto.randomUUID(),
+      labelId: fridge.labelId,
+      sku: fridge.sku,
+      wallId: secondary.id,
+      xInches: pos.xInches,
+      yInches: pos.yInches,
+      widthInches: fridge.width,
+      depthInches: fridge.depth,
+      rotationDeg: pos.rotationDeg,
+    });
+  }
+
+  return out;
+}
+
 export type TakeoffLine = { sku: string; name: string; qty: number; width: number; note?: string };
 
 export function buildTakeoff(items: PlanItem[]): TakeoffLine[] {

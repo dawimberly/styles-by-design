@@ -8,10 +8,10 @@ import {
 } from "./kitchen-plan";
 
 export const LAYOUT_SHAPES = [
-  { id: "single", name: "Single wall", blurb: "One cabinet run. Type the wall length." },
-  { id: "galley", name: "Galley", blurb: "Two parallel runs. Type run length and the space between walls." },
-  { id: "ell", name: "L-shape", blurb: "Two walls that meet at a corner." },
-  { id: "u", name: "U-shape", blurb: "Back wall plus two arms." },
+  { id: "single", name: "Single wall", blurb: "One cabinet run." },
+  { id: "galley", name: "Galley", blurb: "Two parallel runs." },
+  { id: "ell", name: "L-shaped", blurb: "Corner kitchen." },
+  { id: "u", name: "U-shaped", blurb: "Three connected runs." },
 ] as const;
 
 export type LayoutShapeId = (typeof LAYOUT_SHAPES)[number]["id"];
