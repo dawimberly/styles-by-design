@@ -114,7 +114,7 @@
       <div>
         <h2 class="font-serif text-3xl">Step 4 — Package design with the purchase email</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          Download the dimensioned plan and copy the takeoff into the same email as the cabinet purchase. Homeowners can
+          Download the four-page PDF and copy the takeoff into the same email as the cabinet purchase. Homeowners can
           also send it to our preferred contractor to negotiate install.
         </p>
       </div>
@@ -138,11 +138,11 @@
         </ul>
         <p v-else class="mt-3 text-ink/50">Place stock cabinets in step 3 to build a takeoff.</p>
         <div class="mt-4 flex flex-wrap gap-2">
-          <button type="button" class="rounded-full bg-ink px-5 py-2 text-cream" @click="downloadSvg">
-            Download plan SVG
+          <button type="button" class="rounded-full bg-ink px-5 py-2 text-cream" @click="downloadPdfPack">
+            Download plan PDF
           </button>
           <button type="button" class="rounded-full border border-ink px-5 py-2" @click="printPlan">
-            Print / PDF
+            Print
           </button>
         </div>
       </div>
@@ -191,7 +191,7 @@
           </NuxtLink>
         </div>
         <p class="md:col-span-2 text-sm text-ink/50">
-          Paste the copied package into the purchase email and attach the SVG. Design help:
+          Paste the copied package into the purchase email and attach the PDF. Design help:
           <NuxtLink to="/contact" class="text-moss hover:underline">Contact Styles by Design</NuxtLink>.
         </p>
       </form>
@@ -219,6 +219,7 @@ import {
   downloadTextFile,
   takeoffSummary,
 } from "../utils/kitchen-stock";
+import { buildPlanPdf, downloadPdf } from "../utils/kitchen-pdf";
 
 const step = ref<PlanStepId>(1);
 const planFootprints = ref<PlanFootprint[]>([]);
@@ -287,7 +288,7 @@ function summarize() {
   lines.push(
     "",
     role.value === "designer"
-      ? "Please keep this design with the cabinet purchase email for San Antonio shipping. SVG plan attached separately."
+      ? "Please keep this design with the cabinet purchase email for San Antonio shipping. PDF plan attached separately."
       : "Please reply with an install quote and options we can negotiate.",
   );
   return lines.join("\n");
@@ -300,7 +301,7 @@ async function copyPackage() {
     await navigator.clipboard.writeText(summarize());
     msg.value =
       role.value === "designer"
-        ? "Design package copied. Paste it into the same email as your cabinet purchase and attach the SVG."
+        ? "Design package copied. Paste it into the same email as your cabinet purchase and attach the PDF."
         : "Package copied. Paste it when you contact the preferred contractor.";
   } catch {
     msg.value = "Could not copy automatically — summary logged to the browser console.";
@@ -310,28 +311,29 @@ async function copyPackage() {
   }
 }
 
-function downloadSvg() {
-  const svg = buildPlanSvg({
+function planOpts() {
+  return {
     lines: planLines.value,
     items: planItems.value,
     footprints: planFootprints.value,
-    title: name.value ? `Kitchen plan — ${name.value}` : "Kitchen plan",
+    title: name.value ? `Kitchen plan - ${name.value}` : "Kitchen plan",
     studio: SITE.name,
-  });
-  downloadTextFile("kitchen-plan.svg", svg, "image/svg+xml");
+  };
+}
+
+function downloadSvg() {
+  downloadTextFile("kitchen-plan.svg", buildPlanSvg(planOpts()), "image/svg+xml");
+}
+
+function downloadPdfPack() {
+  downloadPdf("kitchen-plan.pdf", buildPlanPdf(planOpts()));
 }
 
 function printPlan() {
-  const svg = buildPlanSvg({
-    lines: planLines.value,
-    items: planItems.value,
-    footprints: planFootprints.value,
-    title: name.value ? `Kitchen plan — ${name.value}` : "Kitchen plan",
-    studio: SITE.name,
-  });
+  const svg = buildPlanSvg(planOpts());
   const win = window.open("", "_blank");
   if (!win) {
-    downloadSvg();
+    downloadPdfPack();
     return;
   }
   win.document.open();
