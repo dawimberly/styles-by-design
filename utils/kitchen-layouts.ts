@@ -3,6 +3,7 @@ import {
   BOARD_WIDTH_IN,
   FOOTPRINT_COLORS,
   type PlanFootprint,
+  type PlanItem,
   type PlanLine,
 } from "./kitchen-plan";
 
@@ -79,4 +80,89 @@ export function buildIsland(widthInches = 72, depthInches = 36, label = "Peninsu
     color: FOOTPRINT_COLORS[1]?.value || COLOR,
     label,
   };
+}
+
+export function buildLShape(longInches: number, returnInches: number) {
+  return buildLayout({ shape: "ell", aInches: longInches, bInches: returnInches });
+}
+
+export type MeasuredLInput = {
+  /** Slot 2 — kitchen depth / long wall (default 124). */
+  kitchenDepthIn: number;
+  /** Slot 1 — peninsula length (default 71). */
+  peninsulaLengthIn: number;
+  /** Fixed peninsula box depth (default 24). */
+  peninsulaDepthIn?: number;
+  /** Slot 3 — living-end gap peninsula end → door wall (default 39). */
+  livingEndGapIn: number;
+  /** Slot 4 — optional L return / range-wall length. */
+  rangeWallIn?: number;
+  /** Slot 5 — optional aisle peninsula face → range wall. */
+  aisleWidthIn?: number;
+};
+
+/**
+ * L + peninsula from taped job photos. No cabinets — walls, peninsula fill, and a living-end door only.
+ */
+export function buildMeasuredLKitchen(input: MeasuredLInput): {
+  lines: PlanLine[];
+  footprints: PlanFootprint[];
+  door: PlanItem;
+} {
+  const depth = Math.min(Math.max(24, input.kitchenDepthIn || 124), BOARD_WIDTH_IN - PAD * 2);
+  const penLen = Math.min(Math.max(24, input.peninsulaLengthIn || 71), depth - 12);
+  const penDep = Math.min(Math.max(18, input.peninsulaDepthIn ?? 24), 48);
+  const gap = Math.max(12, input.livingEndGapIn || 39);
+  const rangeWall = Math.min(
+    Math.max(48, input.rangeWallIn || Math.max(96, penLen + 24)),
+    BOARD_HEIGHT_IN - PAD * 2,
+  );
+  const aisle = Math.max(30, input.aisleWidthIn || 42);
+
+  const x = PAD;
+  const y = PAD;
+  const long = wall("Long / depth", x, y + rangeWall, depth, 0);
+  const range = wall("Range wall", x, y, rangeWall, 90);
+  const livingLen = Math.max(48, Math.min(rangeWall, 72));
+  const living = wall("Living end", x + depth, y + rangeWall - livingLen, livingLen, 90);
+
+  // Peninsula: east end leaves `gap` to living wall; west face prefers aisle off range wall.
+  let penX = x + depth - gap - penLen;
+  if (input.aisleWidthIn != null) penX = x + aisle;
+  penX = Math.max(x + 12, Math.min(penX, x + depth - gap - penLen));
+  const penY = y + rangeWall - penDep;
+  const penW = penLen / 6;
+  const penH = penDep / 6;
+  const penCellsX = penX / 6;
+  const penCellsY = penY / 6;
+  const peninsula: PlanFootprint = {
+    id: crypto.randomUUID(),
+    points: [
+      { x: penCellsX, y: penCellsY },
+      { x: penCellsX + penW, y: penCellsY },
+      { x: penCellsX + penW, y: penCellsY + penH },
+      { x: penCellsX, y: penCellsY + penH },
+    ],
+    closed: true,
+    color: FOOTPRINT_COLORS[1]?.value || COLOR,
+    label: "Peninsula",
+  };
+
+  const doorWidth = 36;
+  const doorDepth = 6;
+  const doorAlong = Math.max(0, (livingLen - doorWidth) / 2);
+  const rad = (living.angleDeg * Math.PI) / 180;
+  const door: PlanItem = {
+    id: crypto.randomUUID(),
+    labelId: "door",
+    xInches: living.xInches + Math.cos(rad) * doorAlong,
+    yInches: living.yInches + Math.sin(rad) * doorAlong,
+    widthInches: doorWidth,
+    depthInches: doorDepth,
+    rotationDeg: living.angleDeg,
+    wallId: living.id,
+    note: "Living end",
+  };
+
+  return { lines: [range, long, living], footprints: [peninsula], door };
 }

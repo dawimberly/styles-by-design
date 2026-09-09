@@ -6,11 +6,10 @@
 
   <div class="mx-auto max-w-6xl space-y-8 px-4 py-12">
     <p class="max-w-3xl text-lg leading-relaxed text-ink/75">
-      Sketch the kitchen, pack Northville stock, export for Flip Fixer. Walls and peninsula on the sheet → utilities →
-      SKUs → PDF + room-scan JSON + cabinet takeoff. Internal only — same shop job as the Flip Fixer estimator.
+      Tape from job photos → walls and peninsula → utilities → Northville stock → Flip Fixer export. Internal only.
     </p>
 
-    <ol class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <ol class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
       <li v-for="s in PLAN_STEPS" :key="s.id">
         <button
           type="button"
@@ -34,9 +33,40 @@
 
     <section v-if="step === 1" class="space-y-4">
       <div>
-        <h2 class="font-serif text-3xl">Step 1 — Walls</h2>
+        <h2 class="font-serif text-3xl">Step 1 — Measure from photos</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          Layout template or hand-drawn walls. Add a peninsula rectangle if needed — drag and resize on the grid.
+          Assign taped inches to the slots, then build the L + peninsula. Tweak on the walls step after.
+        </p>
+      </div>
+      <KitchenPhotoMeasure
+        v-model:lines="planLines"
+        v-model:footprints="planFootprints"
+        v-model:items="planItems"
+        @built="onMeasuredBuild"
+      />
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="text-sm text-ink/55">
+          {{
+            planLines.length
+              ? `${planLines.length} walls on sheet — continue to tweak`
+              : "Build layout from measures, or skip to walls and draw by hand"
+          }}
+        </p>
+        <button
+          type="button"
+          class="rounded-full bg-ink px-6 py-3 text-cream"
+          @click="goTo(2)"
+        >
+          Continue to walls →
+        </button>
+      </div>
+    </section>
+
+    <section v-else-if="step === 2" class="space-y-4">
+      <div>
+        <h2 class="font-serif text-3xl">Step 2 — Walls</h2>
+        <p class="mt-2 max-w-2xl text-ink/70">
+          Layout template or hand-drawn walls. Drag peninsula as one piece; pull corners to resize.
         </p>
       </div>
       <KitchenLayoutStarter
@@ -52,6 +82,7 @@
         v-model:lines="planLines"
       />
       <div class="flex flex-wrap items-center justify-between gap-3">
+        <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(1)">← Back</button>
         <p class="text-sm text-ink/55">
           {{
             planLines.length
@@ -63,18 +94,19 @@
           type="button"
           class="rounded-full bg-ink px-6 py-3 text-cream disabled:opacity-40"
           :disabled="!planLines.length"
-          @click="goTo(2)"
+          @click="goTo(3)"
         >
           Continue to utilities →
         </button>
       </div>
     </section>
 
-    <section v-else-if="step === 2" class="space-y-4">
+    <section v-else-if="step === 3" class="space-y-4">
       <div>
-        <h2 class="font-serif text-3xl">Step 2 — Utilities</h2>
+        <h2 class="font-serif text-3xl">Step 3 — Utilities</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          Doors, windows, outlets, plumbing. These feed the room-scan export Flip Fixer loads.
+          Doors, windows, outlets, plumbing. Living-end door from measure is already on the sheet if you built from
+          photos.
         </p>
       </div>
       <KitchenPlanBoard
@@ -84,19 +116,18 @@
         v-model:lines="planLines"
       />
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(1)">← Back</button>
-        <button type="button" class="rounded-full bg-ink px-6 py-3 text-cream" @click="goTo(3)">
+        <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(2)">← Back</button>
+        <button type="button" class="rounded-full bg-ink px-6 py-3 text-cream" @click="goTo(4)">
           Continue to stock →
         </button>
       </div>
     </section>
 
-    <section v-else-if="step === 3" class="space-y-4">
+    <section v-else-if="step === 4" class="space-y-4">
       <div>
-        <h2 class="font-serif text-3xl">Step 3 — Appliances & stock</h2>
+        <h2 class="font-serif text-3xl">Step 4 — Appliances & stock</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          Place sink · DW · range · fridge, then fill runs with Northville widths (B24, W2430, FLR*). No prices here —
-          estimator owns pricing.
+          Place sink · DW · range · fridge, then fill runs with Northville widths. No prices — estimator owns pricing.
         </p>
       </div>
       <KitchenPlanBoard
@@ -107,8 +138,8 @@
       />
       <KitchenRunTools v-model:lines="planLines" v-model:items="planItems" />
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(2)">← Back</button>
-        <button type="button" class="rounded-full bg-ink px-6 py-3 text-cream" @click="goTo(4)">
+        <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(3)">← Back</button>
+        <button type="button" class="rounded-full bg-ink px-6 py-3 text-cream" @click="goTo(5)">
           Continue to export →
         </button>
       </div>
@@ -116,10 +147,9 @@
 
     <section v-else class="space-y-4">
       <div>
-        <h2 class="font-serif text-3xl">Step 4 — Export for Flip Fixer</h2>
+        <h2 class="font-serif text-3xl">Step 5 — Export for Flip Fixer</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          PDF for the job folder. Room-scan JSON for estimator quantities. Cabinet takeoff JSON for SKU lines. No
-          purchase-email packaging.
+          PDF for the job folder. Room-scan JSON for estimator quantities. Cabinet takeoff JSON for SKU lines.
         </p>
       </div>
 
@@ -146,7 +176,7 @@
             <span>{{ line.name }} · {{ inchesToFeetInches(line.width) }}{{ line.note ? ` · ${line.note}` : "" }}</span>
           </li>
         </ul>
-        <p v-else class="mt-3 text-ink/50">Place stock in step 3 to build a takeoff.</p>
+        <p v-else class="mt-3 text-ink/50">Place stock in step 4 to build a takeoff.</p>
         <div class="mt-4 flex flex-wrap gap-2">
           <button type="button" class="rounded-full bg-ink px-5 py-2 text-cream" @click="downloadPdfPack">
             Download plan PDF
@@ -163,7 +193,7 @@
         </div>
         <p v-if="msg" class="mt-3 text-moss">{{ msg }}</p>
         <div class="mt-4">
-          <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(3)">← Back</button>
+          <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(4)">← Back</button>
         </div>
       </div>
     </section>
@@ -210,6 +240,7 @@ const takeoff = computed(() =>
 
 function canGoTo(id: PlanStepId) {
   if (id === 1) return true;
+  if (id === 2) return true;
   return planLines.value.length > 0;
 }
 
@@ -217,6 +248,12 @@ function goTo(id: PlanStepId) {
   if (!canGoTo(id)) return;
   step.value = id;
   msg.value = "";
+  if (id === 2) {
+    nextTick(() => {
+      wallsBoard.value?.selectMove?.();
+      wallsBoard.value?.scrollToWalls?.();
+    });
+  }
 }
 
 function onLayoutPlaced() {
@@ -224,6 +261,10 @@ function onLayoutPlaced() {
     wallsBoard.value?.selectMove?.();
     wallsBoard.value?.scrollToWalls?.();
   });
+}
+
+function onMeasuredBuild() {
+  goTo(2);
 }
 
 function exportOpts() {

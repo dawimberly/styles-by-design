@@ -9,21 +9,26 @@ export const PLAN_CELL_PX = 24;
 export const PLAN_STEPS = [
   {
     id: 1,
-    title: "Walls",
-    blurb: "Layout walls and peninsula — drag and resize on the sheet.",
+    title: "Measure",
+    blurb: "Tape inches from job photos → build L + peninsula.",
   },
   {
     id: 2,
+    title: "Walls",
+    blurb: "Tweak walls and peninsula on the sheet.",
+  },
+  {
+    id: 3,
     title: "Utilities",
     blurb: "Doors, windows, outlets, plumbing for the room scan.",
   },
   {
-    id: 3,
+    id: 4,
     title: "Stock",
     blurb: "Northville SKUs and appliances on the runs.",
   },
   {
-    id: 4,
+    id: 5,
     title: "Export",
     blurb: "PDF + room-scan JSON + cabinet takeoff for Flip Fixer.",
   },
