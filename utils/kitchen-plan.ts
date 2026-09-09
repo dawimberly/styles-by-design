@@ -82,6 +82,10 @@ export type PlanItem = {
   /** Rotation in degrees (0 = width along X). */
   rotationDeg: number;
   note?: string;
+  /** Northville / appliance SKU when known (B24, W2430, SB36). */
+  sku?: string;
+  /** Wall line this box is snapped to. */
+  wallId?: string;
 };
 
 /** Dimensioned wall / run — inch precision, not locked to the 6" grid. */
@@ -154,7 +158,8 @@ export function lineSummary(line: PlanLine) {
 }
 
 export function itemSummary(item: PlanItem) {
-  return `${labelMeta(item.labelId).name}: ${inchesToFeetInches(item.widthInches)} × ${inchesToFeetInches(item.depthInches)} @ (${item.xInches.toFixed(1)}", ${item.yInches.toFixed(1)}") rot ${Math.round(item.rotationDeg)}°`;
+  const sku = item.sku ? `${item.sku} · ` : "";
+  return `${sku}${labelMeta(item.labelId).name}: ${inchesToFeetInches(item.widthInches)} × ${inchesToFeetInches(item.depthInches)} @ (${item.xInches.toFixed(1)}", ${item.yInches.toFixed(1)}") rot ${Math.round(item.rotationDeg)}°`;
 }
 
 export function inchesToFeetInches(inches: number) {
@@ -192,7 +197,6 @@ export function distPoints(a: PlanPoint, b: PlanPoint) {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
-/** Ray-cast point-in-polygon (cell coords). */
 export function pointInPolygon(point: PlanPoint, polygon: PlanPoint[]) {
   if (polygon.length < 3) return false;
   let inside = false;
@@ -211,7 +215,6 @@ function cross(o: PlanPoint, a: PlanPoint, b: PlanPoint) {
   return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
 }
 
-/** Monotone-chain convex hull — used for color combine. */
 export function convexHull(points: PlanPoint[]): PlanPoint[] {
   const unique = new Map<string, PlanPoint>();
   for (const p of points) {
@@ -220,7 +223,6 @@ export function convexHull(points: PlanPoint[]): PlanPoint[] {
   }
   const sorted = [...unique.values()].sort((a, b) => (a.x === b.x ? a.y - b.y : a.x - b.x));
   if (sorted.length <= 2) return sorted;
-
   const lower: PlanPoint[] = [];
   for (const p of sorted) {
     while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
@@ -243,18 +245,9 @@ export function combineFootprintsByColor(footprints: PlanFootprint[], color: str
   if (same.length <= 1) return footprints;
   const hull = convexHull(same.flatMap((f) => f.points));
   if (hull.length < 3) return footprints;
-  return [
-    ...others,
-    {
-      id: crypto.randomUUID(),
-      points: hull,
-      closed: true,
-      color,
-    },
-  ];
+  return [...others, { id: crypto.randomUUID(), points: hull, closed: true, color }];
 }
 
-/** Axis-aligned rectangle corners from any point set (cell coords). */
 export function rectangleFromPoints(points: PlanPoint[]): PlanPoint[] | null {
   if (points.length < 2) return null;
   let minX = Infinity;
@@ -276,16 +269,11 @@ export function rectangleFromPoints(points: PlanPoint[]): PlanPoint[] | null {
   ];
 }
 
-/**
- * True when a closed polygon is roughly rectangular (4–6 verts, edges ~axis-aligned).
- * Used to auto-snap on close / offer recognition.
- */
 export function footprintLooksRectangular(fp: PlanFootprint, angleTolDeg = 18) {
   if (!fp.closed || fp.points.length < 4) return false;
   const hull = convexHull(fp.points);
   if (hull.length < 4 || hull.length > 6) return false;
   const tol = Math.cos(((90 - angleTolDeg) * Math.PI) / 180);
-  // Check consecutive hull edges are mostly horizontal/vertical
   let axisAligned = 0;
   for (let i = 0; i < hull.length; i++) {
     const a = hull[i];
@@ -298,14 +286,12 @@ export function footprintLooksRectangular(fp: PlanFootprint, angleTolDeg = 18) {
   return axisAligned >= hull.length - 1;
 }
 
-/** Replace footprint points with a clean axis-aligned rectangle. */
 export function snapFootprintToRectangle(fp: PlanFootprint): PlanFootprint | null {
   const rect = rectangleFromPoints(fp.points);
   if (!rect) return null;
   return { ...fp, points: rect, closed: true };
 }
 
-/** Build a room fill from wall line endpoints (axis-aligned bounds). */
 export function footprintFromWallLines(lines: PlanLine[], color = FOOTPRINT_COLORS[0].value): PlanFootprint | null {
   if (!lines.length) return null;
   const pts: PlanPoint[] = [];
@@ -345,7 +331,6 @@ export function footprintSummary(fp: PlanFootprint) {
   return `${colorName} footprint · ${fp.closed ? "closed" : "open"} · ${fp.points.length} pts · peri ~${inchesToFeetInches(Math.round(footprintPerimeterInches(fp)))}: ${pts}`;
 }
 
-/** Distance in inches from a point to a line segment. */
 export function distToLineInches(px: number, py: number, line: PlanLine) {
   const { x1, y1, x2, y2 } = lineEndpoints(line);
   const dx = x2 - x1;
