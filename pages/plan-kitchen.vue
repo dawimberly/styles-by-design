@@ -233,7 +233,7 @@ const step = ref<PlanStepId>(1);
 const planFootprints = ref<PlanFootprint[]>([]);
 const planItems = ref<PlanItem[]>([]);
 const planLines = ref<PlanLine[]>([]);
-const wallsBoard = ref<{ scrollToWalls?: () => void } | null>(null);
+const wallsBoard = ref<{ scrollToWalls?: () => void; selectMove?: () => void } | null>(null);
 const name = ref("");
 const email = ref("");
 const phone = ref("");
@@ -264,7 +264,10 @@ function goTo(id: PlanStepId) {
 }
 
 function onLayoutPlaced() {
-  nextTick(() => wallsBoard.value?.scrollToWalls?.());
+  nextTick(() => {
+    wallsBoard.value?.selectMove?.();
+    wallsBoard.value?.scrollToWalls?.();
+  });
 }
 
 function summarize() {

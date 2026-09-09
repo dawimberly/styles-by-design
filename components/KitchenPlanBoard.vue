@@ -6,6 +6,14 @@
           <button
             type="button"
             class="rounded-full border border-ink px-4 py-2 text-sm"
+            :class="tool === 'move' ? 'bg-ink text-cream' : 'bg-cream'"
+            @click="tool = 'move'"
+          >
+            Move / resize
+          </button>
+          <button
+            type="button"
+            class="rounded-full border border-ink px-4 py-2 text-sm"
             :class="tool === 'line' ? 'bg-ink text-cream' : 'bg-cream'"
             @click="tool = 'line'"
           >
@@ -32,53 +40,55 @@
           </button>
         </div>
 
-        <label class="text-sm">
-          <span class="mb-1 block font-medium text-ink/70">Length (in)</span>
-          <input
-            v-model.number="lineLengthIn"
-            type="number"
-            min="1"
-            step="0.25"
-            class="w-28 rounded-lg border border-sand bg-cream px-3 py-2"
-          />
-        </label>
-        <label class="text-sm">
-          <span class="mb-1 block font-medium text-ink/70">Angle (°)</span>
-          <input
-            v-model.number="lineAngle"
-            type="number"
-            step="1"
-            class="w-24 rounded-lg border border-sand bg-cream px-3 py-2"
-          />
-        </label>
-        <button type="button" class="rounded-full border border-sand px-3 py-2 text-sm" @click="lineAngle = (lineAngle + 90) % 360">
-          +90°
-        </button>
-        <label class="text-sm">
-          <span class="mb-1 block font-medium text-ink/70">Wall label (optional)</span>
-          <input
-            v-model="lineLabel"
-            type="text"
-            placeholder="North / island face"
-            class="w-40 rounded-lg border border-sand bg-cream px-3 py-2"
-          />
-        </label>
-        <div class="flex flex-wrap items-center gap-2 pb-1">
-          <span class="text-xs font-medium text-ink/55">Line color</span>
-          <button
-            v-for="c in FOOTPRINT_COLORS"
-            :key="c.id"
-            type="button"
-            class="h-7 w-7 rounded-full border-2"
-            :class="lineColor === c.value ? 'border-ink scale-110' : 'border-white shadow'"
-            :style="{ backgroundColor: c.value }"
-            :title="c.name"
-            @click="lineColor = c.value"
-          />
-        </div>
+        <template v-if="tool === 'line'">
+          <label class="text-sm">
+            <span class="mb-1 block font-medium text-ink/70">Length (in)</span>
+            <input
+              v-model.number="lineLengthIn"
+              type="number"
+              min="1"
+              step="0.25"
+              class="w-28 rounded-lg border border-sand bg-cream px-3 py-2"
+            />
+          </label>
+          <label class="text-sm">
+            <span class="mb-1 block font-medium text-ink/70">Angle (°)</span>
+            <input
+              v-model.number="lineAngle"
+              type="number"
+              step="1"
+              class="w-24 rounded-lg border border-sand bg-cream px-3 py-2"
+            />
+          </label>
+          <button type="button" class="rounded-full border border-sand px-3 py-2 text-sm" @click="lineAngle = (lineAngle + 90) % 360">
+            +90°
+          </button>
+          <label class="text-sm">
+            <span class="mb-1 block font-medium text-ink/70">Wall label (optional)</span>
+            <input
+              v-model="lineLabel"
+              type="text"
+              placeholder="North / island face"
+              class="w-40 rounded-lg border border-sand bg-cream px-3 py-2"
+            />
+          </label>
+          <div class="flex flex-wrap items-center gap-2 pb-1">
+            <span class="text-xs font-medium text-ink/55">Line color</span>
+            <button
+              v-for="c in FOOTPRINT_COLORS"
+              :key="c.id"
+              type="button"
+              class="h-7 w-7 rounded-full border-2"
+              :class="lineColor === c.value ? 'border-ink scale-110' : 'border-white shadow'"
+              :style="{ backgroundColor: c.value }"
+              :title="c.name"
+              @click="lineColor = c.value"
+            />
+          </div>
+        </template>
         <p class="w-full text-sm text-ink/55">
-          {{ scaleLegend() }}. One line = one wall. Type any inch length, set angle, click to place, drag to move.
-          Right-click to rotate or edit length.
+          {{ scaleLegend() }}. Default is Move / resize — drag walls and islands, pull island corners to change size.
+          Switch to Place wall line only when you need a new wall.
         </p>
       </template>
 
@@ -183,6 +193,7 @@
             :stroke="fp.color"
             stroke-width="3"
             class="cursor-grab active:cursor-grabbing"
+            :class="activeId === fp.id ? 'stroke-[4px]' : ''"
             @pointerdown.stop="onPolygonDown(fp, $event)"
             @contextmenu.stop.prevent="openFootprintMenu(fp, $event)"
           />
@@ -237,13 +248,22 @@
           v-for="handle in pointHandles"
           :key="handle.key"
           type="button"
-          class="absolute z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-ink bg-cream shadow"
-          :class="phase === 'walls' ? 'pointer-events-none opacity-70' : 'cursor-grab active:cursor-grabbing'"
+          class="absolute z-40 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-ink bg-cream shadow cursor-nwse-resize"
+          :class="activeId === handle.footprintId ? 'opacity-100 ring-2 ring-moss' : 'opacity-80'"
           :style="{ left: `${handle.x * PLAN_CELL_PX}px`, top: `${handle.y * PLAN_CELL_PX}px`, backgroundColor: handle.color }"
-          :aria-label="`Point ${handle.pointIndex + 1}`"
-          @pointerdown.stop="undefined"
-          @contextmenu.stop.prevent="undefined"
+          :aria-label="`Resize corner ${handle.pointIndex + 1}`"
+          :title="'Drag corner to resize'"
+          @pointerdown.stop="startCornerResize(handle.footprintId, handle.pointIndex, $event)"
+          @contextmenu.stop.prevent="openPointMenu(handle.footprintId, handle.pointIndex, $event)"
         />
+
+        <div
+          v-if="activeFootprintSize"
+          class="pointer-events-none absolute z-40 rounded bg-ink px-2 py-1 text-[11px] font-medium text-cream shadow"
+          :style="activeFootprintSize.style"
+        >
+          {{ activeFootprintSize.label }}
+        </div>
 
         <!-- Utilities ghost under cabinets (true 6" footprint kept in data). -->
         <div
@@ -499,7 +519,7 @@ const lineLengthIn = ref(120);
 const lineAngle = ref(0);
 const lineLabel = ref("");
 const lineColor = ref(FOOTPRINT_COLORS[0].value);
-const tool = ref<"line" | "place" | "erase">("line");
+const tool = ref<"move" | "line" | "place" | "erase">("move");
 const activeId = ref<string | null>(null);
 const menu = ref<ContextMenu | null>(null);
 const editLineLength = ref(0);
@@ -546,6 +566,7 @@ const utilityMarks = computed(() => {
 const pointHandles = computed(() => {
   const list: { key: string; footprintId: string; pointIndex: number; x: number; y: number; color: string }[] = [];
   for (const fp of footprints.value) {
+    if (!fp.closed || fp.points.length < 3) continue;
     fp.points.forEach((p, pointIndex) => {
       list.push({
         key: `${fp.id}-${pointIndex}`,
@@ -560,9 +581,31 @@ const pointHandles = computed(() => {
   return list;
 });
 
+const activeFootprintSize = computed(() => {
+  if (!activeId.value) return null;
+  const fp = footprints.value.find((f) => f.id === activeId.value);
+  if (!fp?.closed || !fp.points.length) return null;
+  const xs = fp.points.map((p) => p.x);
+  const ys = fp.points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const wIn = (maxX - minX) * CELL_INCHES;
+  const dIn = (maxY - minY) * CELL_INCHES;
+  return {
+    label: `${inchesToFeetInches(wIn)} × ${inchesToFeetInches(dIn)}`,
+    style: {
+      left: `${((minX + maxX) / 2) * PLAN_CELL_PX}px`,
+      top: `${minY * PLAN_CELL_PX - 22}px`,
+      transform: "translateX(-50%)",
+    },
+  };
+});
+
 function syncPhaseDefaults() {
   if (props.phase === "walls") {
-    tool.value = "line";
+    tool.value = "move";
     return;
   }
   tool.value = "place";
@@ -641,7 +684,62 @@ function scrollToWalls() {
   scroller.scrollTo({ left, top, behavior: "smooth" });
 }
 
-defineExpose({ scrollToWalls });
+defineExpose({ scrollToWalls, selectMove });
+
+function selectMove() {
+  tool.value = "move";
+  const last = [...footprints.value].reverse().find((f) => f.closed && f.points.length >= 3);
+  if (last) activeId.value = last.id;
+}
+
+function startCornerResize(footprintId: string, pointIndex: number, event: PointerEvent) {
+  if (event.button !== 0 || !boardEl.value) return;
+  if (tool.value === "erase") {
+    removeFootprint(footprintId);
+    return;
+  }
+  closeMenu();
+  activeId.value = footprintId;
+  const fp = footprints.value.find((f) => f.id === footprintId);
+  if (!fp) return;
+  const board = boardEl.value;
+  const origin = fp.points.map((pt) => ({ x: pt.x, y: pt.y }));
+  const anchor = origin[(pointIndex + 2) % origin.length] || origin[0];
+  const keepRect = fp.closed && origin.length === 4;
+  dragKind = "point";
+  dragId = footprintId;
+  dragPointIndex = pointIndex;
+  const onMove = (ev: PointerEvent) => {
+    if (dragKind !== "point" || !dragId) return;
+    const next = cornerFromEvent(ev, board);
+    if (keepRect && anchor) {
+      const minX = Math.min(anchor.x, next.x);
+      const maxX = Math.max(anchor.x, next.x);
+      const minY = Math.min(anchor.y, next.y);
+      const maxY = Math.max(anchor.y, next.y);
+      if (maxX - minX < 1 || maxY - minY < 1) return;
+      patchFootprint(dragId, {
+        points: [
+          { x: minX, y: minY },
+          { x: maxX, y: minY },
+          { x: maxX, y: maxY },
+          { x: minX, y: maxY },
+        ],
+      });
+      return;
+    }
+    updatePoint(dragId, dragPointIndex, next);
+  };
+  const onUp = () => {
+    dragKind = null;
+    dragId = null;
+    dragPointIndex = -1;
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+  };
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp);
+}
 
 function polyPoints(fp: PlanFootprint) {
   return fp.points.map((p) => `${p.x * PLAN_CELL_PX},${p.y * PLAN_CELL_PX}`).join(" ");
