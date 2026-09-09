@@ -15,7 +15,7 @@
 const serviceData = {
   title: "Kitchen design",
   description:
-    "We design kitchens as daily rooms: layout, finishes, lighting, and a stock-cabinet takeoff from the estimator. Install is typically our own crews, run through The Flip Fixer. Outside contractors can order boxes at trade price. We do not fabricate custom cabinets.",
+    "We design kitchens as daily rooms: layout, finishes, lighting, and a stock-cabinet takeoff from the estimator. Use our preferred contractor for a 10% discount when you build, or work with your own licensed contractor. Outside trade buyers can order boxes at trade price. We do not fabricate custom cabinets.",
   mainFeatures: [
     "Space planning and 3D",
     "Finish, stone, and lighting specs",
@@ -27,7 +27,10 @@ const serviceData = {
   process: [
     { title: "Consult", description: "Walk the room and how you cook." },
     { title: "Design", description: "Drawings, finishes, and SKUs locked to the price list." },
-    { title: "Handoff", description: "Install typically goes through The Flip Fixer. Cabinets order at trade price from the portal." },
+    {
+      title: "Handoff",
+      description: "Use our preferred contractor for a 10% discount, or order cabinets at trade price from the portal with your GC.",
+    },
   ],
   galleryImages: [
     { src: PHOTOS.kitchen, alt: "Glossy white kitchen", description: "Glossy White" },
@@ -37,7 +40,8 @@ const serviceData = {
   faqs: [
     {
       question: "Do you install the kitchen?",
-      answer: "Install is typically our own crews, scheduled through The Flip Fixer. You can also use an outside licensed contractor, who can buy cabinets from our portal.",
+      answer:
+        "Styles by Design designs the space. Use our preferred contractor for a 10% discount, or hire your own licensed contractor. Trade buyers can purchase cabinets from our portal.",
     },
     {
       question: "Can I get custom cabinets?",
@@ -45,7 +49,7 @@ const serviceData = {
     },
     {
       question: "How do contractors order?",
-      answer: "The contractor portal uses the same price list as Flip Fixer, at 20% off MSRP.",
+      answer: "Verified trade buyers use the contractor portal for the estimator price list at 20% off MSRP.",
     },
   ],
 };

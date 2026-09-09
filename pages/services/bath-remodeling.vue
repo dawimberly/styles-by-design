@@ -15,7 +15,7 @@
 const serviceData = {
   title: "Bath design",
   description:
-    "From powder room to master suite: showers, tile, glass, and vanities specified as a design package. Install is typically our crews under The Flip Fixer.",
+    "From powder room to master suite: showers, tile, glass, and vanities specified as a design package. Use our preferred contractor for a 10% discount when you build, or bring your own licensed contractor.",
   mainFeatures: [
     "Layout and 3D",
     "Tile, glass, and fixture specs",
@@ -27,7 +27,10 @@ const serviceData = {
   process: [
     { title: "Measure", description: "We map what can stay versus what should go." },
     { title: "Specify", description: "Tile, glass, fixtures, and a 3D view." },
-    { title: "Handoff", description: "Install typically runs through The Flip Fixer from the design package." },
+    {
+      title: "Handoff",
+      description: "Build from the design package with our preferred contractor (10% discount) or your own GC.",
+    },
   ],
   galleryImages: [
     { src: PHOTOS.bath, alt: "Grey bath", description: "Grey Shaker bath" },
@@ -37,7 +40,8 @@ const serviceData = {
   faqs: [
     {
       question: "Do you remodel the bath yourselves?",
-      answer: "Usually yes — our installers, billed and run through The Flip Fixer. An outside licensed contractor can also build from the package.",
+      answer:
+        "Styles by Design designs the package. Use our preferred contractor for a 10% discount, or have an outside licensed contractor build from the drawings.",
     },
     {
       question: "Can vanities come from your list?",
@@ -45,7 +49,7 @@ const serviceData = {
     },
     {
       question: "Do you design curbless showers?",
-      answer: "Yes, as a design spec. Waterproofing and tile are typically Flip Fixer install, or your contractor if you bring one.",
+      answer: "Yes, as a design spec. Waterproofing and tile are handled by the preferred contractor or your contractor if you bring one.",
     },
   ],
 };

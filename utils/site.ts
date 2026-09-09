@@ -6,8 +6,10 @@ export const SITE = {
   email: "Jon@TheFlipFixer.com",
   url: "https://styles-by-design.vercel.app",
   tagline: "Interior design for kitchens, baths, and whole homes",
-  flipFixer: "The Flip Fixer",
-  flipFixerUrl: "https://theflipfixer.com",
+  /** External install partner — do not display the brand name on the public site. */
+  preferredContractorUrl: "https://theflipfixer.com",
+  preferredContractorCta: "Preferred contractor",
+  preferredContractorOffer: "Use our preferred contractor for a 10% discount.",
 };
 
 export const AREAS = [
@@ -26,6 +28,8 @@ export const AREAS = [
 ];
 
 export const PHOTO_CREDIT = "Cabinet photography courtesy of Northville Cabinetry.";
+
+export const CLOSET_FINISH = "Closet · White or Oak";
 
 /** Northville door + kitchen photos keyed to catalog finish names. */
 export const FINISH_PHOTOS: Record<string, { door: string; room: string }> = {
@@ -64,6 +68,10 @@ export const FINISH_PHOTOS: Record<string, { door: string; room: string }> = {
   "Cognac (Raised Panel)": {
     door: "/images/northville/door-cognac.jpg",
     room: "/images/northville/kitchen-cognac.jpg",
+  },
+  "Closet · White or Oak": {
+    door: "/images/northville/closet.jpg",
+    room: "/images/northville/closet.jpg",
   },
 };
 

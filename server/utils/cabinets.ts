@@ -9,6 +9,7 @@ export type CabinetOption = {
   unit: string;
   cost_per_unit: number | null;
   cost_by_finish?: Record<string, number>;
+  closet_group?: string;
 };
 
 type Catalog = {
@@ -39,13 +40,17 @@ export function contractorPrice(option: CabinetOption, finish: string) {
 
 export function flattenSkus() {
   return Object.entries(data.groups).flatMap(([groupId, group]) =>
-    group.options.map((option) => ({
-      groupId,
-      groupName: group.display_name,
-      sku: option.sku,
-      name: option.display_name || option.name,
-      option,
-    })),
+    group.options.map((option) => {
+      const label = option.name && option.name !== option.sku ? option.name : option.display_name || option.sku;
+      const name = option.closet_group ? `${option.closet_group} · ${label}` : label;
+      return {
+        groupId,
+        groupName: group.display_name,
+        sku: option.sku,
+        name,
+        option,
+      };
+    }),
   );
 }
 

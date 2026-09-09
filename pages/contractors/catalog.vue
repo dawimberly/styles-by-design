@@ -38,11 +38,15 @@
 
     <figure class="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm">
       <div class="grid gap-0 md:grid-cols-[minmax(0,1fr)_11rem]">
-        <img :src="selectedLook.room" :alt="`${finish} kitchen`" class="h-64 w-full object-cover md:h-80" />
-        <img :src="selectedLook.door" :alt="`${finish} door`" class="h-40 w-full object-cover md:h-80" />
+        <img :src="selectedLook.room" :alt="`${finish} photo`" class="h-64 w-full object-cover md:h-80" />
+        <img :src="selectedLook.door" :alt="`${finish} sample`" class="h-40 w-full object-cover md:h-80" />
       </div>
       <figcaption class="border-t border-sand px-4 py-3 text-sm text-ink/70">
-        {{ finish }} — door sample and a Northville kitchen in this finish. SKUs share this look.
+        {{
+          isClosetFinish
+            ? `${finish} — Northville closet line. Units, shelves, drawers, doors, and upgrades.`
+            : `${finish} — door sample and a Northville kitchen in this finish. SKUs share this look.`
+        }}
       </figcaption>
     </figure>
 
@@ -51,6 +55,7 @@
         <thead class="border-b border-sand text-ink/60">
           <tr>
             <th class="px-4 py-3">SKU</th>
+            <th class="px-4 py-3">Description</th>
             <th class="px-4 py-3">Group</th>
             <th class="px-4 py-3">MSRP</th>
             <th class="px-4 py-3">Trade</th>
@@ -60,7 +65,8 @@
         </thead>
         <tbody>
           <tr v-for="item in catalog?.items || []" :key="item.sku" class="border-b border-sand/60">
-            <td class="px-4 py-3 font-medium">{{ item.sku }}</td>
+            <td class="px-4 py-3 font-medium whitespace-nowrap">{{ item.sku }}</td>
+            <td class="px-4 py-3 text-ink/70">{{ item.name }}</td>
             <td class="px-4 py-3 text-ink/70">{{ item.groupName }}</td>
             <td class="px-4 py-3 text-ink/50 line-through">${{ item.list.toFixed(2) }}</td>
             <td class="px-4 py-3 text-moss">${{ item.net.toFixed(2) }}</td>
@@ -112,7 +118,10 @@
         <li v-for="line in cart" :key="line.sku" class="flex items-center justify-between gap-4">
           <span class="flex min-w-0 items-center gap-3">
             <img :src="selectedLook.door" alt="" class="h-12 w-12 shrink-0 rounded object-cover" />
-            <span>{{ line.sku }} · ${{ line.net.toFixed(2) }}</span>
+            <span class="min-w-0">
+              <span class="font-medium">{{ line.sku }}</span>
+              <span class="block truncate text-sm text-ink/60">{{ line.name }} · ${{ line.net.toFixed(2) }}</span>
+            </span>
           </span>
           <input
             :value="line.qty"
@@ -184,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-import { finishPhotos } from "../../utils/site";
+import { CLOSET_FINISH, finishPhotos } from "../../utils/site";
 
 definePageMeta({ middleware: "contractor" });
 
@@ -228,6 +237,19 @@ const { data: catalog } = await useFetch("/api/contractors/catalog", {
 
 const cartTotal = computed(() => cart.value.reduce((sum, line) => sum + line.net * line.qty, 0));
 const selectedLook = computed(() => finishPhotos(finish.value));
+const isClosetFinish = computed(() => finish.value === CLOSET_FINISH);
+
+watch(group, (value) => {
+  if (value === "closet" && finish.value !== CLOSET_FINISH) finish.value = CLOSET_FINISH;
+  else if (value && value !== "closet" && finish.value === CLOSET_FINISH) {
+    finish.value = "Elegant White (Shaker)";
+  }
+});
+
+watch(finish, (value) => {
+  if (value === CLOSET_FINISH && group.value !== "closet") group.value = "closet";
+  else if (value !== CLOSET_FINISH && group.value === "closet") group.value = "";
+});
 
 let zipLookup = "";
 

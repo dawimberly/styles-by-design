@@ -1,21 +1,28 @@
 <template>
-  <PageHeader subtitle="Gallery" title="Northville kitchens, baths, and closets we specify" />
+  <PageHeader subtitle="Gallery" title="Northville finishes we specify for design plans" />
 
   <div class="mx-auto max-w-6xl px-4 py-16">
     <div class="grid items-start gap-10 md:grid-cols-5">
       <div class="md:col-span-2">
-        <h2 class="font-serif text-4xl">Same kitchen, before and after</h2>
+        <h2 class="font-serif text-4xl">Finish reference</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          Dark wood and butcher block on the left. White shaker, stone counters, and a farmhouse sink on the right.
-          Cabinets from the Northville list; install typically through The Flip Fixer.
+          These images are Northville product photography used for design selections — not Styles by Design jobsite
+          galleries. {{ SITE.preferredContractorOffer }}
         </p>
+        <a
+          :href="SITE.preferredContractorUrl"
+          class="mt-6 inline-block rounded-full bg-brass px-5 py-2 text-sm font-medium text-ink hover:bg-sand"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {{ SITE.preferredContractorCta }}
+        </a>
       </div>
       <div class="md:col-span-3">
-        <BeforeAfterSlider
-          :before-image="PHOTOS.kitchenBefore"
-          :after-image="PHOTOS.kitchenAfter"
-          before-alt="Kitchen before"
-          after-alt="Kitchen after"
+        <img
+          :src="PHOTOS.kitchenHero"
+          alt="Northville kitchen cabinetry finish reference"
+          class="h-80 w-full rounded-2xl object-cover shadow-sm md:h-[28rem]"
         />
       </div>
     </div>

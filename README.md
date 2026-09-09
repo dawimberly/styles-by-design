@@ -1,6 +1,6 @@
 # Styles by Design
 
-Interior design studio site (San Antonio). Contractors buy discounted stock cabinets from the Flip Fixer estimator price list.
+Interior design studio site (San Antonio). Contractors buy discounted stock cabinets from the estimator price list.
 
 ## Contractor portal
 

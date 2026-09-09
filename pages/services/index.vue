@@ -1,5 +1,5 @@
 <template>
-  <PageHeader subtitle="Services" title="Design under Styles by Design. Install typically through The Flip Fixer." />
+  <PageHeader subtitle="Services" title="Design and planning. Build with our preferred contractor for a 10% discount." />
 
   <div class="mx-auto max-w-6xl space-y-24 px-4 py-16">
     <article v-for="(item, i) in mains" :key="item.title" class="grid items-center gap-10 md:grid-cols-2">
@@ -32,7 +32,7 @@
 const mains = [
   {
     title: "Kitchen design",
-    body: "Plans, finishes, lighting, and a cabinet takeoff from the estimator list. Install is typically our crews under The Flip Fixer.",
+    body: "Plans, finishes, lighting, and a cabinet takeoff from the estimator list. Use our preferred contractor for a 10% discount when you are ready to build.",
     features: ["Space planning", "Finish and fixture specs", "3D views", "Stock cabinet SKUs, not custom boxes"],
     image: PHOTOS.kitchen,
     to: "/services/kitchen-remodeling",
@@ -40,7 +40,7 @@ const mains = [
   },
   {
     title: "Bath design",
-    body: "Showers, tile, vanities, and lighting as a spec package. Our installers usually run the job through The Flip Fixer.",
+    body: "Showers, tile, vanities, and lighting as a spec package. Build with our preferred contractor for a 10% discount, or bring your own licensed contractor.",
     features: ["Layout", "Tile and glass", "Vanity SKUs from the list", "Lighting"],
     image: PHOTOS.bath,
     to: "/services/bath-remodeling",
@@ -59,10 +59,13 @@ const mains = [
 const extras = [
   { title: "3D rendering", description: "See the room before demolition." },
   { title: "Finish boards", description: "Paint, stone, hardware, and lighting in one package." },
-  { title: "Estimator takeoff", description: "Cabinet SKUs match Flip Fixer so the GC is not guessing." },
+  { title: "Estimator takeoff", description: "Cabinet SKUs match the estimator list so the GC is not guessing." },
   { title: "Color", description: "Whole-home palettes that hold up in San Antonio light." },
   { title: "Furniture & styling", description: "Pieces that fit the architecture, not a catalog dump." },
-  { title: "Builder coordination", description: "Install is typically The Flip Fixer. Outside GCs can still buy cabinets from the portal." },
+  {
+    title: "Builder coordination",
+    description: "Use our preferred contractor for a 10% discount, or buy cabinets from the trade portal with your own GC.",
+  },
 ];
 
 useSeoMeta({

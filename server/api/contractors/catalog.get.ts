@@ -37,6 +37,7 @@ export default defineEventHandler((event) => {
           name: row.name,
           groupId: row.groupId,
           groupName: row.groupName,
+          closetGroup: row.option.closet_group || null,
           list,
           net,
           save: Math.round((list - net) * 100) / 100,

@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
         _subject: "HOLD — Cabinets To Go dealer packet (pay SBD first)",
         _template: "table",
         _captcha: "false",
-        dealer_account: "Styles by Design / Flip Fixer Cabinets To Go account",
+        dealer_account: "Styles by Design Cabinets To Go account",
         status: "Do not place on CTG until funds are confirmed",
         company: body.company,
         name: body.name || "",

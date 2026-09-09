@@ -5,14 +5,14 @@
     <aside class="md:col-span-2 space-y-6">
       <p class="text-lg text-ink/75">Call or send photos of the space.</p>
       <a :href="SITE.phoneHref" class="block font-serif text-4xl text-moss">{{ SITE.phone }}</a>
-      <a :href="`mailto:${SITE.email}`" class="block text-ink/80 hover:text-moss">{{ SITE.email }}</a>
+      <a :href="`mailto:${SITE.email}`" class="block text-ink/80 hover:text-moss">Email Jon</a>
       <p class="text-ink/70">{{ SITE.city }} and nearby Hill Country towns.</p>
     </aside>
 
     <div class="md:col-span-3 rounded-2xl bg-white p-8 shadow-sm">
       <div v-if="sent" class="flex min-h-80 flex-col items-center justify-center text-center">
         <h2 class="font-serif text-3xl">Sent.</h2>
-        <p class="mt-2 max-w-sm text-ink/70">It went to {{ SITE.email }}. We'll get back to you.</p>
+        <p class="mt-2 max-w-sm text-ink/70">We got your message and will get back to you.</p>
         <a :href="SITE.phoneHref" class="mt-6 text-moss">Call {{ SITE.phone }}</a>
       </div>
       <form
@@ -62,7 +62,7 @@
           />
         </div>
         <button type="submit" class="rounded-full bg-ink px-6 py-3 text-cream">Send it over</button>
-        <p class="text-center text-xs text-ink/50">Goes to {{ SITE.email }} until jon@stylesbydesign.com is live.</p>
+        <p class="text-center text-xs text-ink/50">We reply by phone or email after you send.</p>
       </form>
     </div>
   </div>
@@ -91,6 +91,6 @@ function onSubmit(e: Event) {
 
 useSeoMeta({
   title: "Contact",
-  description: `Call ${SITE.name} at ${SITE.phone} or write ${SITE.email}. Design consults in ${SITE.city}.`,
+  description: `Call ${SITE.name} at ${SITE.phone}. Design consults in ${SITE.city}.`,
 });
 </script>

@@ -4,7 +4,7 @@
   <section class="mx-auto max-w-6xl px-4 py-20">
     <p class="text-sm uppercase tracking-[0.28em] text-moss">What we do</p>
     <h2 class="mt-3 font-serif text-4xl md:text-5xl">Spaces that work as well as they look.</h2>
-    <div class="mt-12 grid gap-6 md:grid-cols-3">
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
       <NuxtLink
         v-for="card in services"
         :key="card.to"
@@ -24,20 +24,59 @@
   <section class="bg-white py-20">
     <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-2">
       <div>
-        <p class="text-sm uppercase tracking-[0.28em] text-moss">Featured project</p>
-        <h2 class="mt-3 font-serif text-4xl">Designed kitchen</h2>
+        <p class="text-sm uppercase tracking-[0.28em] text-moss">Cabinet finishes</p>
+        <h2 class="mt-3 font-serif text-4xl">Northville stock we specify</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          Same kitchen: dated dark wood on the left, white shaker and stone on the right. Install typically runs through
-          The Flip Fixer.
+          Styles by Design designs the space and the takeoff. Gallery photos are Northville cabinet photography —
+          not Styles by Design construction. {{ SITE.preferredContractorOffer }}
         </p>
-        <NuxtLink to="/gallery" class="mt-6 inline-block text-moss">See the gallery →</NuxtLink>
+        <div class="mt-6 flex flex-wrap gap-4">
+          <NuxtLink to="/gallery" class="inline-block text-moss">Browse finishes →</NuxtLink>
+          <a :href="SITE.preferredContractorUrl" class="inline-block text-moss" target="_blank" rel="noreferrer">
+            {{ SITE.preferredContractorCta }} →
+          </a>
+        </div>
       </div>
-      <BeforeAfterSlider
-        :before-image="PHOTOS.kitchenBefore"
-        :after-image="PHOTOS.kitchenAfter"
-        before-alt="Kitchen before remodeling"
-        after-alt="Kitchen after remodeling"
+      <img
+        :src="PHOTOS.kitchenHero"
+        alt="Northville elegant white kitchen cabinetry"
+        class="h-80 w-full rounded-2xl object-cover shadow-sm md:h-[28rem]"
       />
+    </div>
+  </section>
+
+  <section class="bg-sand/40 py-20">
+    <div class="mx-auto max-w-6xl px-4 md:grid-cols-2 md:grid md:items-center md:gap-12">
+      <div>
+        <p class="text-sm uppercase tracking-[0.28em] text-moss">Trade partners</p>
+        <h2 class="mt-3 font-serif text-4xl">Contractor portal</h2>
+        <p class="mt-4 text-lg text-ink/75 leading-relaxed">
+          Licensed remodelers and builders can buy Northville stock at 20% off MSRP. Access is separate from the public
+          site: we verify your company first, then issue a trade PIN.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <NuxtLink to="/contact" class="rounded-full bg-ink px-6 py-3 font-medium text-cream">
+            Request trade verification
+          </NuxtLink>
+          <NuxtLink to="/contractors" class="rounded-full border border-ink px-6 py-3 font-medium text-ink">
+            Already have a PIN?
+          </NuxtLink>
+        </div>
+      </div>
+      <div class="mt-10 rounded-2xl bg-white p-8 shadow-sm md:mt-0">
+        <ol class="list-decimal space-y-3 pl-5 text-ink/80">
+          <li>Contact us with your company name and license info.</li>
+          <li>We verify you are an active trade buyer.</li>
+          <li>You receive a PIN for the contractor catalog.</li>
+        </ol>
+        <p class="mt-6 text-sm text-ink/55">
+          Need install help instead?
+          <a :href="SITE.preferredContractorUrl" class="text-moss hover:underline" target="_blank" rel="noreferrer">
+            {{ SITE.preferredContractorCta }}
+          </a>
+          — {{ SITE.preferredContractorOffer }}
+        </p>
+      </div>
     </div>
   </section>
 
@@ -64,8 +103,21 @@
 
   <section class="bg-ink py-16 text-center text-cream">
     <h2 class="font-serif text-4xl">Ready to walk the space together?</h2>
-    <p class="mx-auto mt-4 max-w-xl text-cream/75">Free consultations. Military, veterans, first responders, and educators: ask about our discount.</p>
-    <NuxtLink to="/contact" class="mt-8 inline-block rounded-full bg-brass px-8 py-3 font-medium text-ink">Book a consult</NuxtLink>
+    <p class="mx-auto mt-4 max-w-xl text-cream/75">
+      Free consultations. Military, veterans, first responders, and educators: ask about our discount.
+      {{ SITE.preferredContractorOffer }}
+    </p>
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+      <NuxtLink to="/contact" class="inline-block rounded-full bg-brass px-8 py-3 font-medium text-ink">Book a consult</NuxtLink>
+      <a
+        :href="SITE.preferredContractorUrl"
+        class="inline-block rounded-full border border-cream/40 px-8 py-3 font-medium text-cream hover:bg-cream/10"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {{ SITE.preferredContractorCta }}
+      </a>
+    </div>
   </section>
 </template>
 
@@ -73,21 +125,15 @@
 const services = [
   {
     title: "Kitchen design",
-    blurb: "Layouts, finishes, lighting, and a cabinet takeoff. Install is typically The Flip Fixer.",
+    blurb: "Layouts, finishes, lighting, and a full cabinet plan — built around how your kitchen actually gets used.",
     image: PHOTOS.kitchen,
     to: "/services/kitchen-remodeling",
   },
   {
     title: "Bath design",
-    blurb: "Showers, tile, vanities, and a spec package. Our installers usually run through The Flip Fixer.",
+    blurb: "Showers, tile, vanities, and a complete spec package, ready to build.",
     image: PHOTOS.bath,
     to: "/services/bath-remodeling",
-  },
-  {
-    title: "Contractor cabinets",
-    blurb: "Trade pricing on stock Northville SKUs from the estimator. 20% off MSRP.",
-    image: PHOTOS.cabinets,
-    to: "/contractors",
   },
 ];
 
