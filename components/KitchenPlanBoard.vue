@@ -182,7 +182,7 @@
             fill-opacity="0.28"
             :stroke="fp.color"
             stroke-width="3"
-            class="cursor-pointer"
+            class="cursor-grab active:cursor-grabbing"
             @pointerdown.stop="onPolygonDown(fp, $event)"
             @contextmenu.stop.prevent="openFootprintMenu(fp, $event)"
           />
@@ -517,7 +517,7 @@ watch(activeLabel, (id) => {
   placeDepthIn.value = size.depthInches;
 });
 
-let dragKind: "point" | "item" | "line" | null = null;
+let dragKind: "point" | "item" | "line" | "footprint" | null = null;
 let dragId: string | null = null;
 let dragPointIndex = -1;
 let dragOffsetX = 0;
@@ -897,8 +897,43 @@ function duplicateMenuItem() {
 }
 
 function onPolygonDown(fp: PlanFootprint, event: PointerEvent) {
-  if (event.button !== 0) return;
+  if (event.button !== 0 || !boardEl.value) return;
   activeId.value = fp.id;
+  closeMenu();
+  if (tool.value === "erase") {
+    removeFootprint(fp.id);
+    return;
+  }
+  const board = boardEl.value;
+  const start = inchesFromEvent(event, board);
+  const origin = fp.points.map((pt) => ({ x: pt.x, y: pt.y }));
+  dragKind = "footprint";
+  dragId = fp.id;
+  const onMove = (ev: PointerEvent) => {
+    if (dragKind !== "footprint" || !dragId) return;
+    const pos = inchesFromEvent(ev, board);
+    let dx = (pos.x - start.x) / CELL_INCHES;
+    let dy = (pos.y - start.y) / CELL_INCHES;
+    const xs = origin.map((pt) => pt.x + dx);
+    const ys = origin.map((pt) => pt.y + dy);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    if (minX < 0) dx -= minX;
+    if (minY < 0) dy -= minY;
+    if (maxX > PLAN_COLS) dx -= maxX - PLAN_COLS;
+    if (maxY > PLAN_ROWS) dy -= maxY - PLAN_ROWS;
+    patchFootprint(dragId, { points: origin.map((pt) => ({ x: pt.x + dx, y: pt.y + dy })) });
+  };
+  const onUp = () => {
+    dragKind = null;
+    dragId = null;
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+  };
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp);
 }
 
 function clearWalls() {
