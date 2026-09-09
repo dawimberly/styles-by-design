@@ -2,7 +2,6 @@ import {
   BOARD_HEIGHT_IN,
   BOARD_WIDTH_IN,
   FOOTPRINT_COLORS,
-  footprintFromWallLines,
   type PlanFootprint,
   type PlanLine,
 } from "./kitchen-plan";
@@ -20,6 +19,8 @@ export type LayoutInput = {
   shape: LayoutShapeId;
   aInches: number;
   bInches: number;
+  /** U-shape right arm; defaults to bInches when omitted. */
+  cInches?: number;
 };
 
 const PAD = 24;
@@ -40,21 +41,24 @@ function wall(label: string, x: number, y: number, length: number, angle: number
 export function buildLayout(input: LayoutInput): { lines: PlanLine[]; footprint: PlanFootprint | null } {
   const a = Math.min(Math.max(24, input.aInches), BOARD_WIDTH_IN - PAD * 2);
   const b = Math.min(Math.max(24, input.bInches), BOARD_HEIGHT_IN - PAD * 2);
+  const c = Math.min(Math.max(24, input.cInches ?? input.bInches), BOARD_HEIGHT_IN - PAD * 2);
   const x = PAD;
   const y = PAD;
   let lines: PlanLine[] = [];
 
   if (input.shape === "single") {
-    lines = [wall("Run", x, y + 48, a, 0)];
+    lines = [wall("Wall", x, y + 72, a, 0)];
   } else if (input.shape === "galley") {
-    lines = [wall("North run", x, y, a, 0), wall("South run", x, y + b, a, 0)];
+    lines = [wall("North", x, y, a, 0), wall("South", x, y + b, a, 0)];
   } else if (input.shape === "ell") {
-    lines = [wall("West", x, y, b, 90), wall("South", x, y + b, a, 0)];
+    // L: short wall up (b), long wall right (a), meeting at lower-left.
+    lines = [wall("Short", x, y, b, 90), wall("Long", x, y + b, a, 0)];
   } else {
-    lines = [wall("West", x, y, b, 90), wall("South", x, y + b, a, 0), wall("East", x + a, y, b, 90)];
+    // U: left arm (b), back/south (a), right arm (c). Opens upward.
+    lines = [wall("Left", x, y, b, 90), wall("Back", x, y + b, a, 0), wall("Right", x + a, y + (b - c), c, 90)];
   }
 
-  return { lines, footprint: footprintFromWallLines(lines, COLOR) };
+  return { lines, footprint: null };
 }
 
 /** Island is a freestanding rectangle, not a room-shape template. */
