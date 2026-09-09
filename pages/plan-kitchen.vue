@@ -171,9 +171,7 @@
           class="rounded-lg border border-sand px-4 py-3 md:col-span-2"
           placeholder="Finish, island, timeline, ship-to notes, anything the sketch misses"
         />
-
         <p v-if="msg" class="md:col-span-2 text-moss">{{ msg }}</p>
-
         <div class="flex flex-wrap gap-3 md:col-span-2">
           <button type="button" class="rounded-full border border-sand px-5 py-3" @click="goTo(3)">← Back</button>
           <button class="rounded-full bg-ink px-6 py-3 text-cream" type="submit" :disabled="sending">
@@ -192,10 +190,8 @@
             Open contractor / trade purchase →
           </NuxtLink>
         </div>
-
         <p class="md:col-span-2 text-sm text-ink/50">
-          Paste the copied package into the purchase email (or contractor form) so design and order travel together.
-          Attach the SVG. Design help:
+          Paste the copied package into the purchase email and attach the SVG. Design help:
           <NuxtLink to="/contact" class="text-moss hover:underline">Contact Styles by Design</NuxtLink>.
         </p>
       </form>
@@ -207,20 +203,22 @@
 import {
   CELL_INCHES,
   PLAN_STEPS,
-  buildPlanSvg,
-  buildTakeoff,
-  downloadTextFile,
   footprintSummary,
   inchesToFeetInches,
   itemSummary,
   labelMeta,
   lineSummary,
-  takeoffSummary,
   type PlanFootprint,
   type PlanItem,
   type PlanLine,
   type PlanStepId,
 } from "../utils/kitchen-plan";
+import {
+  buildPlanSvg,
+  buildTakeoff,
+  downloadTextFile,
+  takeoffSummary,
+} from "../utils/kitchen-stock";
 
 const step = ref<PlanStepId>(1);
 const planFootprints = ref<PlanFootprint[]>([]);
@@ -347,7 +345,6 @@ function printPlan() {
 
 useSeoMeta({
   title: "Plan my kitchen",
-  description:
-    "Walls, utilities, then appliances — package a kitchen design with the cabinet purchase email.",
+  description: "Walls, utilities, then appliances — package a kitchen design with the cabinet purchase email.",
 });
 </script>
