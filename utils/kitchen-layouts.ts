@@ -7,10 +7,10 @@ import {
 } from "./kitchen-plan";
 
 export const LAYOUT_SHAPES = [
-  { id: "single", name: "Single wall", blurb: "One cabinet run." },
-  { id: "galley", name: "Galley", blurb: "Two parallel runs." },
-  { id: "ell", name: "L-shaped", blurb: "Corner kitchen." },
-  { id: "u", name: "U-shaped", blurb: "Three connected runs." },
+  { id: "single", name: "Single wall", blurb: "One wall." },
+  { id: "galley", name: "Galley", blurb: "Two parallel walls." },
+  { id: "ell", name: "L-shaped", blurb: "Two walls at a corner." },
+  { id: "u", name: "U-shaped", blurb: "Three walls." },
 ] as const;
 
 export type LayoutShapeId = (typeof LAYOUT_SHAPES)[number]["id"];

@@ -37,7 +37,9 @@
             :x="label.x"
             :y="label.y"
             text-anchor="middle"
-            class="fill-ink text-[11px] font-medium"
+            fill="currentColor"
+            font-size="12"
+            font-family="Georgia, serif"
           >
             {{ label.text }}
           </text>
