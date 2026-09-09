@@ -92,8 +92,8 @@
       <div>
         <h2 class="font-serif text-3xl">Step 3 — Appliances & cabinets</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          Place sink, dishwasher, fridge, range, counters, and cabinet runs. Standard sizes load automatically; tweak
-          inches and rotation anytime.
+          Pick a Northville stock SKU, snap it to a wall, or fill a whole run with boxes plus filler. Standard sizes
+          load automatically; tweak inches and rotation anytime.
         </p>
       </div>
       <KitchenPlanBoard
@@ -114,8 +114,8 @@
       <div>
         <h2 class="font-serif text-3xl">Step 4 — Package design with the purchase email</h2>
         <p class="mt-2 max-w-2xl text-ink/70">
-          For outside designers: copy this package into the same email as your cabinet purchase so shipping to San
-          Antonio includes the layout. Homeowners can also send it to our preferred contractor to negotiate install.
+          Download the dimensioned plan and copy the takeoff into the same email as the cabinet purchase. Homeowners can
+          also send it to our preferred contractor to negotiate install.
         </p>
       </div>
 
@@ -130,6 +130,21 @@
           · Appliances & cabinets:
           <span class="font-medium text-ink">{{ applianceCount }}</span>
         </p>
+        <ul v-if="takeoff.length" class="mt-4 space-y-1 border-t border-sand pt-3">
+          <li v-for="line in takeoff" :key="line.sku + (line.note || '')" class="flex justify-between gap-3">
+            <span class="font-medium text-ink">{{ line.qty }}× {{ line.sku }}</span>
+            <span>{{ line.name }} · {{ inchesToFeetInches(line.width) }}{{ line.note ? ` · ${line.note}` : "" }}</span>
+          </li>
+        </ul>
+        <p v-else class="mt-3 text-ink/50">Place stock cabinets in step 3 to build a takeoff.</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button type="button" class="rounded-full bg-ink px-5 py-2 text-cream" @click="downloadSvg">
+            Download plan SVG
+          </button>
+          <button type="button" class="rounded-full border border-ink px-5 py-2" @click="printPlan">
+            Print / PDF
+          </button>
+        </div>
       </div>
 
       <form class="grid gap-4 rounded-2xl bg-white p-8 shadow-sm md:grid-cols-2" @submit.prevent="copyPackage">
@@ -180,7 +195,7 @@
 
         <p class="md:col-span-2 text-sm text-ink/50">
           Paste the copied package into the purchase email (or contractor form) so design and order travel together.
-          Design help:
+          Attach the SVG. Design help:
           <NuxtLink to="/contact" class="text-moss hover:underline">Contact Styles by Design</NuxtLink>.
         </p>
       </form>
@@ -192,10 +207,15 @@
 import {
   CELL_INCHES,
   PLAN_STEPS,
+  buildPlanSvg,
+  buildTakeoff,
+  downloadTextFile,
   footprintSummary,
+  inchesToFeetInches,
   itemSummary,
   labelMeta,
   lineSummary,
+  takeoffSummary,
   type PlanFootprint,
   type PlanItem,
   type PlanLine,
@@ -222,6 +242,7 @@ const utilityCount = computed(
 const applianceCount = computed(
   () => planItems.value.filter((item) => labelMeta(item.labelId).category === "appliance").length,
 );
+const takeoff = computed(() => buildTakeoff(planItems.value.filter((item) => labelMeta(item.labelId).category === "appliance")));
 
 function canGoTo(id: PlanStepId) {
   if (id === 1) return true;
@@ -263,10 +284,12 @@ function summarize() {
   const appliances = planItems.value.filter((item) => labelMeta(item.labelId).category === "appliance");
   if (!appliances.length) lines.push("(none)");
   for (const item of appliances) lines.push(`- ${itemSummary(item)}`);
+  lines.push("", "Stock takeoff:");
+  lines.push(takeoffSummary(appliances));
   lines.push(
     "",
     role.value === "designer"
-      ? "Please keep this design with the cabinet purchase email for San Antonio shipping."
+      ? "Please keep this design with the cabinet purchase email for San Antonio shipping. SVG plan attached separately."
       : "Please reply with an install quote and options we can negotiate.",
   );
   return lines.join("\n");
@@ -279,7 +302,7 @@ async function copyPackage() {
     await navigator.clipboard.writeText(summarize());
     msg.value =
       role.value === "designer"
-        ? "Design package copied. Paste it into the same email as your cabinet purchase."
+        ? "Design package copied. Paste it into the same email as your cabinet purchase and attach the SVG."
         : "Package copied. Paste it when you contact the preferred contractor.";
   } catch {
     msg.value = "Could not copy automatically — summary logged to the browser console.";
@@ -287,6 +310,39 @@ async function copyPackage() {
   } finally {
     sending.value = false;
   }
+}
+
+function downloadSvg() {
+  const svg = buildPlanSvg({
+    lines: planLines.value,
+    items: planItems.value,
+    footprints: planFootprints.value,
+    title: name.value ? `Kitchen plan — ${name.value}` : "Kitchen plan",
+    studio: SITE.name,
+  });
+  downloadTextFile("kitchen-plan.svg", svg, "image/svg+xml");
+}
+
+function printPlan() {
+  const svg = buildPlanSvg({
+    lines: planLines.value,
+    items: planItems.value,
+    footprints: planFootprints.value,
+    title: name.value ? `Kitchen plan — ${name.value}` : "Kitchen plan",
+    studio: SITE.name,
+  });
+  const win = window.open("", "_blank");
+  if (!win) {
+    downloadSvg();
+    return;
+  }
+  win.document.open();
+  win.document.write("<!doctype html><title>Kitchen plan</title>");
+  win.document.write('<body style="margin:0;background:#f7f3ea">');
+  win.document.write(svg);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 250);
 }
 
 useSeoMeta({
