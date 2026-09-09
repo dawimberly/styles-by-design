@@ -10,22 +10,22 @@ export const PLAN_STEPS = [
   {
     id: 1,
     title: "Walls",
-    blurb: "One typed line per wall — any inch length, then rotate and drag.",
+    blurb: "Layout walls and peninsula — drag and resize on the sheet.",
   },
   {
     id: 2,
     title: "Utilities",
-    blurb: "Doors, windows, outlets, and plumbing.",
+    blurb: "Doors, windows, outlets, plumbing for the room scan.",
   },
   {
     id: 3,
-    title: "Appliances & cabinets",
-    blurb: "Sink, DW, fridge, range, and cabinet runs.",
+    title: "Stock",
+    blurb: "Northville SKUs and appliances on the runs.",
   },
   {
     id: 4,
-    title: "Package & send",
-    blurb: "Email the design with the cabinet purchase for San Antonio shipping.",
+    title: "Export",
+    blurb: "PDF + room-scan JSON + cabinet takeoff for Flip Fixer.",
   },
 ] as const;
 
@@ -69,6 +69,8 @@ export type PlanFootprint = {
   points: PlanPoint[];
   closed: boolean;
   color: string;
+  /** Peninsula / island / room fill label. */
+  label?: string;
 };
 
 export type PlanItem = {
@@ -327,8 +329,9 @@ export function footprintPerimeterInches(fp: PlanFootprint) {
 
 export function footprintSummary(fp: PlanFootprint) {
   const colorName = FOOTPRINT_COLORS.find((c) => c.value === fp.color)?.name || fp.color;
+  const name = fp.label?.trim() || colorName;
   const pts = fp.points.map((p) => `(${p.x * CELL_INCHES}",${p.y * CELL_INCHES}")`).join(" → ");
-  return `${colorName} footprint · ${fp.closed ? "closed" : "open"} · ${fp.points.length} pts · peri ~${inchesToFeetInches(Math.round(footprintPerimeterInches(fp)))}: ${pts}`;
+  return `${name} · ${fp.closed ? "closed" : "open"} · ${fp.points.length} pts · peri ~${inchesToFeetInches(Math.round(footprintPerimeterInches(fp)))}: ${pts}`;
 }
 
 export function distToLineInches(px: number, py: number, line: PlanLine) {

@@ -67,7 +67,6 @@ const route = useRoute();
 const links = [
   { to: "/", text: "Home" },
   { to: "/services", text: "Services" },
-  { to: "/plan-kitchen", text: "Plan kitchen" },
   { to: "/gallery", text: "Gallery" },
   { to: "/about", text: "About" },
   { to: "/contact", text: "Contact" },

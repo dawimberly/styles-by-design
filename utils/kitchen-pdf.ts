@@ -308,7 +308,7 @@ function sheetTakeoff(opts: PlanPdfOpts) {
     if (y < 80) break;
   }
   p.text(MARGIN, 56, 9, "Northville stock boxes only. Fillers are field-cut. Not a custom cabinet shop drawing.");
-  p.text(MARGIN, 42, 9, "Separate pages keep outlets out from under cabinets. Attach all four sheets to the purchase email.");
+  p.text(MARGIN, 42, 9, "Separate pages keep outlets out from under cabinets. Attach all four sheets to the Flip Fixer job.");
   return p.raw();
 }
 

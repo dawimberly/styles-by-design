@@ -2,7 +2,8 @@
   <PageHeader subtitle="Staff" title="Employee login — confirm funds, then send to Divya" />
   <div class="mx-auto max-w-xl px-4 py-16">
     <p class="text-ink/75 leading-relaxed">
-      Studio staff only. Confirm Stripe payment, then email the Cabinets To Go work order to Divya at Dura Stone.
+      Studio staff only. Confirm Stripe payment, then email the Cabinets To Go work order to Divya at Dura Stone. After
+      login you can also open the kitchen estimator (sketch + Northville takeoff for Flip Fixer).
     </p>
     <form class="mt-8 space-y-4 rounded-2xl bg-white p-8 shadow-sm" @submit.prevent="login">
       <label class="block text-sm font-medium" for="staff-pin">Staff PIN</label>

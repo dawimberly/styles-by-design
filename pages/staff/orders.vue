@@ -8,6 +8,11 @@
           Paid Stripe checkouts wait here. Confirm funds, then send the work order to
           dawimberly@gmail.com (temporary). Jon gets a copy.
         </p>
+        <p class="mt-3">
+          <NuxtLink to="/staff/kitchen" class="text-sm font-medium text-moss hover:underline">
+            Kitchen estimator →
+          </NuxtLink>
+        </p>
       </div>
       <button class="text-sm text-moss" type="button" @click="logout">Sign out</button>
     </div>

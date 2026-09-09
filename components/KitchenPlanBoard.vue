@@ -197,6 +197,17 @@
             @pointerdown.stop="onPolygonDown(fp, $event)"
             @contextmenu.stop.prevent="openFootprintMenu(fp, $event)"
           />
+          <text
+            v-for="fp in closedFootprints"
+            :key="`label-${fp.id}`"
+            :x="footprintCenter(fp).x * PLAN_CELL_PX"
+            :y="footprintCenter(fp).y * PLAN_CELL_PX"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            class="pointer-events-none fill-ink text-[11px] font-medium"
+          >
+            {{ fp.label || "Peninsula" }}
+          </text>
           <polyline
             v-for="fp in openFootprints"
             :key="`line-${fp.id}`"
@@ -745,6 +756,13 @@ function polyPoints(fp: PlanFootprint) {
   return fp.points.map((p) => `${p.x * PLAN_CELL_PX},${p.y * PLAN_CELL_PX}`).join(" ");
 }
 
+function footprintCenter(fp: PlanFootprint) {
+  if (!fp.points.length) return { x: 0, y: 0 };
+  const x = fp.points.reduce((s, p) => s + p.x, 0) / fp.points.length;
+  const y = fp.points.reduce((s, p) => s + p.y, 0) / fp.points.length;
+  return { x, y };
+}
+
 function cornerFromEvent(event: PointerEvent | MouseEvent, el: HTMLElement): PlanPoint {
   const rect = el.getBoundingClientRect();
   return clampPoint({
@@ -824,7 +842,7 @@ function clearFootprints() {
 function openFootprintMenu(fp: PlanFootprint, event: MouseEvent) {
   const pos = menuPosition(event);
   activeId.value = fp.id;
-  menu.value = { kind: "footprint", id: fp.id, title: "Footprint", x: pos.x, y: pos.y, panel: "main" };
+  menu.value = { kind: "footprint", id: fp.id, title: fp.label || "Peninsula", x: pos.x, y: pos.y, panel: "main" };
 }
 
 function openPointMenu(footprintId: string, pointIndex: number, event: MouseEvent) {

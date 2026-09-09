@@ -87,33 +87,33 @@
     <div class="flex flex-wrap items-center gap-3 border-t border-sand/70 pt-4">
       <label class="flex items-center gap-2 text-sm text-ink/80">
         <input v-model="addIsland" type="checkbox" class="h-4 w-4 rounded border-sand" />
-        Also add an island rectangle
+        Also add a peninsula / island rectangle
       </label>
       <template v-if="addIsland">
         <label class="text-sm">
-          <span class="sr-only">Island width</span>
+          <span class="sr-only">Peninsula width</span>
           <input
             v-model.number="islandW"
             type="number"
             min="24"
             step="1"
             class="w-24 rounded-lg border border-sand bg-cream px-3 py-2"
-            title="Island width (in)"
+            title="Peninsula width (in)"
           />
         </label>
         <span class="text-ink/40">×</span>
         <label class="text-sm">
-          <span class="sr-only">Island depth</span>
+          <span class="sr-only">Peninsula depth</span>
           <input
             v-model.number="islandD"
             type="number"
             min="18"
             step="1"
             class="w-24 rounded-lg border border-sand bg-cream px-3 py-2"
-            title="Island depth (in)"
+            title="Peninsula depth (in)"
           />
         </label>
-        <span class="text-xs text-ink/50">in — drag after place</span>
+        <span class="text-xs text-ink/50">in — drag as one piece, pull corners to resize</span>
       </template>
     </div>
   </div>
@@ -249,7 +249,7 @@ function place() {
     cInches: cInches.value,
   });
   // Walls only — no bounding-box room fill (that made L/U look like a solid rectangle).
-  const fps: PlanFootprint[] = addIsland.value ? [buildIsland(islandW.value, islandD.value)] : [];
+  const fps: PlanFootprint[] = addIsland.value ? [buildIsland(islandW.value, islandD.value, "Peninsula")] : [];
   lines.value = next.lines;
   footprints.value = fps;
   emit("placed");
