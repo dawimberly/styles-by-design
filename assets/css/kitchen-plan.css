@@ -1,0 +1,20 @@
+/* Kitchen plan sheet — keep both scrollbars visible on the drawing pane. */
+.kitchen-plan-page .overflow-auto {
+  max-height: 70vh;
+  min-height: 28rem;
+  overflow: scroll !important;
+  scrollbar-gutter: stable;
+}
+.kitchen-plan-page .overflow-auto::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+.kitchen-plan-page .overflow-auto::-webkit-scrollbar-thumb {
+  background: #1f2a24;
+  border-radius: 999px;
+  border: 3px solid #f7f3ea;
+}
+.kitchen-plan-page .overflow-auto::-webkit-scrollbar-track,
+.kitchen-plan-page .overflow-auto::-webkit-scrollbar-corner {
+  background: #e8dfd0;
+}
