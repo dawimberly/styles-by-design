@@ -1,10 +1,10 @@
 export const CELL_INCHES = 6;
 /** Graph-paper squares per full (bold) foot square: 2 × 6" = 1'. */
 export const CELLS_PER_FOOT = 2;
-/** Board ~16' × 14' — sized to fit a laptop screen without huge scrolling. */
-export const PLAN_COLS = 32;
-export const PLAN_ROWS = 28;
-export const PLAN_CELL_PX = 18;
+/** Board 24' × 20'. Viewport scrolls; do not shrink cells to fit the laptop. */
+export const PLAN_COLS = 48;
+export const PLAN_ROWS = 40;
+export const PLAN_CELL_PX = 24;
 
 export const PLAN_STEPS = [
   {
