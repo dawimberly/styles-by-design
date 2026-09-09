@@ -2,6 +2,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: false },
   modules: ["@nuxtjs/tailwindcss", "@nuxt/fonts"],
+  css: ["~/assets/css/kitchen-plan.css"],
   fonts: {
     families: [
       { name: "Cormorant Garamond", provider: "google", weights: [500, 600, 700] },
