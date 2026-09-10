@@ -61,6 +61,6 @@ async function login() {
 
 useSeoMeta({
   title: "Contractor portal",
-  description: "Verified trade buyers only. Request a PIN for Northville stock at 20% off MSRP.",
+  description: "Verified trade buyers only. Request a PIN for stock cabinets at 20% off MSRP.",
 });
 </script>
