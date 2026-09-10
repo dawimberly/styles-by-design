@@ -9,7 +9,7 @@ export default defineEventHandler((event) => {
   const group = String(query.group || "");
 
   let rows = flattenSkus();
-  if (group) rows = rows.filter((row) => matchesCatalogGroup(row.groupId, group));
+  // Typing a search scans the whole catalog; category filter applies only when search is empty.
   if (search) {
     rows = rows.filter(
       (row) =>
@@ -17,6 +17,8 @@ export default defineEventHandler((event) => {
         row.name.toLowerCase().includes(search) ||
         row.groupName.toLowerCase().includes(search),
     );
+  } else if (group) {
+    rows = rows.filter((row) => matchesCatalogGroup(row.groupId, group));
   }
 
   return {

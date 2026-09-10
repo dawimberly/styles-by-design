@@ -12,7 +12,7 @@
     </div>
 
     <div class="mt-8 grid gap-3 md:grid-cols-3">
-      <input v-model="q" class="rounded-lg border border-sand bg-white px-4 py-3" placeholder="Search SKU or description" />
+      <input v-model="q" class="rounded-lg border border-sand bg-white px-4 py-3" placeholder="Search any SKU or description" />
       <select v-model="group" class="rounded-lg border border-sand bg-white px-4 py-3">
         <option value="">All categories</option>
         <optgroup v-for="section in catalog?.sections || []" :key="section.id" :label="section.name">
@@ -304,7 +304,11 @@ const headers = useRequestHeaders(["cookie"]);
 const { data: catalog } = await useFetch("/api/contractors/catalog", {
   headers,
   credentials: "include",
-  query: { q, group, finish },
+  query: computed(() => ({
+    q: q.value,
+    group: q.value.trim() ? "" : group.value,
+    finish: finish.value,
+  })),
   watch: [q, group, finish],
 });
 
