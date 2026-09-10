@@ -1,3 +1,6 @@
+import { EMPLOYEE_COOKIE, employeePinFromRuntime } from "../../utils/cabinets";
+import { authCookieOptions } from "../../utils/auth-cookies";
+
 export default defineEventHandler(async (event) => {
   const pin = employeePinFromRuntime();
   if (!pin) {
@@ -7,12 +10,6 @@ export default defineEventHandler(async (event) => {
   if (!body?.pin || body.pin !== pin) {
     throw createError({ statusCode: 401, statusMessage: "That staff PIN is not valid." });
   }
-  setCookie(event, EMPLOYEE_COOKIE, body.pin, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-  });
+  setCookie(event, EMPLOYEE_COOKIE, body.pin, authCookieOptions(event));
   return { ok: true };
 });
