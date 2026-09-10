@@ -11,10 +11,17 @@
       <button class="text-sm text-moss" type="button" @click="logout">Sign out</button>
     </div>
 
-    <div class="mt-8 grid gap-3 md:grid-cols-3">
-      <div class="md:col-span-1">
-        <input v-model="q" class="w-full rounded-lg border border-sand bg-white px-4 py-3" placeholder="Type to search (SKU or words)" />
-        <p class="mt-1 text-xs text-ink/45">Searches as you type — no button.</p>
+    <div class="mt-8 grid gap-3 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <div>
+        <input
+          v-model="q"
+          class="w-full rounded-lg border border-sand bg-white px-4 py-3"
+          placeholder="Search SKU or words (e.g. vanity, pantry)"
+          @keydown.enter.prevent="applySearch"
+        />
+        <p class="mt-1 text-xs text-ink/45">
+          {{ visibleItems.length }} of {{ catalog?.items?.length || 0 }} shown
+        </p>
       </div>
       <select v-model="group" class="rounded-lg border border-sand bg-white px-4 py-3">
         <option value="">All categories</option>
@@ -25,6 +32,7 @@
       <select v-model="finish" class="rounded-lg border border-sand bg-white px-4 py-3">
         <option v-for="f in catalog?.finishes || []" :key="f" :value="f">{{ f }}</option>
       </select>
+      <button class="rounded-full bg-ink px-5 py-3 text-cream" type="button" @click="applySearch">Search</button>
     </div>
 
     <div class="mt-4 flex flex-wrap gap-2">
@@ -41,7 +49,7 @@
       </button>
     </div>
 
-    <figure class="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm">
+    <figure v-if="!q.trim()" class="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm">
       <div class="grid gap-0 md:grid-cols-[minmax(0,1fr)_11rem]">
         <img :src="selectedLook.room" :alt="`${finish} photo`" class="h-64 w-full object-cover md:h-80" />
         <img :src="selectedLook.door" :alt="`${finish} sample`" class="h-40 w-full object-cover md:h-80" />
@@ -90,7 +98,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in catalog?.items || []" :key="item.sku" class="border-b border-sand/60">
+          <tr v-for="item in visibleItems" :key="item.sku" class="border-b border-sand/60">
             <td class="px-4 py-3 font-medium whitespace-nowrap">{{ item.sku }}</td>
             <td class="px-4 py-3 text-ink/70">{{ item.name }}</td>
             <td class="px-4 py-3 text-ink/70">{{ item.groupName }}</td>
@@ -131,6 +139,9 @@
           </tr>
         </tbody>
       </table>
+      <p v-if="!(visibleItems.length)" class="px-4 py-8 text-center text-ink/55">
+        No cabinets match “{{ q || group || 'this filter' }}”. Clear search or pick another category.
+      </p>
     </div>
 
     <section class="mt-12 rounded-2xl bg-white p-8 shadow-sm">
@@ -257,6 +268,8 @@ import {
   roomLabel,
   type CartRoom,
 } from "../../utils/room-types";
+import { matchesCatalogGroup } from "../../utils/catalog-categories";
+import { matchesSearchBlob } from "../../utils/sku-search";
 
 definePageMeta({ middleware: "contractor" });
 
@@ -283,6 +296,7 @@ type Item = {
   name: string;
   groupId: string;
   groupName: string;
+  searchText?: string;
   list: number;
   net: number;
   save: number;
@@ -307,13 +321,29 @@ const headers = useRequestHeaders(["cookie"]);
 const { data: catalog } = await useFetch("/api/contractors/catalog", {
   headers,
   credentials: "include",
-  query: computed(() => ({
-    q: q.value,
-    group: q.value.trim() ? "" : group.value,
-    finish: finish.value,
-  })),
-  watch: [q, group, finish],
+  query: computed(() => ({ finish: finish.value })),
+  watch: [finish],
 });
+
+/** Live filter — does not wait on another network round-trip. */
+const visibleItems = computed(() => {
+  const items = (catalog.value?.items || []) as Item[];
+  const needle = q.value.trim();
+  return items.filter((item) => {
+    if (needle) {
+      const blob = item.searchText || `${item.sku} ${item.name} ${item.groupName}`;
+      if (!matchesSearchBlob(blob, needle)) return false;
+      return true;
+    }
+    if (group.value && !matchesCatalogGroup(item.groupId, group.value)) return false;
+    return true;
+  });
+});
+
+function applySearch() {
+  // Bound to the same q ref — button/enter are explicit commits for users who expect them.
+  q.value = q.value.trim();
+}
 
 const cartTotal = computed(() => cart.value.reduce((sum, line) => sum + line.net * line.qty, 0));
 const selectedLook = computed(() => finishPhotos(finish.value));

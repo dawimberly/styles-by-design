@@ -1,21 +1,13 @@
 import { cabinetCatalog, contractorPrice, flattenSkus, listPrice } from "../../utils/cabinets";
-import { CATALOG_SECTIONS, matchesCatalogGroup } from "../../utils/catalog-categories";
-import { matchesSearchBlob } from "../../utils/sku-search";
+import { CATALOG_SECTIONS } from "../../utils/catalog-categories";
 
+/** Full priced catalog for one finish — client filters search/category for live typing. */
 export default defineEventHandler((event) => {
   requireContractor(event);
   const query = getQuery(event);
   const finish = String(query.finish || cabinetCatalog().finish_options[0]);
-  const search = String(query.q || "").trim().toLowerCase();
-  const group = String(query.group || "");
 
-  let rows = flattenSkus();
-  // Typing a search scans the whole catalog; category filter applies only when search is empty.
-  if (search) {
-    rows = rows.filter((row) => matchesSearchBlob(row.searchBlob, search));
-  } else if (group) {
-    rows = rows.filter((row) => matchesCatalogGroup(row.groupId, group));
-  }
+  const rows = flattenSkus();
 
   return {
     source: cabinetCatalog().msrp_source,
@@ -41,6 +33,7 @@ export default defineEventHandler((event) => {
           groupId: row.groupId,
           groupName: row.groupName,
           closetGroup: row.option.closet_group || null,
+          searchText: row.searchBlob,
           list,
           net,
           save: Math.round((list - net) * 100) / 100,

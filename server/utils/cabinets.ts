@@ -1,7 +1,7 @@
 import catalog from "../data/cabinets.json";
-import { catalogCategoryId, catalogCategoryName } from "./catalog-categories";
-import { catalogItemDescription } from "./sku-plain";
-import { skuSearchBlob } from "./sku-search";
+import { catalogCategoryId, catalogCategoryName } from "../../utils/catalog-categories";
+import { catalogItemDescription } from "../../utils/sku-plain";
+import { skuSearchBlob } from "../../utils/sku-search";
 
 export const CONTRACTOR_DISCOUNT = 0.2;
 
