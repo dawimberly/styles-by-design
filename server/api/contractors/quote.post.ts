@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     state?: string;
     zip?: string;
     fulfillment?: "drop_ship" | "delivery";
-    lines?: { sku: string; qty: number; net: number; name: string }[];
+    lines?: { sku: string; qty: number; net: number; name: string; roomLabel?: string }[];
   }>(event);
 
   if (!body?.company?.trim() || !body?.email?.trim() || !body.lines?.length) {
@@ -29,8 +29,13 @@ export default defineEventHandler(async (event) => {
 
   const total = Math.round(body.lines.reduce((sum, line) => sum + line.net * line.qty, 0) * 100) / 100;
   const lines = body.lines
-    .map((line) => `${line.qty} × ${line.name} (${line.sku}) @ $${line.net.toFixed(2)}`)
+    .map((line) => {
+      const room = (line.roomLabel || "").trim();
+      const where = room ? `[${room}] ` : "";
+      return `${where}${line.qty} × ${line.name} (${line.sku}) @ $${line.net.toFixed(2)}`;
+    })
     .join("\n");
+  const rooms = [...new Set(body.lines.map((line) => (line.roomLabel || "").trim()).filter(Boolean))].join(", ");
   const shipTo = formatShipTo(verified);
   const fulfillment = body.fulfillment === "delivery" ? "Jobsite delivery" : "Drop-ship via Cabinets To Go account";
 
@@ -54,6 +59,7 @@ export default defineEventHandler(async (event) => {
         ship_to: shipTo,
         address_verified: verified.matched,
         notes: body.notes || "",
+        rooms: rooms || "(not labeled)",
         trade_total: `$${total.toFixed(2)}`,
         sku_lines: lines,
       },

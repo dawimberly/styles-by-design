@@ -1,4 +1,4 @@
-type Line = { sku: string; qty: number; net: number; name: string };
+type Line = { sku: string; qty: number; net: number; name: string; roomLabel?: string };
 
 export default defineEventHandler(async (event) => {
   requireContractor(event);
@@ -31,6 +31,7 @@ export default defineEventHandler(async (event) => {
   const origin = getRequestURL(event).origin;
   const shipTo = formatShipTo(verified);
   const fulfillment = body.fulfillment === "delivery" ? "Jobsite delivery" : "Drop-ship via Cabinets To Go account";
+  const rooms = [...new Set(body.lines.map((line) => (line.roomLabel || "").trim()).filter(Boolean))].join(", ");
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -47,17 +48,22 @@ export default defineEventHandler(async (event) => {
       ship_to: shipTo.slice(0, 500),
       address_verified: verified.matched.slice(0, 400),
       notes: (body.notes || "").slice(0, 500),
+      rooms: rooms.slice(0, 400),
     },
-    line_items: body.lines.map((line) => ({
-      quantity: Math.max(1, Math.min(999, Math.floor(line.qty))),
-      price_data: {
-        currency: "usd",
-        unit_amount: Math.round(line.net * 100),
-        product_data: {
-          name: `${line.name} (${line.sku})`.slice(0, 120),
+    line_items: body.lines.map((line) => {
+      const room = (line.roomLabel || "").trim();
+      const title = room ? `${room} · ${line.name} (${line.sku})` : `${line.name} (${line.sku})`;
+      return {
+        quantity: Math.max(1, Math.min(999, Math.floor(line.qty))),
+        price_data: {
+          currency: "usd",
+          unit_amount: Math.round(line.net * 100),
+          product_data: {
+            name: title.slice(0, 120),
+          },
         },
-      },
-    })),
+      };
+    }),
   });
 
   if (!session.url) {

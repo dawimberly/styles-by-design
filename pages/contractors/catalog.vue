@@ -14,8 +14,10 @@
     <div class="mt-8 grid gap-3 md:grid-cols-3">
       <input v-model="q" class="rounded-lg border border-sand bg-white px-4 py-3" placeholder="Search SKU or description" />
       <select v-model="group" class="rounded-lg border border-sand bg-white px-4 py-3">
-        <option value="">All groups</option>
-        <option v-for="g in catalog?.groups || []" :key="g.id" :value="g.id">{{ g.name }}</option>
+        <option value="">All categories</option>
+        <optgroup v-for="section in catalog?.sections || []" :key="section.id" :label="section.name">
+          <option v-for="g in section.groups" :key="g.id" :value="g.id">{{ g.name }}</option>
+        </optgroup>
       </select>
       <select v-model="finish" class="rounded-lg border border-sand bg-white px-4 py-3">
         <option v-for="f in catalog?.finishes || []" :key="f" :value="f">{{ f }}</option>
@@ -50,6 +52,27 @@
       </figcaption>
     </figure>
 
+    <div class="mt-8 flex flex-wrap items-end gap-3 rounded-2xl border border-sand bg-white p-4 shadow-sm">
+      <div class="min-w-[12rem] flex-1">
+        <label class="mb-1 block text-xs uppercase tracking-[0.15em] text-ink/50" for="active-room">Add qty to room</label>
+        <select id="active-room" v-model="activeRoomId" class="w-full rounded-lg border border-sand bg-cream px-4 py-3">
+          <option v-for="room in rooms" :key="room.instanceId" :value="room.instanceId">
+            {{ roomLabel(rooms, room) }}
+          </option>
+        </select>
+      </div>
+      <div class="min-w-[10rem]">
+        <label class="mb-1 block text-xs uppercase tracking-[0.15em] text-ink/50" for="new-room-type">New room</label>
+        <select id="new-room-type" v-model="newRoomType" class="w-full rounded-lg border border-sand px-4 py-3">
+          <option v-for="t in ROOM_TYPES" :key="t.id" :value="t.id">{{ t.name }}</option>
+        </select>
+      </div>
+      <button class="rounded-full border border-ink px-5 py-3 text-sm" type="button" @click="addRoom">+ Add room</button>
+      <p class="w-full text-sm text-ink/60">
+        Same job can have Kitchen 1, Kitchen 2, Bedroom 1… Quantities go into the selected room.
+      </p>
+    </div>
+
     <div class="mt-8 overflow-x-auto rounded-2xl bg-white shadow-sm">
       <table class="min-w-full text-left text-sm">
         <thead class="border-b border-sand text-ink/60">
@@ -60,7 +83,7 @@
             <th class="px-4 py-3">MSRP</th>
             <th class="px-4 py-3">Trade</th>
             <th class="px-4 py-3">Save</th>
-            <th class="px-4 py-3 whitespace-nowrap">Qty</th>
+            <th class="px-4 py-3 whitespace-nowrap">Qty in {{ activeRoomName }}</th>
           </tr>
         </thead>
         <tbody>
@@ -108,31 +131,61 @@
     </div>
 
     <section class="mt-12 rounded-2xl bg-white p-8 shadow-sm">
-      <h2 class="font-serif text-3xl">Order cart</h2>
+      <h2 class="font-serif text-3xl">Order cart by room</h2>
       <p class="mt-2 max-w-2xl text-ink/70">
         You pay Styles by Design. After Stripe confirms funds, studio staff confirm payment in the employee portal and
         send the Cabinets To Go work order to Divya at Dura Stone.
       </p>
       <p v-if="!cart.length" class="mt-4 text-ink/60">Set quantities to build an order.</p>
-      <ul v-else class="mt-4 space-y-3">
-        <li v-for="line in cart" :key="line.sku" class="flex items-center justify-between gap-4">
-          <span class="flex min-w-0 items-center gap-3">
-            <img :src="selectedLook.door" alt="" class="h-12 w-12 shrink-0 rounded object-cover" />
-            <span class="min-w-0">
-              <span class="font-medium">{{ line.name }}</span>
-              <span class="block truncate text-sm text-ink/60">SKU {{ line.sku }} · ${{ line.net.toFixed(2) }}</span>
-            </span>
-          </span>
-          <input
-            :value="line.qty"
-            min="0"
-            max="999"
-            type="number"
-            class="w-20 rounded border border-sand px-2 py-1"
-            @input="setQtyFromCart(line.sku, $event)"
-          />
-        </li>
-      </ul>
+      <div v-else class="mt-6 space-y-8">
+        <div v-for="block in cartByRoom" :key="block.instanceId">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-sand pb-2">
+            <h3 class="font-serif text-2xl">{{ block.label }}</h3>
+            <div class="flex flex-wrap items-center gap-2">
+              <p class="text-sm text-ink/60">${{ block.total.toFixed(2) }}</p>
+              <button
+                v-if="rooms.length > 1"
+                class="text-sm text-ink/50 hover:text-ink"
+                type="button"
+                @click="removeRoom(block.instanceId)"
+              >
+                Remove room
+              </button>
+            </div>
+          </div>
+          <ul class="space-y-3">
+            <li v-for="line in block.lines" :key="line.sku + line.roomInstanceId" class="flex items-center justify-between gap-4">
+              <span class="flex min-w-0 items-center gap-3">
+                <img :src="selectedLook.door" alt="" class="h-12 w-12 shrink-0 rounded object-cover" />
+                <span class="min-w-0">
+                  <span class="font-medium">{{ line.name }}</span>
+                  <span class="block truncate text-sm text-ink/60">SKU {{ line.sku }} · ${{ line.net.toFixed(2) }}</span>
+                </span>
+              </span>
+              <div class="flex shrink-0 items-center gap-2">
+                <select
+                  class="max-w-[9rem] rounded border border-sand px-2 py-1 text-sm"
+                  :value="line.roomInstanceId"
+                  :aria-label="`Move ${line.sku} to room`"
+                  @change="onMoveLine(line, $event)"
+                >
+                  <option v-for="room in rooms" :key="room.instanceId" :value="room.instanceId">
+                    {{ roomLabel(rooms, room) }}
+                  </option>
+                </select>
+                <input
+                  :value="line.qty"
+                  min="0"
+                  max="999"
+                  type="number"
+                  class="w-20 rounded border border-sand px-2 py-1"
+                  @input="setQtyFromCart(line.sku, line.roomInstanceId, $event)"
+                />
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
       <p v-if="cart.length" class="mt-4 font-medium">Trade total ${{ cartTotal.toFixed(2) }}</p>
 
       <form v-if="cart.length" class="mt-8 grid gap-4 md:grid-cols-2" @submit.prevent="submitQuote">
@@ -194,6 +247,13 @@
 
 <script setup lang="ts">
 import { CLOSET_FINISH, finishPhotos } from "../../utils/site";
+import {
+  ROOM_TYPES,
+  labelForInstance,
+  newRoomInstance,
+  roomLabel,
+  type CartRoom,
+} from "../../utils/room-types";
 
 definePageMeta({ middleware: "contractor" });
 
@@ -225,7 +285,20 @@ type Item = {
   save: number;
 };
 
-const cart = ref<{ sku: string; name: string; net: number; qty: number }[]>([]);
+type CartLine = {
+  sku: string;
+  name: string;
+  net: number;
+  qty: number;
+  roomInstanceId: string;
+  roomLabel: string;
+};
+
+const rooms = ref<CartRoom[]>([newRoomInstance("kitchen")]);
+const activeRoomId = ref(rooms.value[0].instanceId);
+const newRoomType = ref("kitchen");
+
+const cart = ref<CartLine[]>([]);
 
 const headers = useRequestHeaders(["cookie"]);
 const { data: catalog } = await useFetch("/api/contractors/catalog", {
@@ -238,18 +311,78 @@ const { data: catalog } = await useFetch("/api/contractors/catalog", {
 const cartTotal = computed(() => cart.value.reduce((sum, line) => sum + line.net * line.qty, 0));
 const selectedLook = computed(() => finishPhotos(finish.value));
 const isClosetFinish = computed(() => finish.value === CLOSET_FINISH);
+const activeRoomName = computed(() => labelForInstance(rooms.value, activeRoomId.value));
+
+const cartByRoom = computed(() =>
+  rooms.value
+    .map((room) => {
+      const lines = cart.value.filter((line) => line.roomInstanceId === room.instanceId);
+      return {
+        instanceId: room.instanceId,
+        label: roomLabel(rooms.value, room),
+        lines,
+        total: lines.reduce((sum, line) => sum + line.net * line.qty, 0),
+      };
+    })
+    .filter((block) => block.lines.length > 0),
+);
 
 watch(group, (value) => {
-  if (value === "closet" && finish.value !== CLOSET_FINISH) finish.value = CLOSET_FINISH;
-  else if (value && value !== "closet" && finish.value === CLOSET_FINISH) {
+  const closet = isClosetGroup(value);
+  if (closet && finish.value !== CLOSET_FINISH) finish.value = CLOSET_FINISH;
+  else if (value && !closet && finish.value === CLOSET_FINISH) {
     finish.value = "Elegant White (Shaker)";
   }
 });
 
 watch(finish, (value) => {
-  if (value === CLOSET_FINISH && group.value !== "closet") group.value = "closet";
-  else if (value !== CLOSET_FINISH && group.value === "closet") group.value = "";
+  if (value === CLOSET_FINISH && !isClosetGroup(group.value)) group.value = "closet";
+  else if (value !== CLOSET_FINISH && isClosetGroup(group.value)) group.value = "";
 });
+
+function isClosetGroup(value: string) {
+  return value === "closet" || value.startsWith("closet-");
+}
+
+function refreshLineLabels() {
+  for (const line of cart.value) {
+    line.roomLabel = labelForInstance(rooms.value, line.roomInstanceId);
+  }
+}
+
+function addRoom() {
+  const room = newRoomInstance(newRoomType.value);
+  rooms.value = [...rooms.value, room];
+  activeRoomId.value = room.instanceId;
+  refreshLineLabels();
+}
+
+function removeRoom(instanceId: string) {
+  if (rooms.value.length <= 1) return;
+  const hasLines = cart.value.some((line) => line.roomInstanceId === instanceId);
+  if (hasLines && !window.confirm("Remove this room and its cart lines?")) return;
+  cart.value = cart.value.filter((line) => line.roomInstanceId !== instanceId);
+  rooms.value = rooms.value.filter((room) => room.instanceId !== instanceId);
+  if (activeRoomId.value === instanceId) activeRoomId.value = rooms.value[0].instanceId;
+  refreshLineLabels();
+}
+
+function moveLine(line: CartLine, targetRoomId: string) {
+  if (line.roomInstanceId === targetRoomId) return;
+  const existing = cart.value.find((entry) => entry.sku === line.sku && entry.roomInstanceId === targetRoomId);
+  if (existing) {
+    existing.qty = clampQty(existing.qty + line.qty);
+    cart.value = cart.value.filter((entry) => !(entry.sku === line.sku && entry.roomInstanceId === line.roomInstanceId));
+  } else {
+    line.roomInstanceId = targetRoomId;
+    line.roomLabel = labelForInstance(rooms.value, targetRoomId);
+  }
+  refreshLineLabels();
+}
+
+function onMoveLine(line: CartLine, event: Event) {
+  moveLine(line, (event.target as HTMLSelectElement).value);
+}
 
 let zipLookup = "";
 
@@ -276,18 +409,28 @@ function clampQty(value: number) {
 }
 
 function qtyOf(sku: string) {
-  return cart.value.find((line) => line.sku === sku)?.qty ?? 0;
+  return cart.value.find((line) => line.sku === sku && line.roomInstanceId === activeRoomId.value)?.qty ?? 0;
 }
 
 function setQty(item: Item, qty: number) {
   const next = clampQty(qty);
-  const existing = cart.value.find((line) => line.sku === item.sku);
+  const roomId = activeRoomId.value;
+  const existing = cart.value.find((line) => line.sku === item.sku && line.roomInstanceId === roomId);
   if (next === 0) {
-    cart.value = cart.value.filter((line) => line.sku !== item.sku);
+    cart.value = cart.value.filter((line) => !(line.sku === item.sku && line.roomInstanceId === roomId));
     return;
   }
   if (existing) existing.qty = next;
-  else cart.value.push({ sku: item.sku, name: item.name, net: item.net, qty: next });
+  else {
+    cart.value.push({
+      sku: item.sku,
+      name: item.name,
+      net: item.net,
+      qty: next,
+      roomInstanceId: roomId,
+      roomLabel: labelForInstance(rooms.value, roomId),
+    });
+  }
 }
 
 function bump(item: Item, delta: number) {
@@ -298,11 +441,11 @@ function onQtyInput(item: Item, event: Event) {
   setQty(item, Number((event.target as HTMLInputElement).value));
 }
 
-function setQtyFromCart(sku: string, event: Event) {
-  const line = cart.value.find((entry) => entry.sku === sku);
+function setQtyFromCart(sku: string, roomInstanceId: string, event: Event) {
+  const line = cart.value.find((entry) => entry.sku === sku && entry.roomInstanceId === roomInstanceId);
   if (!line) return;
   const next = clampQty(Number((event.target as HTMLInputElement).value));
-  if (next === 0) cart.value = cart.value.filter((entry) => entry.sku !== sku);
+  if (next === 0) cart.value = cart.value.filter((entry) => !(entry.sku === sku && entry.roomInstanceId === roomInstanceId));
   else line.qty = next;
 }
 
@@ -371,6 +514,7 @@ async function submitQuote() {
     return;
   }
   paying.value = true;
+  refreshLineLabels();
   try {
     const res = await $fetch<{ url: string }>("/api/contractors/checkout", {
       method: "POST",

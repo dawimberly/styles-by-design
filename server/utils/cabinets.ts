@@ -1,4 +1,5 @@
 import catalog from "../data/cabinets.json";
+import { catalogCategoryId, catalogCategoryName } from "./catalog-categories";
 import { catalogItemDescription } from "./sku-plain";
 
 export const CONTRACTOR_DISCOUNT = 0.2;
@@ -40,13 +41,15 @@ export function contractorPrice(option: CabinetOption, finish: string) {
 }
 
 export function flattenSkus() {
-  return Object.entries(data.groups).flatMap(([groupId, group]) =>
+  return Object.entries(data.groups).flatMap(([sourceGroupId, group]) =>
     group.options.map((option) => {
       const label = catalogItemDescription(option.sku, option.name, option.display_name);
       const name = option.closet_group ? `${option.closet_group} · ${label}` : label;
+      const groupId = catalogCategoryId(option.sku, sourceGroupId, option.closet_group);
       return {
+        sourceGroupId,
         groupId,
-        groupName: group.display_name,
+        groupName: catalogCategoryName(groupId),
         sku: option.sku,
         name,
         option,

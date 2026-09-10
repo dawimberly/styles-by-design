@@ -1,4 +1,5 @@
 import { cabinetCatalog, contractorPrice, flattenSkus, listPrice } from "../../utils/cabinets";
+import { CATALOG_SECTIONS, matchesCatalogGroup } from "../../utils/catalog-categories";
 
 export default defineEventHandler((event) => {
   requireContractor(event);
@@ -8,7 +9,7 @@ export default defineEventHandler((event) => {
   const group = String(query.group || "");
 
   let rows = flattenSkus();
-  if (group) rows = rows.filter((row) => row.groupId === group);
+  if (group) rows = rows.filter((row) => matchesCatalogGroup(row.groupId, group));
   if (search) {
     rows = rows.filter(
       (row) =>
@@ -23,10 +24,14 @@ export default defineEventHandler((event) => {
     finishes: cabinetCatalog().finish_options,
     finish,
     discount: 0.2,
-    groups: Object.entries(cabinetCatalog().groups).map(([id, g]) => ({
-      id,
-      name: g.display_name,
-    })),
+    sections: CATALOG_SECTIONS,
+    groups: CATALOG_SECTIONS.flatMap((section) =>
+      section.groups.map((g) => ({
+        id: g.id,
+        name: g.name,
+        section: section.name,
+      })),
+    ),
     items: rows
       .map((row) => {
         const list = listPrice(row.option, finish);
