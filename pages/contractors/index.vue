@@ -2,8 +2,8 @@
   <PageHeader subtitle="Trade" title="Contractor portal — verified trade buyers only" />
   <div class="mx-auto max-w-xl px-4 py-16">
     <p class="text-ink/75 leading-relaxed">
-      Licensed remodelers and builders can order Northville stock cabinets at 20% off published MSRP. Prices match the
-      estimator list. This portal is separate from the public design site.
+      Licensed remodelers and builders can order stock cabinets at 20% off published MSRP. Prices match the estimator
+      list. This portal is separate from the public design site.
     </p>
     <p class="mt-4 text-ink/75 leading-relaxed">
       You must be verified before you receive a trade PIN. Contact Styles by Design with your company name and license
@@ -32,7 +32,6 @@
       <a :href="SITE.preferredContractorUrl" class="text-moss hover:underline" target="_blank" rel="noreferrer">
         {{ SITE.preferredContractorCta }}
       </a>
-      — {{ SITE.preferredContractorOffer }}
     </p>
   </div>
 </template>

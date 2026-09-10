@@ -25,10 +25,10 @@
     <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-2">
       <div>
         <p class="text-sm uppercase tracking-[0.28em] text-moss">Cabinet finishes</p>
-        <h2 class="mt-3 font-serif text-4xl">Northville stock we specify</h2>
+        <h2 class="mt-3 font-serif text-4xl">Cabinet finishes we specify</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          Styles by Design designs the space and the takeoff. Gallery photos are Northville cabinet photography —
-          not Styles by Design construction. {{ SITE.preferredContractorOffer }}
+          Styles by Design designs the space and the cabinet takeoff — finishes locked before demo so the build stays
+          clean.
         </p>
         <div class="mt-6 flex flex-wrap gap-4">
           <NuxtLink to="/gallery" class="inline-block text-moss">Browse finishes →</NuxtLink>
@@ -39,7 +39,7 @@
       </div>
       <img
         :src="PHOTOS.kitchenHero"
-        alt="Northville elegant white kitchen cabinetry"
+        alt="Elegant white kitchen cabinetry"
         class="h-80 w-full rounded-2xl object-cover shadow-sm md:h-[28rem]"
       />
     </div>
@@ -51,7 +51,7 @@
         <p class="text-sm uppercase tracking-[0.28em] text-moss">Trade partners</p>
         <h2 class="mt-3 font-serif text-4xl">Contractor portal</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          Licensed remodelers and builders can buy Northville stock at 20% off MSRP. Access is separate from the public
+          Licensed remodelers and builders can buy stock cabinets at 20% off MSRP. Access is separate from the public
           site: we verify your company first, then issue a trade PIN.
         </p>
         <div class="mt-8 flex flex-wrap gap-4">
@@ -74,7 +74,6 @@
           <a :href="SITE.preferredContractorUrl" class="text-moss hover:underline" target="_blank" rel="noreferrer">
             {{ SITE.preferredContractorCta }}
           </a>
-          — {{ SITE.preferredContractorOffer }}
         </p>
       </div>
     </div>
@@ -105,7 +104,6 @@
     <h2 class="font-serif text-4xl">Ready to walk the space together?</h2>
     <p class="mx-auto mt-4 max-w-xl text-cream/75">
       Free consultations. Military, veterans, first responders, and educators: ask about our discount.
-      {{ SITE.preferredContractorOffer }}
     </p>
     <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
       <NuxtLink to="/contact" class="inline-block rounded-full bg-brass px-8 py-3 font-medium text-ink">Book a consult</NuxtLink>

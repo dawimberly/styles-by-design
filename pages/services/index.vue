@@ -1,5 +1,5 @@
 <template>
-  <PageHeader subtitle="Services" title="Design and planning. Build with our preferred contractor for a 10% discount." />
+  <PageHeader subtitle="Services" title="Design and planning for kitchens, baths, and whole homes." />
 
   <div class="mx-auto max-w-6xl space-y-24 px-4 py-16">
     <article v-for="(item, i) in mains" :key="item.title" class="grid items-center gap-10 md:grid-cols-2">
@@ -32,15 +32,15 @@
 const mains = [
   {
     title: "Kitchen design",
-    body: "Plans, finishes, lighting, and a cabinet takeoff from the estimator list. Use our preferred contractor for a 10% discount when you are ready to build.",
-    features: ["Space planning", "Finish and fixture specs", "3D views", "Stock cabinet SKUs, not custom boxes"],
+    body: "Plans, finishes, lighting, and a cabinet takeoff from the estimator list — ready for your preferred contractor or GC.",
+    features: ["Space planning", "Finish and fixture specs", "3D views", "Stock cabinet SKUs"],
     image: PHOTOS.kitchen,
     to: "/services/kitchen-remodeling",
     cta: "Kitchen design",
   },
   {
     title: "Bath design",
-    body: "Showers, tile, vanities, and lighting as a spec package. Build with our preferred contractor for a 10% discount, or bring your own licensed contractor.",
+    body: "Showers, tile, vanities, and lighting as a spec package your builder can price and install.",
     features: ["Layout", "Tile and glass", "Vanity SKUs from the list", "Lighting"],
     image: PHOTOS.bath,
     to: "/services/bath-remodeling",
@@ -48,7 +48,7 @@ const mains = [
   },
   {
     title: "Trade cabinet sales",
-    body: "Licensed contractors buy discounted stock cabinets from the Northville list already loaded in our estimator. We are not a custom cabinet shop.",
+    body: "Licensed contractors buy discounted stock cabinets from the estimator list loaded in our portal.",
     features: ["190 SKUs", "Nine finishes", "20% off MSRP", "Quote from the portal"],
     image: PHOTOS.cabinets,
     to: "/contractors",
@@ -64,7 +64,7 @@ const extras = [
   { title: "Furniture & styling", description: "Pieces that fit the architecture, not a catalog dump." },
   {
     title: "Builder coordination",
-    description: "Use our preferred contractor for a 10% discount, or buy cabinets from the trade portal with your own GC.",
+    description: "Handoff to our preferred contractor or your GC, with cabinet orders available through the trade portal.",
   },
 ];
 

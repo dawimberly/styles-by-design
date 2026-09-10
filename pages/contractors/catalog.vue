@@ -46,8 +46,8 @@
       <figcaption class="border-t border-sand px-4 py-3 text-sm text-ink/70">
         {{
           isClosetFinish
-            ? `${finish} — Northville closet line. Units, shelves, drawers, doors, and upgrades.`
-            : `${finish} — door sample and a Northville kitchen in this finish. SKUs share this look.`
+            ? `${finish} — closet line units, shelves, drawers, doors, and upgrades.`
+            : `${finish} — door sample and a kitchen in this finish. Catalog SKUs share this look.`
         }}
       </figcaption>
     </figure>

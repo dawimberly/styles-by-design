@@ -5,9 +5,7 @@
         <h2 class="font-serif text-3xl">{{ SITE.name }}</h2>
         <p class="mt-4 max-w-sm text-cream/75 leading-relaxed">
           Interior design studio in {{ SITE.city }}. We design and plan the space.
-          {{ SITE.preferredContractorOffer }}
         </p>
-        <p class="mt-4 text-xs text-cream/40">{{ PHOTO_CREDIT }}</p>
       </div>
       <div>
         <h3 class="text-sm uppercase tracking-[0.2em] text-brass">Visit</h3>
@@ -34,7 +32,6 @@
         >
           {{ SITE.preferredContractorCta }}
         </a>
-        <p class="mt-3 text-xs text-cream/45">{{ SITE.preferredContractorOffer }}</p>
         <p class="mt-2 text-xs text-cream/45">
           Trade buyers: request verification before receiving a contractor PIN.
         </p>

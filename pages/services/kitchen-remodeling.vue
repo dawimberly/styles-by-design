@@ -15,7 +15,7 @@
 const serviceData = {
   title: "Kitchen design",
   description:
-    "We design kitchens as daily rooms: layout, finishes, lighting, and a stock-cabinet takeoff from the estimator. Use our preferred contractor for a 10% discount when you build, or work with your own licensed contractor. Outside trade buyers can order boxes at trade price. We do not fabricate custom cabinets.",
+    "We design kitchens as daily rooms: layout, finishes, lighting, and a stock-cabinet takeoff from the estimator. Build with our preferred contractor or your own licensed GC. Trade buyers can order boxes at trade price.",
   mainFeatures: [
     "Space planning and 3D",
     "Finish, stone, and lighting specs",
@@ -29,7 +29,7 @@ const serviceData = {
     { title: "Design", description: "Drawings, finishes, and SKUs locked to the price list." },
     {
       title: "Handoff",
-      description: "Use our preferred contractor for a 10% discount, or order cabinets at trade price from the portal with your GC.",
+      description: "Preferred contractor or your GC builds from the package; trade buyers can order cabinets from the portal.",
     },
   ],
   galleryImages: [
@@ -41,11 +41,11 @@ const serviceData = {
     {
       question: "Do you install the kitchen?",
       answer:
-        "Styles by Design designs the space. Use our preferred contractor for a 10% discount, or hire your own licensed contractor. Trade buyers can purchase cabinets from our portal.",
+        "Styles by Design designs the space. Install is through our preferred contractor or your own licensed contractor. Trade buyers can purchase cabinets from our portal.",
     },
     {
       question: "Can I get custom cabinets?",
-      answer: "We specify stock Northville SKUs from the estimator. We are not a custom cabinet shop.",
+      answer: "We specify stock SKUs from the estimator list rather than custom millwork.",
     },
     {
       question: "How do contractors order?",

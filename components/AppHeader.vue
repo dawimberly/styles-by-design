@@ -51,7 +51,6 @@
       <a :href="SITE.preferredContractorUrl" class="mt-2 block font-medium text-moss" target="_blank" rel="noreferrer">
         {{ SITE.preferredContractorCta }}
       </a>
-      <p class="mt-1 text-sm text-ink/50">{{ SITE.preferredContractorOffer }}</p>
       <NuxtLink to="/contractors" class="mt-2 block text-sm text-ink/50" @click="open = false">
         Contractor portal
       </NuxtLink>

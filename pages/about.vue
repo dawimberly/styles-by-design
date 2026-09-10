@@ -7,13 +7,11 @@
       <h2 class="font-serif text-4xl text-ink">Meet Jon Styles</h2>
       <p>
         More than twenty years designing interiors around San Antonio. Jon founded Styles by Design as the design brand:
-        spaces first, then a spec that can be built. Use our preferred contractor for a 10% discount when you are ready
-        to install, or bring your own licensed contractor.
+        spaces first, then a spec that can be built — with our preferred contractor or your own licensed GC.
       </p>
       <p>
         Each house gets honest budgets, drawings before demo, and a handoff that does not leave the jobsite guessing.
-        Styles by Design is not a custom cabinet shop. Stock boxes come from the Northville / estimator list. Outside
-        licensed contractors can buy from the trade portal after verification.
+        Stock cabinets come from our estimator list; verified trade buyers can order from the contractor portal.
       </p>
       <blockquote class="border-l-4 border-brass pl-6 font-serif text-2xl text-ink">
         “Every home tells a story. Our job is to help you tell yours well.”
@@ -24,7 +22,7 @@
         <li>Licensed interior designer — Texas Board of Architectural Examiners</li>
         <li>Certified Kitchen and Bath Designer</li>
         <li>National Kitchen and Bath Association member</li>
-        <li>Trade cabinet sales from the Northville / estimator price list</li>
+        <li>Trade cabinet sales from the estimator price list</li>
       </ul>
     </div>
   </div>

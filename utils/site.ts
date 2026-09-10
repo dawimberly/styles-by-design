@@ -9,7 +9,6 @@ export const SITE = {
   /** External install partner — do not display the brand name on the public site. */
   preferredContractorUrl: "https://theflipfixer.com",
   preferredContractorCta: "Preferred contractor",
-  preferredContractorOffer: "Use our preferred contractor for a 10% discount.",
 };
 
 export const AREAS = [
@@ -27,11 +26,9 @@ export const AREAS = [
   "Stone Oak",
 ];
 
-export const PHOTO_CREDIT = "Cabinet photography courtesy of Northville Cabinetry.";
-
 export const CLOSET_FINISH = "Closet · White or Oak";
 
-/** Northville door + kitchen photos keyed to catalog finish names. */
+/** Door + kitchen photos keyed to catalog finish names. */
 export const FINISH_PHOTOS: Record<string, { door: string; room: string }> = {
   "Elegant White (Shaker)": {
     door: "/images/northville/door-elegant-white.jpg",

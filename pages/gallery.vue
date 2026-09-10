@@ -1,13 +1,12 @@
 <template>
-  <PageHeader subtitle="Gallery" title="Northville finishes we specify for design plans" />
+  <PageHeader subtitle="Gallery" title="Finishes we love for kitchens and baths" />
 
   <div class="mx-auto max-w-6xl px-4 py-16">
     <div class="grid items-start gap-10 md:grid-cols-5">
       <div class="md:col-span-2">
         <h2 class="font-serif text-4xl">Finish reference</h2>
         <p class="mt-4 text-lg text-ink/75 leading-relaxed">
-          These images are Northville product photography used for design selections — not Styles by Design jobsite
-          galleries. {{ SITE.preferredContractorOffer }}
+          Door styles and room looks we specify on design plans — kitchens, baths, and closets.
         </p>
         <a
           :href="SITE.preferredContractorUrl"
@@ -21,14 +20,13 @@
       <div class="md:col-span-3">
         <img
           :src="PHOTOS.kitchenHero"
-          alt="Northville kitchen cabinetry finish reference"
+          alt="Kitchen cabinetry finish reference"
           class="h-80 w-full rounded-2xl object-cover shadow-sm md:h-[28rem]"
         />
       </div>
     </div>
 
-    <h2 class="mt-24 font-serif text-4xl">Finishes from the Northville list</h2>
-    <p class="mt-3 max-w-2xl text-ink/70">{{ PHOTO_CREDIT }}</p>
+    <h2 class="mt-24 font-serif text-4xl">Finish gallery</h2>
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <figure v-for="item in items" :key="item.src" class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/80">
         <img :src="item.src" :alt="item.alt" class="h-64 w-full object-cover transition duration-700 group-hover:scale-105" />
@@ -46,7 +44,7 @@ const items = [
   { src: PHOTOS.greyIsland, alt: "Grey shaker kitchen", description: "Grey Shaker" },
   { src: PHOTOS.bath, alt: "Grey shaker bath", description: "Grey Shaker bath" },
   { src: PHOTOS.bathDetail, alt: "Antique white vanity", description: "Antique White vanity" },
-  { src: PHOTOS.office, alt: "Northville closet", description: "Closet line" },
+  { src: PHOTOS.office, alt: "Closet storage", description: "Closet line" },
   { src: PHOTOS.stone, alt: "Natural wood kitchen", description: "Natural Wood" },
   { src: PHOTOS.blue, alt: "Blue shaker kitchen", description: "Blue Shaker" },
   { src: PHOTOS.espresso, alt: "Espresso shaker kitchen", description: "Espresso Shaker" },
@@ -55,6 +53,6 @@ const items = [
 
 useSeoMeta({
   title: "Gallery",
-  description: "Northville cabinetry finishes specified by Styles by Design in San Antonio.",
+  description: "Cabinet and finish inspiration from Styles by Design in San Antonio.",
 });
 </script>
