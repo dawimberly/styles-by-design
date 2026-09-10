@@ -36,7 +36,8 @@ export function describeSkuPlain(sku: string): string | null {
   if ((m = s.match(/^BES(\d{2})([LR])$/))) return `${inches(m[1])} base end shelf, ${side(m[2])}`;
   if ((m = s.match(/^BEA(\d{2})([LR])$/))) return `${inches(m[1])} base end angle, ${side(m[2])}`;
   if ((m = s.match(/^BSR(\d{2})$/))) return `${inches(m[1])} base spice rack`;
-  if ((m = s.match(/^BWBK(\d{2})$/))) return `${inches(m[1])} base wine / bottle kit`;
+  if ((m = s.match(/^BWBK(\d{2})$/)))
+    return `${inches(m[1])} base waste basket / trash pullout`;
   if ((m = s.match(/^BSK(\d{2})D$/))) return `${inches(m[1])} base sink cabinet with drawers`;
 
   // Tall / pantry / oven
