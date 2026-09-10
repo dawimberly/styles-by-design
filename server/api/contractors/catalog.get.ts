@@ -1,5 +1,5 @@
 import { cabinetCatalog, contractorPrice, flattenSkus, listPrice } from "../../utils/cabinets";
-import { CATALOG_SECTIONS } from "../../utils/catalog-categories";
+import { CATALOG_SECTIONS } from "../../../utils/catalog-categories";
 
 /** Full priced catalog for one finish — client filters search/category for live typing. */
 export default defineEventHandler((event) => {
