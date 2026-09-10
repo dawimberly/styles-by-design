@@ -7,8 +7,25 @@ const SYNONYM_CHAIN: Record<string, string[]> = {
   vanity: ["vanity", "bath", "bathroom", "powder", "powder room", "sink vanity", "bath cabinet"],
   pantry: ["pantry", "tall", "food storage", "broom", "utility tall", "floor to ceiling"],
   oven: ["oven", "wall oven", "double oven", "appliance tall"],
-  drawer: ["drawer", "drawers", "pullout", "pull-out", "slide"],
+  drawer: ["drawer", "drawers", "pullout", "pull-out", "slide", "sliding"],
   sink: ["sink", "kitchen sink", "wet", "cleanup"],
+  trash: [
+    "trash",
+    "garbage",
+    "rubbish",
+    "waste",
+    "wastebasket",
+    "waste bin",
+    "trash can",
+    "garbage can",
+    "recycling",
+    "recycle",
+    "trash pullout",
+    "garbage pullout",
+    "waste pullout",
+    "trash base",
+    "sliding trash",
+  ],
   farm: ["farm", "farmhouse", "apron", "apron-front", "farm sink"],
   corner: ["corner", "blind", "lazy", "susan", "lazy susan", "diagonal"],
   microwave: ["microwave", "micro", "over range microwave", "built-in microwave"],
@@ -250,13 +267,25 @@ export function skuSearchBlob(input: {
   return skuSearchTerms(input).join(" | ");
 }
 
-/** Multi-word search: every token must appear somewhere in the blob. */
+/** Multi-word search: every token must match a whole term (not a substring of "cabinets"). */
 export function matchesSearchBlob(blob: string, query: string) {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const hay = blob.toLowerCase();
-  if (hay.includes(q)) return true;
+  const terms = blob
+    .toLowerCase()
+    .split("|")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  const hay = ` ${terms.join(" ")} `;
+  if (terms.some((t) => t === q) || hay.includes(` ${q} `)) return true;
+
   const tokens = q.split(/[^a-z0-9"]+/).filter((t) => t.length > 1);
-  if (!tokens.length) return hay.includes(q);
-  return tokens.every((t) => hay.includes(t));
+  if (!tokens.length) return false;
+
+  return tokens.every((token) => {
+    if (terms.some((t) => t === token || t.includes(token) && token.length >= 4)) return true;
+    // whole-word match inside joined hay for short tokens (avoid "bin" ⊂ "cabinets")
+    const re = new RegExp(`(?:^|[^a-z0-9])${token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:[^a-z0-9]|$)`);
+    return re.test(hay);
+  });
 }

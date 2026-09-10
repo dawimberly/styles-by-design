@@ -12,7 +12,10 @@
     </div>
 
     <div class="mt-8 grid gap-3 md:grid-cols-3">
-      <input v-model="q" class="rounded-lg border border-sand bg-white px-4 py-3" placeholder="Search any SKU or description" />
+      <div class="md:col-span-1">
+        <input v-model="q" class="w-full rounded-lg border border-sand bg-white px-4 py-3" placeholder="Type to search (SKU or words)" />
+        <p class="mt-1 text-xs text-ink/45">Searches as you type — no button.</p>
+      </div>
       <select v-model="group" class="rounded-lg border border-sand bg-white px-4 py-3">
         <option value="">All categories</option>
         <optgroup v-for="section in catalog?.sections || []" :key="section.id" :label="section.name">
