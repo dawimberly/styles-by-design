@@ -1,5 +1,6 @@
 import { cabinetCatalog, contractorPrice, flattenSkus, listPrice } from "../../utils/cabinets";
 import { CATALOG_SECTIONS, matchesCatalogGroup } from "../../utils/catalog-categories";
+import { matchesSearchBlob } from "../../utils/sku-search";
 
 export default defineEventHandler((event) => {
   requireContractor(event);
@@ -11,12 +12,7 @@ export default defineEventHandler((event) => {
   let rows = flattenSkus();
   // Typing a search scans the whole catalog; category filter applies only when search is empty.
   if (search) {
-    rows = rows.filter(
-      (row) =>
-        row.sku.toLowerCase().includes(search) ||
-        row.name.toLowerCase().includes(search) ||
-        row.groupName.toLowerCase().includes(search),
-    );
+    rows = rows.filter((row) => matchesSearchBlob(row.searchBlob, search));
   } else if (group) {
     rows = rows.filter((row) => matchesCatalogGroup(row.groupId, group));
   }

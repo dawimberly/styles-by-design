@@ -1,6 +1,7 @@
 import catalog from "../data/cabinets.json";
 import { catalogCategoryId, catalogCategoryName } from "./catalog-categories";
 import { catalogItemDescription } from "./sku-plain";
+import { skuSearchBlob } from "./sku-search";
 
 export const CONTRACTOR_DISCOUNT = 0.2;
 
@@ -46,12 +47,21 @@ export function flattenSkus() {
       const label = catalogItemDescription(option.sku, option.name, option.display_name);
       const name = option.closet_group ? `${option.closet_group} · ${label}` : label;
       const groupId = catalogCategoryId(option.sku, sourceGroupId, option.closet_group);
+      const groupName = catalogCategoryName(groupId);
+      const searchBlob = skuSearchBlob({
+        sku: option.sku,
+        name,
+        groupId,
+        groupName,
+        closetGroup: option.closet_group || null,
+      });
       return {
         sourceGroupId,
         groupId,
-        groupName: catalogCategoryName(groupId),
+        groupName,
         sku: option.sku,
         name,
+        searchBlob,
         option,
       };
     }),
