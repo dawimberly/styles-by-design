@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
 
   const total = Math.round(body.lines.reduce((sum, line) => sum + line.net * line.qty, 0) * 100) / 100;
   const lines = body.lines
-    .map((line) => `${line.qty} × ${line.sku} (${line.name}) @ $${line.net.toFixed(2)}`)
+    .map((line) => `${line.qty} × ${line.name} (${line.sku}) @ $${line.net.toFixed(2)}`)
     .join("\n");
   const shipTo = formatShipTo(verified);
   const fulfillment = body.fulfillment === "delivery" ? "Jobsite delivery" : "Drop-ship via Cabinets To Go account";

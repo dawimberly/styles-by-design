@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
         currency: "usd",
         unit_amount: Math.round(line.net * 100),
         product_data: {
-          name: `${line.sku} ${line.name}`.slice(0, 120),
+          name: `${line.name} (${line.sku})`.slice(0, 120),
         },
       },
     })),

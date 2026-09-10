@@ -12,7 +12,7 @@
     </div>
 
     <div class="mt-8 grid gap-3 md:grid-cols-3">
-      <input v-model="q" class="rounded-lg border border-sand bg-white px-4 py-3" placeholder="Search SKU" />
+      <input v-model="q" class="rounded-lg border border-sand bg-white px-4 py-3" placeholder="Search SKU or description" />
       <select v-model="group" class="rounded-lg border border-sand bg-white px-4 py-3">
         <option value="">All groups</option>
         <option v-for="g in catalog?.groups || []" :key="g.id" :value="g.id">{{ g.name }}</option>
@@ -119,8 +119,8 @@
           <span class="flex min-w-0 items-center gap-3">
             <img :src="selectedLook.door" alt="" class="h-12 w-12 shrink-0 rounded object-cover" />
             <span class="min-w-0">
-              <span class="font-medium">{{ line.sku }}</span>
-              <span class="block truncate text-sm text-ink/60">{{ line.name }} · ${{ line.net.toFixed(2) }}</span>
+              <span class="font-medium">{{ line.name }}</span>
+              <span class="block truncate text-sm text-ink/60">SKU {{ line.sku }} · ${{ line.net.toFixed(2) }}</span>
             </span>
           </span>
           <input
