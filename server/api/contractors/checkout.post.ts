@@ -1,5 +1,5 @@
 import { formatShipTo, verifyShipAddress } from "../../utils/address";
-import { checkoutIdempotencyKey, checkoutLineItems, cabinetTaxCode, findOrCreateCustomer, letterSuffix, stripeClient } from "../../utils/stripe";
+import { checkoutIdempotencyKey, checkoutLineItems, cabinetTaxCode, findOrCreateCustomer, stripeClient } from "../../utils/stripe";
 import { priceContractorLines, resolveFinish } from "../../utils/catalog-order";
 
 type Body = {
@@ -70,26 +70,30 @@ export default defineEventHandler(async (event) => {
 
     session = await stripe.checkout.sessions.create(
       {
+        // Checkout Studio fixed_by_ui
+        ui_mode: "form",
+        billing_address_collection: "auto",
+        phone_number_collection: { enabled: false },
+        automatic_tax: { enabled: false },
+        submit_type: "auto",
+        integration_identifier: "custom_embedded_web_0001",
+        // sample_only — keep real contractor values (not placeholders)
         mode: "payment",
+        line_items: checkoutLineItems(lines, cabinetTaxCode()),
+        // Existing Styles by Design order context (not Studio-managed)
         customer: customer.id,
         customer_update: { address: "auto", name: "auto", shipping: "auto" },
-        success_url: `${origin}/contractors/paid?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/contractors/catalog`,
+        return_url: `${origin}/contractors/paid?session_id={CHECKOUT_SESSION_ID}`,
         metadata,
-        automatic_tax: { enabled: true },
-        tax_id_collection: { enabled: true },
         invoice_creation: {
           enabled: true,
           invoice_data: {
             description: `Stock cabinets — ${company}`.slice(0, 350),
-            footer: "Trade cabinet order for Styles by Design. Sales tax is calculated by Stripe Tax where registered.",
+            footer: "Trade cabinet order for Styles by Design.",
             metadata,
           },
         },
         shipping_address_collection: { allowed_countries: ["US"] },
-        phone_number_collection: { enabled: true },
-        line_items: checkoutLineItems(lines, cabinetTaxCode()),
-        integration_identifier: `sbd_contractor_${letterSuffix()}`,
         payment_intent_data: {
           description: `Cabinets — ${company}`.slice(0, 350),
           metadata,
@@ -102,9 +106,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 502, statusMessage: "Could not start Stripe checkout. Try again." });
   }
 
-  if (!session.url) {
-    throw createError({ statusCode: 502, statusMessage: "Stripe did not return a checkout URL." });
+  if (!session.client_secret) {
+    throw createError({ statusCode: 502, statusMessage: "Stripe did not return a checkout client secret." });
   }
 
-  return { url: session.url };
+  return { client_secret: session.client_secret, session_id: session.id };
 });

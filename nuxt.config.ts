@@ -21,6 +21,10 @@ export default defineNuxtConfig({
     stripeCabinetTaxCode: process.env.STRIPE_CABINET_TAX_CODE || "txcd_99999999",
     stripeDesignTaxCode: process.env.STRIPE_DESIGN_TAX_CODE || "txcd_20060022",
     ctgOrderEmail: process.env.CTG_ORDER_EMAIL || "divya@durastoneusa.com",
+    public: {
+      stripePublishableKey:
+        process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || process.env.STRIPE_PUBLISHABLE_KEY || "",
+    },
   },
   app: {
     head: {

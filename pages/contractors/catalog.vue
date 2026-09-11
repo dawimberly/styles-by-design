@@ -147,9 +147,7 @@
     <section class="mt-12 rounded-2xl bg-white p-8 shadow-sm">
       <h2 class="font-serif text-3xl">Order cart by room</h2>
       <p class="mt-2 max-w-2xl text-ink/70">
-        You pay Styles by Design. Trade prices are exclusive of tax — Stripe Tax is added at checkout from the
-        verified ship-to address (only in states where Styles by Design is registered to collect). After Stripe
-        confirms funds, studio staff confirm payment and send the Cabinets To Go work order to Divya at Dura Stone.
+        You pay Styles by Design. Trade prices are exclusive of tax. After Stripe confirms funds, studio staff confirm payment and send the Cabinets To Go work order to Divya at Dura Stone.
       </p>
       <p v-if="!cart.length" class="mt-4 text-ink/60">Set quantities to build an order.</p>
       <div v-else class="mt-6 space-y-8">
@@ -249,13 +247,21 @@
         </ol>
         <p v-if="quoteMsg" class="md:col-span-2 text-moss">{{ quoteMsg }}</p>
         <button class="rounded-full bg-ink px-6 py-3 text-cream" type="submit" :disabled="paying || !addressOk">
-          {{ paying ? "Opening checkout…" : "Pay Styles by Design" }}
+          {{ paying ? "Preparing checkout…" : "Pay Styles by Design" }}
         </button>
         <p class="md:col-span-2 text-sm text-ink/50">
           Card payment goes to Styles by Design. Stripe emails an invoice after payment. Staff then confirm funds and
           email Divya the work order for drop-ship or delivery to this address.
         </p>
       </form>
+
+      <section v-if="checkoutOpen" class="mt-8 rounded-2xl border border-sand bg-cream p-6">
+        <h3 class="font-serif text-2xl">Pay securely</h3>
+        <p class="mt-2 text-sm text-ink/70">Enter card details below. Do not leave this page until payment finishes.</p>
+        <div id="checkout-form" class="mt-6"></div>
+        <p v-if="checkoutMsg" class="mt-4 text-sm text-moss">{{ checkoutMsg }}</p>
+        <button class="mt-4 text-sm text-moss underline" type="button" @click="cancelEmbeddedCheckout">Cancel</button>
+      </section>
     </section>
   </div>
 </template>
@@ -289,6 +295,9 @@ const zip = ref("");
 const fulfillment = ref<"drop_ship" | "delivery">("drop_ship");
 const quoteMsg = ref("");
 const paying = ref(false);
+const checkoutOpen = ref(false);
+const checkoutMsg = ref("");
+let checkoutFormMount: { unmount?: () => void } | null = null;
 const checkingAddress = ref(false);
 const addressOk = ref("");
 
@@ -545,18 +554,97 @@ async function verifyAddress() {
   }
 }
 
+
+async function loadStripeJs(): Promise<any> {
+  const w = window as any;
+  if (w.Stripe) return w.Stripe;
+  await new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector('script[data-stripe-dahlia]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', () => reject(new Error('Stripe.js failed to load')));
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/dahlia/stripe.js';
+    script.async = true;
+    script.dataset.stripeDahlia = 'true';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Stripe.js failed to load'));
+    document.head.appendChild(script);
+  });
+  if (!w.Stripe) throw new Error('Stripe.js unavailable');
+  return w.Stripe;
+}
+
+async function mountEmbeddedCheckout(clientSecret: string) {
+  const config = useRuntimeConfig();
+  const pk = String(config.public.stripePublishableKey || "").trim();
+  if (!pk.startsWith("pk_")) {
+    throw new Error("Missing STRIPE_PUBLISHABLE_KEY / NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.");
+  }
+  const StripeCtor = await loadStripeJs();
+  const stripe = StripeCtor(pk, { betas: ["custom_checkout_payment_form_1"] });
+  const appearance = {
+    theme: "stripe",
+    labels: "floating",
+    variables: {
+      colorPrimary: "#0570de",
+      colorBackground: "#ffffff",
+      colorText: "#30313d",
+      colorDanger: "#df1b41",
+      fontFamily: "Ideal Sans, system-ui, sans-serif",
+      spacingUnit: "4px",
+      borderRadius: "4px",
+    },
+  };
+  const checkout = stripe.initCheckoutFormSdk({ clientSecret, appearance });
+  const form = checkout.createForm({ layout: "expanded" });
+  await nextTick();
+  form.mount("#checkout-form");
+  checkoutFormMount = form;
+  const loadActionsResult = await checkout.loadActions();
+  if (loadActionsResult.type === "success") {
+    form.on("confirm", async (event: unknown) => {
+      try {
+        await loadActionsResult.actions.confirm({ formConfirmEvent: event });
+      } catch (error) {
+        console.error("Payment confirmation error:", error);
+        checkoutMsg.value = "Payment could not be confirmed. Try again.";
+      }
+    });
+  } else {
+    checkoutMsg.value = "Checkout form actions failed to load.";
+  }
+}
+
+function cancelEmbeddedCheckout() {
+  try {
+    checkoutFormMount?.unmount?.();
+  } catch {
+    /* ignore */
+  }
+  checkoutFormMount = null;
+  checkoutOpen.value = false;
+  checkoutMsg.value = '';
+  const el = document.getElementById('checkout-form');
+  if (el) el.innerHTML = '';
+}
+
 async function submitQuote() {
-  quoteMsg.value = "";
+  quoteMsg.value = '';
+  checkoutMsg.value = '';
   if (!addressOk.value) {
-    quoteMsg.value = "Verify the postal address before paying.";
+    quoteMsg.value = 'Verify the postal address before paying.';
     return;
   }
   paying.value = true;
   refreshLineLabels();
   try {
-    const res = await $fetch<{ url: string }>("/api/contractors/checkout", {
-      method: "POST",
-      credentials: "include",
+    cancelEmbeddedCheckout();
+    const res = await $fetch<{ client_secret: string; session_id: string }>('/api/contractors/checkout', {
+      method: 'POST',
+      credentials: 'include',
       body: {
         company: company.value,
         name: name.value,
@@ -572,10 +660,13 @@ async function submitQuote() {
         lines: cart.value,
       },
     });
-    await navigateTo(res.url, { external: true });
+    checkoutOpen.value = true;
+    quoteMsg.value = 'Checkout ready — complete payment below.';
+    await mountEmbeddedCheckout(res.client_secret);
   } catch (error: unknown) {
-    const err = error as { data?: { statusMessage?: string }; statusMessage?: string };
-    quoteMsg.value = err.data?.statusMessage || err.statusMessage || "Checkout failed. Stripe may not be connected yet.";
+    const err = error as { data?: { statusMessage?: string }; statusMessage?: string; message?: string };
+    quoteMsg.value =
+      err.data?.statusMessage || err.statusMessage || err.message || 'Checkout failed. Stripe may not be connected yet.';
   } finally {
     paying.value = false;
   }

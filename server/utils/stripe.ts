@@ -3,8 +3,12 @@ import Stripe from "stripe";
 import type { ShipAddress } from "./address";
 import type { PricedLine } from "./catalog-order";
 
-/** Latest Stripe API version from stripe-best-practices. */
-export const STRIPE_API_VERSION = "2026-08-26.dahlia" as const;
+/**
+ * Checkout Studio embedded form requires this API version + beta flag.
+ * See Stripe Checkout Studio / custom_checkout_payment_form_preview.
+ */
+export const STRIPE_API_VERSION =
+  "2026-03-25.dahlia; custom_checkout_payment_form_preview=v1" as const;
 
 /**
  * Candidate product tax codes from https://docs.stripe.com/tax/tax-codes
@@ -54,7 +58,8 @@ export function stripeClient() {
     throw stripeNotConfiguredError();
   }
   return new Stripe(stripeSecretKey(), {
-    apiVersion: STRIPE_API_VERSION,
+    // Cast: Node SDK type union may lag Checkout Studio beta version strings.
+    apiVersion: STRIPE_API_VERSION as Stripe.LatestApiVersion,
     typescript: true,
   });
 }
