@@ -14,8 +14,8 @@ Single source of truth for remaining Checkout Studio setup on Styles by Design.
 | mode | payment | Keep `payment` for one-time contractor cabinet orders. Use `subscription` only if you later sell recurring products. |
 | line_items | Dynamic `price_data` from catalog SKUs | Already real trade prices from the cabinet catalog (not `price_...` placeholders). Replace only if you switch to Dashboard Price IDs. |
 | STRIPE_PUBLISHABLE_KEY / NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY | empty | Add the Styles by Design `pk_test_...` (then `pk_live_...`) on Vercel + local `.env`. |
-| STRIPE_SECRET_KEY | set in Vercel | Keep Styles by Design `sk_test_...` / `rk_test_...` (not Paq'in). |
-| NUXT_STRIPE_SECRET_KEY | optional duplicate | Same value as `STRIPE_SECRET_KEY`. Use this on Vercel Preview if Nuxt does not see `STRIPE_SECRET_KEY`. |
+| STRIPE_SECRET_KEY | `rk_test_...` on Vercel | Styles by Design restricted key (`acct_1UCpLt3jR2iJiC6A`). Swap to `rk_live_...` for real payments. |
+| NUXT_STRIPE_SECRET_KEY | same `rk_test_...` | Nuxt runtime override. Must always match `STRIPE_SECRET_KEY`. |
 | STRIPE_WEBHOOK_SECRET | set in Vercel | Must match the webhook signing secret for `/api/contractors/stripe-webhook`. |
 
 ## Configured Parameters
@@ -39,6 +39,17 @@ These parameters were configured in Checkout Studio and are set in code.
 | Stripe API version | `2026-03-25.dahlia; custom_checkout_payment_form_preview=v1` |
 | Stripe.js | `https://js.stripe.com/dahlia/stripe.js` |
 | beta | `custom_checkout_payment_form_1` |
+
+## Going live (test mode today)
+
+Everything below is currently **test mode**, so `4242 4242 4242 4242` works and no real money moves.
+Live mode needs its own keys and its own webhook — nothing carries over from test.
+
+1. Create a **live** restricted key with write on Checkout Sessions, Customers, Invoices, Invoice Items, Products, Prices, Webhook Endpoints.
+2. Set `STRIPE_SECRET_KEY` and `NUXT_STRIPE_SECRET_KEY` to that `rk_live_...`.
+3. Set `NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to `pk_live_...`.
+4. Create a **live-mode** webhook for `https://stylesbydesigntx.com/api/contractors/stripe-webhook` and store its `whsec_` in `STRIPE_WEBHOOK_SECRET`.
+5. Redeploy Production, then confirm with one small real order (test cards stop working in live mode).
 
 ## Setup and next steps
 
