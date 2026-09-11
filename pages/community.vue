@@ -1,35 +1,38 @@
 <template>
-  <PageHeader subtitle="Community" title="We help where we can. We say so when we cannot." />
+  <PageHeader subtitle="Community" title="We are building this on purpose." />
 
   <section class="mx-auto max-w-6xl px-4 py-16">
     <p class="max-w-3xl text-lg leading-relaxed text-ink/80">
-      Styles by Design is a small San Antonio studio. We design kitchens and baths, then specify stock cabinets from our
-      estimator list. This page is for people and houses we try to treat differently — not a foundation, not a promise
-      that every request gets a free kitchen.
+      Styles by Design is a San Antonio studio. We design kitchens and baths, and we specify stock cabinets that can
+      actually get built. This page is for the people we want more of our work to serve — military families, veterans,
+      first responders, educators, CASA, and group homes.
+    </p>
+    <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ink/80">
+      Discounts are already part of how we work. The next chapter is bigger: donated labor where we can give it, money
+      raised for materials, and training so the house stays useful after we leave. We are looking for the partners who
+      want to grow that with us.
     </p>
 
     <div class="mt-12 grid gap-6 md:grid-cols-3">
       <article class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-sand">
-        <h2 class="font-serif text-2xl">Service discount</h2>
+        <h2 class="font-serif text-2xl">Service families</h2>
         <p class="mt-3 text-ink/75 leading-relaxed">
-          Military, veterans, first responders, and educators: ask when you book. We apply a discount on design and on
-          cabinets we sell. Bring ID or a work email if you have it. The exact amount depends on the job, not a printed
-          coupon.
+          Military, veterans, first responders, and educators. Ask when you book. We discount design and the cabinets we
+          sell. Bring ID or a work email if you have it — we would rather spend the visit on the room than on paperwork.
         </p>
       </article>
       <article class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-sand">
         <h2 class="font-serif text-2xl">CASA</h2>
         <p class="mt-3 text-ink/75 leading-relaxed">
-          We support CASA — court-appointed advocates for children who need a stable home. If you are working a house
-          tied to that work, say so. We will look at design help and cabinet pricing case by case.
+          Court-appointed advocates standing with children who need a stable home. If a kitchen or bath is part of that
+          work, we want to hear about the house. Design help and cabinet pricing are on the table.
         </p>
       </article>
       <article class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-sand">
         <h2 class="font-serif text-2xl">Group homes</h2>
         <p class="mt-3 text-ink/75 leading-relaxed">
-          We would like to give heavy discounts or donated labor to group homes. That is not a formal program yet. No
-          application portal, no guaranteed free install. We are open to being contacted and will tell you honestly what
-          we can take on.
+          This is the work we want to grow. Heavy discounts. Donated labor when the calendar can hold it. A kitchen that
+          the people living there can keep using. If you run a home, start the conversation here.
         </p>
       </article>
     </div>
@@ -38,27 +41,27 @@
   <section class="bg-sand/40 py-16">
     <div class="mx-auto max-w-6xl px-4 md:grid md:grid-cols-2 md:gap-12">
       <div>
-        <p class="text-sm uppercase tracking-[0.28em] text-moss">What we hope to grow</p>
-        <h2 class="mt-3 font-serif text-4xl">Materials money and training</h2>
+        <p class="text-sm uppercase tracking-[0.28em] text-moss">Where this is going</p>
+        <h2 class="mt-3 font-serif text-4xl">Materials, mentors, more houses</h2>
         <p class="mt-4 text-lg leading-relaxed text-ink/80">
-          Long term we want to help raise money for boxes, counters, and fixtures — the parts that still cost real
-          dollars even when labor is given. We also want to mentor and train people on the work so the kitchen stays
-          usable after we leave.
+          Labor is only half a kitchen. Boxes, counters, and fixtures still cost real money. We want to help raise that
+          money so a donated day on site is not wasted on an empty room.
         </p>
         <p class="mt-4 text-lg leading-relaxed text-ink/80">
-          That fundraising and training piece is not standing yet. If you run a home or a program and want to talk about
-          it, use the form on this page. Do not wait for a polished nonprofit page that does not exist.
+          We also want to mentor and train people on the work — measure, hang, keep a finish clean — so the house does
+          not depend on us coming back for every hinge. If you have a program, a home, or a crew that needs that, write
+          us. We would rather start messy than wait for a polished foundation page.
         </p>
       </div>
       <div class="mt-10 space-y-4 text-ink/80 md:mt-0">
-        <h3 class="font-serif text-2xl text-ink">What we can and cannot do today</h3>
+        <h3 class="font-serif text-2xl text-ink">How we want to show up</h3>
         <ul class="list-disc space-y-2 pl-5 leading-relaxed">
-          <li>We can design the room and produce a cabinet takeoff.</li>
-          <li>We can discount our design fee and the stock cabinets we sell.</li>
-          <li>We can look at donated or reduced labor on a house-by-house basis. Capacity is limited.</li>
-          <li>We cannot promise a start date, a dollar amount, or a full gut remodel on the first email.</li>
-          <li>We do not build custom cabinet shops. Boxes come from the estimator list.</li>
-          <li>Install, when it happens through us, is scheduled separately from the design brand.</li>
+          <li>Design the room and produce a cabinet takeoff you can build from.</li>
+          <li>Discount our design fee and the stock cabinets we sell.</li>
+          <li>Give labor or cut it deep when a group home or CASA house is ready.</li>
+          <li>Help raise money for materials so the plan does not stall at an empty box list.</li>
+          <li>Train people on the work so the kitchen lasts.</li>
+          <li>Stay a small studio that answers the phone — this grows house by house.</li>
         </ul>
       </div>
     </div>
@@ -70,13 +73,12 @@
         <p class="text-sm uppercase tracking-[0.28em] text-moss">Community form</p>
         <h2 class="font-serif text-4xl">Tell us about the house</h2>
         <p class="text-lg leading-relaxed text-ink/75">
-          This form is only for community asks. Regular kitchen consults still go through
+          Use this form for community work. Regular kitchen consults still go through
           <NuxtLink to="/contact" class="text-moss hover:underline">Contact</NuxtLink>.
         </p>
         <p class="text-sm leading-relaxed text-ink/65">
-          Include the organization or home name, the neighborhood, which room, photos if you have them, and whether
-          materials are already funded. We read these and reply. Silence for a few days usually means we are on a job,
-          not that the note vanished.
+          Organization or home name, neighborhood, which room, photos if you have them, and whether materials are
+          funded. We read these and reply.
         </p>
         <a :href="SITE.phoneHref" class="block font-serif text-3xl text-moss">{{ SITE.phone }}</a>
         <a :href="`mailto:${SITE.email}`" class="block text-ink/80 hover:text-moss">{{ SITE.email }}</a>
@@ -198,6 +200,6 @@ function onSubmit(e: Event) {
 useSeoMeta({
   title: "Community",
   description:
-    "Styles by Design supports military, veterans, first responders, educators, CASA, and group homes in San Antonio. Discounts now; charity labor and fundraising still taking shape.",
+    "Styles by Design is growing support for military families, first responders, educators, CASA, and group homes in San Antonio — discounts, donated labor, materials, and training.",
 });
 </script>

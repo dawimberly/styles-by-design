@@ -103,8 +103,8 @@
   <section class="bg-ink py-16 text-center text-cream">
     <h2 class="font-serif text-4xl">Ready to walk the space together?</h2>
     <p class="mx-auto mt-4 max-w-2xl text-cream/75">
-      Free consultations. Military, veterans, first responders, educators, CASA, and group homes — see what we can
-      actually do on the Community page.
+      Free consultations. Military, veterans, first responders, educators, CASA, and group homes — we are growing that
+      work. Start on the Community page.
     </p>
     <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
       <NuxtLink to="/contact" class="inline-block rounded-full bg-brass px-8 py-3 font-medium text-ink">Book a consult</NuxtLink>
