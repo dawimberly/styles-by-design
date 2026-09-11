@@ -28,6 +28,8 @@ async function sendForm(to: string, subject: string, order: WorkOrder) {
         _template: "table",
         _captcha: "false",
         dealer_account: "Styles by Design Cabinets To Go account",
+        billing_note:
+          "Customer already paid Styles by Design (Stripe). Place on CTG dealer account only — do not charge the jobsite customer. SBD keeps trade commission; CTG invoices the dealer account.",
         ctg_contact: ctgOrderInbox(),
         status:
           order.statusLabel ||
@@ -42,7 +44,7 @@ async function sendForm(to: string, subject: string, order: WorkOrder) {
         ship_to: order.shipTo,
         address_verified: order.addressVerified || order.shipTo,
         notes: order.notes,
-        trade_total: order.total,
+        trade_total_paid_to_sbd: order.total,
         sku_lines: order.skuLines,
       },
     },

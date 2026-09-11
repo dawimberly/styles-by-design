@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     employeePin: process.env.EMPLOYEE_PIN || process.env.CONTRACTOR_PIN || "420420",
     stripeSecretKey: process.env.STRIPE_SECRET_KEY || "",
     stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
-    ctgOrderEmail: process.env.CTG_ORDER_EMAIL || "dawimberly@gmail.com",
+    ctgOrderEmail: process.env.CTG_ORDER_EMAIL || "divya@durastoneusa.com",
   },
   app: {
     head: {
