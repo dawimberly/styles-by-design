@@ -13,7 +13,11 @@ export default defineNuxtConfig({
     contractorPin: process.env.CONTRACTOR_PIN || "420420",
     employeePin: process.env.EMPLOYEE_PIN || process.env.CONTRACTOR_PIN || "420420",
     stripeSecretKey: process.env.STRIPE_SECRET_KEY || "",
-    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
+    stripeWebhookSecret:
+      process.env.STRIPE_WEBHOOK_SECRET ||
+      process.env.SIGNING_SECRET ||
+      process.env.signing_secret ||
+      "",
     stripeCabinetTaxCode: process.env.STRIPE_CABINET_TAX_CODE || "txcd_99999999",
     stripeDesignTaxCode: process.env.STRIPE_DESIGN_TAX_CODE || "txcd_20060022",
     ctgOrderEmail: process.env.CTG_ORDER_EMAIL || "divya@durastoneusa.com",
