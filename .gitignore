@@ -25,3 +25,7 @@ logs
 
 .vercel
 .env*
+
+# Agent skill caches (installed locally; not part of the site)
+.agents/
+skills-lock.json

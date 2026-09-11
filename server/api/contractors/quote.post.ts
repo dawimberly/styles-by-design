@@ -1,4 +1,6 @@
 import { INBOX } from "../../utils/inbox";
+import { formatShipTo, verifyShipAddress } from "../../utils/address";
+import { priceContractorLines, resolveFinish, lineTotalCents } from "../../utils/catalog-order";
 
 export default defineEventHandler(async (event) => {
   requireContractor(event);
@@ -14,12 +16,15 @@ export default defineEventHandler(async (event) => {
     state?: string;
     zip?: string;
     fulfillment?: "drop_ship" | "delivery";
-    lines?: { sku: string; qty: number; net: number; name: string; roomLabel?: string }[];
+    lines?: { sku: string; qty: number; roomLabel?: string }[];
   }>(event);
 
-  if (!body?.company?.trim() || !body?.email?.trim() || !body.lines?.length) {
-    throw createError({ statusCode: 400, statusMessage: "Company, email, and at least one SKU are required." });
+  if (!body?.company?.trim() || !body?.email?.trim()) {
+    throw createError({ statusCode: 400, statusMessage: "Company and email are required." });
   }
+
+  const finish = resolveFinish(body.finish);
+  const priced = priceContractorLines(finish, body.lines);
   const verified = await verifyShipAddress({
     street: body.street || "",
     city: body.city || "",
@@ -27,15 +32,15 @@ export default defineEventHandler(async (event) => {
     zip: body.zip || "",
   });
 
-  const total = Math.round(body.lines.reduce((sum, line) => sum + line.net * line.qty, 0) * 100) / 100;
-  const lines = body.lines
+  const total = lineTotalCents(priced) / 100;
+  const lines = priced
     .map((line) => {
-      const room = (line.roomLabel || "").trim();
+      const room = line.roomLabel;
       const where = room ? `[${room}] ` : "";
       return `${where}${line.qty} × ${line.name} (${line.sku}) @ $${line.net.toFixed(2)}`;
     })
     .join("\n");
-  const rooms = [...new Set(body.lines.map((line) => (line.roomLabel || "").trim()).filter(Boolean))].join(", ");
+  const rooms = [...new Set(priced.map((line) => line.roomLabel).filter(Boolean))].join(", ");
   const shipTo = formatShipTo(verified);
   const fulfillment = body.fulfillment === "delivery" ? "Jobsite delivery" : "Drop-ship via Cabinets To Go account";
 
@@ -54,7 +59,7 @@ export default defineEventHandler(async (event) => {
         name: body.name || "",
         email: body.email,
         phone: body.phone || "",
-        finish: body.finish || "",
+        finish,
         fulfillment,
         ship_to: shipTo,
         address_verified: verified.matched,

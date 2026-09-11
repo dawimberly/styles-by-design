@@ -5,6 +5,27 @@
     <p class="mt-6 text-lg text-ink/75 leading-relaxed">
       Stripe has the payment. Studio staff will confirm funds, then send the Cabinets To Go work order to Divya.
     </p>
+    <dl v-if="receipt" class="mt-8 space-y-2 rounded-2xl bg-white p-6 shadow-sm text-ink/80">
+      <div class="flex justify-between gap-4">
+        <dt>Company</dt>
+        <dd>{{ receipt.company }}</dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt>Subtotal</dt>
+        <dd>{{ receipt.subtotal }}</dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt>Tax</dt>
+        <dd>{{ receipt.tax }}</dd>
+      </div>
+      <div class="flex justify-between gap-4 font-medium">
+        <dt>Total paid</dt>
+        <dd>{{ receipt.total }}</dd>
+      </div>
+      <div v-if="receipt.invoiceUrl" class="pt-2">
+        <a :href="receipt.invoiceUrl" class="text-moss" target="_blank" rel="noreferrer">View Stripe invoice</a>
+      </div>
+    </dl>
     <ol class="mt-10 space-y-4 text-left text-ink/80">
       <li class="rounded-2xl bg-white p-4 shadow-sm">
         <p class="font-medium text-moss">1. Paid</p>
@@ -30,5 +51,21 @@
 </template>
 
 <script setup lang="ts">
+type Receipt = {
+  company: string;
+  subtotal: string;
+  tax: string;
+  total: string;
+  invoiceUrl: string | null;
+};
+
+const route = useRoute();
+const sessionId = computed(() => String(route.query.session_id || ""));
+const { data: receipt } = await useFetch<Receipt>("/api/contractors/receipt", {
+  query: computed(() => ({ session_id: sessionId.value })),
+  immediate: sessionId.value.startsWith("cs_"),
+  watch: false,
+});
+
 useSeoMeta({ title: "Order processing" });
 </script>

@@ -14,6 +14,8 @@ export default defineNuxtConfig({
     employeePin: process.env.EMPLOYEE_PIN || process.env.CONTRACTOR_PIN || "420420",
     stripeSecretKey: process.env.STRIPE_SECRET_KEY || "",
     stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
+    stripeCabinetTaxCode: process.env.STRIPE_CABINET_TAX_CODE || "txcd_99999999",
+    stripeDesignTaxCode: process.env.STRIPE_DESIGN_TAX_CODE || "txcd_20060022",
     ctgOrderEmail: process.env.CTG_ORDER_EMAIL || "divya@durastoneusa.com",
   },
   app: {

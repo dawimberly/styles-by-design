@@ -147,8 +147,9 @@
     <section class="mt-12 rounded-2xl bg-white p-8 shadow-sm">
       <h2 class="font-serif text-3xl">Order cart by room</h2>
       <p class="mt-2 max-w-2xl text-ink/70">
-        You pay Styles by Design. After Stripe confirms funds, studio staff confirm payment in the employee portal and
-        send the Cabinets To Go work order to Divya at Dura Stone.
+        You pay Styles by Design. Trade prices are exclusive of tax — Stripe Tax is added at checkout from the
+        verified ship-to address (only in states where Styles by Design is registered to collect). After Stripe
+        confirms funds, studio staff confirm payment and send the Cabinets To Go work order to Divya at Dura Stone.
       </p>
       <p v-if="!cart.length" class="mt-4 text-ink/60">Set quantities to build an order.</p>
       <div v-else class="mt-6 space-y-8">
@@ -251,8 +252,8 @@
           {{ paying ? "Opening checkout…" : "Pay Styles by Design" }}
         </button>
         <p class="md:col-span-2 text-sm text-ink/50">
-          Card payment goes to Styles by Design. Staff then confirm funds and email Divya the work order for drop-ship
-          or delivery to this address.
+          Card payment goes to Styles by Design. Stripe emails an invoice after payment. Staff then confirm funds and
+          email Divya the work order for drop-ship or delivery to this address.
         </p>
       </form>
     </section>

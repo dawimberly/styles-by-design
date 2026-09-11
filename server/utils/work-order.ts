@@ -13,6 +13,7 @@ export type WorkOrder = {
   addressVerified?: string;
   notes: string;
   total: string;
+  tax?: string;
   skuLines: string;
   statusLabel?: string;
 };
@@ -45,6 +46,7 @@ async function sendForm(to: string, subject: string, order: WorkOrder) {
         address_verified: order.addressVerified || order.shipTo,
         notes: order.notes,
         trade_total_paid_to_sbd: order.total,
+        sales_tax: order.tax || "",
         sku_lines: order.skuLines,
       },
     },
@@ -60,6 +62,10 @@ export async function notifyPaidAwaitingStaff(order: WorkOrder) {
     statusLabel: "PAID — waiting for staff to confirm funds and send to Divya",
     notes: `${order.notes}\n\nOpen /staff, confirm funds, then send to ${ctgOrderInbox()}.`.trim(),
   });
+}
+
+export async function notifyOrderAlert(subject: string, order: WorkOrder) {
+  await sendForm(INBOX, subject, order);
 }
 
 export async function sendOrderToDivya(order: WorkOrder) {

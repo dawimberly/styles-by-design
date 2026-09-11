@@ -8,7 +8,10 @@
           Paid Stripe checkouts wait here. Confirm funds, then send the work order to
           dawimberly@gmail.com (temporary). Jon gets a copy.
         </p>
-        <p class="mt-3">
+        <p class="mt-3 flex flex-wrap gap-4">
+          <NuxtLink to="/staff/invoices" class="text-sm font-medium text-moss hover:underline">
+            Design invoices →
+          </NuxtLink>
           <NuxtLink to="/staff/kitchen" class="text-sm font-medium text-moss hover:underline">
             Kitchen estimator →
           </NuxtLink>
@@ -26,6 +29,7 @@
         <div class="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p class="font-medium">{{ order.company || "No company" }} · {{ order.total }}</p>
+            <p v-if="order.tax && order.tax !== '$0.00'" class="mt-1 text-sm text-ink/60">Tax {{ order.tax }}</p>
             <p class="mt-1 text-sm text-ink/70">{{ order.name }} · {{ order.email }} · {{ order.phone }}</p>
             <p class="mt-2 text-sm">{{ order.shipTo }}</p>
             <p class="mt-1 text-sm text-ink/60">{{ order.fulfillment }} · {{ order.finish }}</p>
@@ -65,6 +69,7 @@ type Order = {
   fulfillment: string;
   shipTo: string;
   notes: string;
+  tax?: string;
   sentToDivya: string;
 };
 

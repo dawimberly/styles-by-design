@@ -19,6 +19,7 @@ export function workOrderFromSession(full: Stripe.Checkout.Session): WorkOrder {
     addressVerified: meta.address_verified || "",
     notes: meta.notes || "",
     total: `$${((full.amount_total || 0) / 100).toFixed(2)}`,
+    tax: `$${((full.total_details?.amount_tax || 0) / 100).toFixed(2)}`,
     skuLines,
   };
 }
@@ -29,6 +30,7 @@ export function orderSummary(full: Stripe.Checkout.Session) {
     id: full.id,
     paid: full.payment_status === "paid",
     total: `$${((full.amount_total || 0) / 100).toFixed(2)}`,
+    tax: `$${((full.total_details?.amount_tax || 0) / 100).toFixed(2)}`,
     email: meta.email || full.customer_email || "",
     company: meta.company || "",
     name: meta.name || "",
