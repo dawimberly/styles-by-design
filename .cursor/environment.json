@@ -1,0 +1,11 @@
+{
+  "name": "Styles by Design (Nuxt)",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "nuxt-dev",
+      "command": "npm run dev"
+    }
+  ],
+  "ports": [3000]
+}
