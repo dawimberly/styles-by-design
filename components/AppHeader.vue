@@ -5,7 +5,7 @@
         <img src="@/assets/images/logosbd.png" alt="Styles by Design" class="h-12 w-auto md:h-14" />
       </NuxtLink>
 
-      <nav class="hidden items-center gap-8 text-sm font-medium tracking-wide text-ink/80 md:flex">
+      <nav class="hidden items-center gap-7 text-sm font-medium tracking-wide text-ink/80 md:flex">
         <NuxtLink
           v-for="link in links"
           :key="link.to"
@@ -67,6 +67,7 @@ const links = [
   { to: "/", text: "Home" },
   { to: "/services", text: "Services" },
   { to: "/gallery", text: "Gallery" },
+  { to: "/community", text: "Community" },
   { to: "/about", text: "About" },
   { to: "/contact", text: "Contact" },
 ];

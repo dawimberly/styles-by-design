@@ -22,6 +22,7 @@
           <li><NuxtLink to="/services/kitchen-remodeling" class="hover:text-cream">Kitchen design</NuxtLink></li>
           <li><NuxtLink to="/services/bath-remodeling" class="hover:text-cream">Bath design</NuxtLink></li>
           <li><NuxtLink to="/gallery" class="hover:text-cream">Gallery</NuxtLink></li>
+          <li><NuxtLink to="/community" class="hover:text-cream">Community</NuxtLink></li>
           <li><NuxtLink to="/contractors" class="hover:text-cream">Contractor portal</NuxtLink></li>
         </ul>
         <a
