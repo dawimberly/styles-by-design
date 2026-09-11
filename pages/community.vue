@@ -1,81 +1,78 @@
 <template>
-  <PageHeader subtitle="Community" title="We donate the labor. We are looking for partners." />
+  <PageHeader subtitle="Community" title="If you have the house, we will bring the labor." />
 
   <section class="mx-auto max-w-6xl px-4 py-16">
     <p class="max-w-3xl text-lg leading-relaxed text-ink/80">
       If you run a group home, work with CASA, or serve military families, first responders, or educators in San Antonio,
-      we want to work with you. Styles by Design will design the room and give the labor. What we need next is a partner
-      on materials — grants, donations, churches, civic groups, vendors who will gift boxes and finishes.
-    </p>
-    <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ink/80">
-      A free crew does not finish a kitchen by itself. Cabinets, counters, and fixtures still have to be paid for. Bring
-      the house. Bring a grant. Bring a donor. We will show up with the plan and the labor.
+      this page is the start of a partnership. Styles by Design designs the kitchen or bath and donates the labor. We are
+      looking for partners who will fund or gift the materials — grants, donations, churches, civic groups, and vendors.
     </p>
 
-    <div class="mt-12 grid gap-6 md:grid-cols-3">
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
       <article class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-sand">
-        <h2 class="font-serif text-2xl">What we put in</h2>
+        <p class="text-sm uppercase tracking-[0.2em] text-moss">If you run the house</p>
+        <h2 class="mt-3 font-serif text-2xl">If the kitchen is the room that needs to work</h2>
         <p class="mt-3 text-ink/75 leading-relaxed">
-          Design, the cabinet takeoff, and free labor for community houses we take on. Service families also get a
-          discount on design and on the stock cabinets we sell when the job is a paid remodel.
+          Send the house, the room, and photos. We will design it, write the cabinet takeoff, and put free labor on it.
+          Mentoring on the work is part of the visit, so the people who live there can keep the room.
         </p>
       </article>
       <article class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-sand">
-        <h2 class="font-serif text-2xl">What a partner puts in</h2>
+        <p class="text-sm uppercase tracking-[0.2em] text-moss">If you fund the work</p>
+        <h2 class="mt-3 font-serif text-2xl">If you have a grant, a gift, or product to give</h2>
         <p class="mt-3 text-ink/75 leading-relaxed">
-          Grants. Cash donations. Gifted cabinets or counters. A church or civic group that will cover the material list.
-          An organization that already has funding and needs a studio and a crew that will work for the house, not the
-          invoice.
+          A material list with real numbers is what a grant or a donor can attach to. We will price the takeoff in plain
+          language. You cover cabinets, counters, and fixtures. We cover design and labor.
         </p>
       </article>
       <article class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-sand">
-        <h2 class="font-serif text-2xl">Who this is for</h2>
+        <p class="text-sm uppercase tracking-[0.2em] text-moss">If you serve</p>
+        <h2 class="mt-3 font-serif text-2xl">If you are military, first responder, or an educator</h2>
         <p class="mt-3 text-ink/75 leading-relaxed">
-          Group homes. CASA and child-advocacy houses. Military, veterans, first responders, and educators. Mentoring and
-          training on the work is part of the offer — so the kitchen stays useful after we leave.
+          Ask when you book a consult. We discount design and the stock cabinets we sell. Bring ID or a work email if you
+          have it.
+        </p>
+      </article>
+      <article class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-sand">
+        <p class="text-sm uppercase tracking-[0.2em] text-moss">If you write grants</p>
+        <h2 class="mt-3 font-serif text-2xl">If you already know which house comes next</h2>
+        <p class="mt-3 text-ink/75 leading-relaxed">
+          Sit with us on the application. We will put a design, a takeoff, and donated labor on the page so the ask is
+          concrete.
         </p>
       </article>
     </div>
   </section>
 
   <section class="bg-sand/40 py-16">
-    <div class="mx-auto max-w-6xl px-4 md:grid md:grid-cols-2 md:gap-12">
-      <div>
-        <p class="text-sm uppercase tracking-[0.28em] text-moss">Partnership</p>
-        <h2 class="mt-3 font-serif text-4xl">Grants, donations, and the material list</h2>
-        <p class="mt-4 text-lg leading-relaxed text-ink/80">
-          If you write grants, sit on a foundation board, own a product line, or know a donor who wants a kitchen in a
-          house that needs one — that is the partnership we are asking for. We will price the takeoff in plain numbers
-          so a grant application or a gift has something solid to attach to.
-        </p>
-        <p class="mt-4 text-lg leading-relaxed text-ink/80">
-          If you already have the materials funded, even better. Send the house. We will design it and put labor on it.
-        </p>
-      </div>
-      <div class="mt-10 space-y-4 text-ink/80 md:mt-0">
-        <h3 class="font-serif text-2xl text-ink">A working split</h3>
-        <ul class="list-disc space-y-2 pl-5 leading-relaxed">
-          <li>We donate design and labor.</li>
-          <li>A partner funds or gifts the cabinets, counters, and fixtures.</li>
-          <li>We train people on site so the house can keep the room.</li>
-          <li>We stay small and take houses we can finish — one partnership at a time.</li>
-        </ul>
-      </div>
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-sm uppercase tracking-[0.28em] text-moss">How a partnership looks</p>
+      <h2 class="mt-3 font-serif text-4xl">If this sounds like your house, here is the split</h2>
+      <ul class="mt-8 grid gap-4 md:grid-cols-3 text-ink/80">
+        <li class="rounded-2xl bg-white p-6 shadow-sm">
+          <h3 class="font-serif text-2xl">We give</h3>
+          <p class="mt-2 leading-relaxed">Design, the cabinet list, free labor, and training on the work.</p>
+        </li>
+        <li class="rounded-2xl bg-white p-6 shadow-sm">
+          <h3 class="font-serif text-2xl">A partner gives</h3>
+          <p class="mt-2 leading-relaxed">A grant, a donation, gifted product, or a group ready to cover materials.</p>
+        </li>
+        <li class="rounded-2xl bg-white p-6 shadow-sm">
+          <h3 class="font-serif text-2xl">The house gets</h3>
+          <p class="mt-2 leading-relaxed">A kitchen or bath that can be used, and people on site who know how to keep it.</p>
+        </li>
+      </ul>
     </div>
   </section>
 
   <section id="ask" class="mx-auto max-w-6xl px-4 py-16">
     <div class="grid gap-12 md:grid-cols-5">
       <aside class="md:col-span-2 space-y-5">
-        <p class="text-sm uppercase tracking-[0.28em] text-moss">Start a partnership</p>
-        <h2 class="font-serif text-4xl">Tell us about the house — or the grant</h2>
+        <p class="text-sm uppercase tracking-[0.28em] text-moss">If this fits</p>
+        <h2 class="font-serif text-4xl">If you are ready to start, write us here</h2>
         <p class="text-lg leading-relaxed text-ink/75">
-          Homes, CASA programs, donors, and grant writers can use this form. Regular paid consults still go through
+          Homes, CASA programs, donors, grant writers, and vendors. Paid design consults still go through
           <NuxtLink to="/contact" class="text-moss hover:underline">Contact</NuxtLink>.
-        </p>
-        <p class="text-sm leading-relaxed text-ink/65">
-          Name the organization, the neighborhood, the room, and whether materials are funded or you want to raise them
-          with us.
         </p>
         <a :href="SITE.phoneHref" class="block font-serif text-3xl text-moss">{{ SITE.phone }}</a>
         <a :href="`mailto:${SITE.email}`" class="block text-ink/80 hover:text-moss">{{ SITE.email }}</a>
@@ -128,30 +125,30 @@
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium" for="kind">I am reaching out as *</label>
+            <label class="text-sm font-medium" for="kind">If you are reaching out as *</label>
             <select id="kind" v-model="kind" name="kind" required class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3">
               <option disabled value="">Choose one</option>
-              <option>Group home looking for free labor</option>
-              <option>CASA or child-advocacy program</option>
+              <option>A group home</option>
+              <option>CASA or child-advocacy</option>
               <option>Military, veteran, first responder, or educator</option>
-              <option>Grant writer or foundation</option>
-              <option>Donor or civic / church partner</option>
-              <option>Vendor who can gift materials</option>
-              <option>Something else — partnership</option>
+              <option>A grant writer or foundation</option>
+              <option>A donor, church, or civic partner</option>
+              <option>A vendor who can gift materials</option>
+              <option>A partner in another form</option>
             </select>
           </div>
           <div>
-            <label class="text-sm font-medium" for="funded">Materials</label>
+            <label class="text-sm font-medium" for="funded">If materials are in the picture</label>
             <select id="funded" v-model="funded" name="materials_funded" class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3">
-              <option value="">Not sure yet</option>
-              <option>Already funded — we need labor and design</option>
+              <option value="">Still mapping this</option>
+              <option>Funded — looking for design and labor</option>
               <option>Partly funded</option>
-              <option>We want to pursue a grant or donations together</option>
-              <option>I can donate or gift product</option>
+              <option>Ready to pursue a grant or donations together</option>
+              <option>Ready to donate or gift product</option>
             </select>
           </div>
           <div>
-            <label class="text-sm font-medium" for="message">What is going on *</label>
+            <label class="text-sm font-medium" for="message">If you tell us one thing *</label>
             <textarea
               id="message"
               v-model="message"
@@ -159,13 +156,11 @@
               rows="6"
               required
               class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3"
-              placeholder="The house, the room, the grant or gift you have in mind, timing."
+              placeholder="The house, the room, the grant or gift, the timing."
             />
           </div>
           <button type="submit" class="rounded-full bg-ink px-6 py-3 text-cream">Start the partnership</button>
-          <p class="text-center text-xs text-ink/50">
-            Same inbox as consults, subject line “community partnership.”
-          </p>
+          <p class="text-center text-xs text-ink/50">Subject line “community partnership.”</p>
         </form>
       </div>
     </div>
@@ -199,6 +194,6 @@ function onSubmit(e: Event) {
 useSeoMeta({
   title: "Community",
   description:
-    "Styles by Design donates labor for group homes, CASA, and service families in San Antonio, and seeks partners for grants and material donations.",
+    "If you have the house, Styles by Design donates the labor. Looking for partners on grants and material donations for group homes, CASA, and service families in San Antonio.",
 });
 </script>
