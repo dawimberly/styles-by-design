@@ -1,11 +1,11 @@
 import Stripe from "stripe";
 import { notifyOrderAlert, notifyPaidAwaitingStaff } from "../../utils/work-order";
 import { workOrderFromSession } from "../../utils/staff-orders";
-import { stripeClient } from "../../utils/stripe";
+import { stripeClient, stripeWebhookSecret } from "../../utils/stripe";
 
 export default defineEventHandler(async (event) => {
   const stripe = stripeClient();
-  const secret = useRuntimeConfig().stripeWebhookSecret?.trim();
+  const secret = stripeWebhookSecret();
   if (!secret) {
     throw createError({ statusCode: 503, statusMessage: "STRIPE_WEBHOOK_SECRET is not set." });
   }

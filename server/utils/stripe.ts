@@ -20,11 +20,29 @@ export const CANDIDATE_CABINET_TAX_CODE = "txcd_99999999";
 export const CANDIDATE_DESIGN_TAX_CODE = "txcd_20060022";
 
 export function stripeSecretKey() {
-  const key = useRuntimeConfig().stripeSecretKey?.trim() || process.env.STRIPE_SECRET_KEY?.trim() || "";
+  const config = useRuntimeConfig();
+  const key = (
+    config.stripeSecretKey ||
+    process.env.NUXT_STRIPE_SECRET_KEY ||
+    process.env.STRIPE_SECRET_KEY ||
+    ""
+  ).trim();
   return key;
 }
 
 /** Same key-shape check as Paq'in Family House (dirty-ink) — this project uses a different Stripe account. */
+export function stripeWebhookSecret() {
+  const config = useRuntimeConfig();
+  return (
+    config.stripeWebhookSecret ||
+    process.env.NUXT_STRIPE_WEBHOOK_SECRET ||
+    process.env.STRIPE_WEBHOOK_SECRET ||
+    process.env.SIGNING_SECRET ||
+    process.env.signing_secret ||
+    ""
+  ).trim();
+}
+
 export function hasStripeSecret() {
   const key = stripeSecretKey();
   return (

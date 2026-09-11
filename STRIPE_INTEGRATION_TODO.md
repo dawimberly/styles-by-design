@@ -15,6 +15,7 @@ Single source of truth for remaining Checkout Studio setup on Styles by Design.
 | line_items | Dynamic `price_data` from catalog SKUs | Already real trade prices from the cabinet catalog (not `price_...` placeholders). Replace only if you switch to Dashboard Price IDs. |
 | STRIPE_PUBLISHABLE_KEY / NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY | empty | Add the Styles by Design `pk_test_...` (then `pk_live_...`) on Vercel + local `.env`. |
 | STRIPE_SECRET_KEY | set in Vercel | Keep Styles by Design `sk_test_...` / `rk_test_...` (not Paq'in). |
+| NUXT_STRIPE_SECRET_KEY | optional duplicate | Same value as `STRIPE_SECRET_KEY`. Use this on Vercel Preview if Nuxt does not see `STRIPE_SECRET_KEY`. |
 | STRIPE_WEBHOOK_SECRET | set in Vercel | Must match the webhook signing secret for `/api/contractors/stripe-webhook`. |
 
 ## Configured Parameters
