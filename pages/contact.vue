@@ -7,6 +7,11 @@
       <a :href="SITE.phoneHref" class="block font-serif text-4xl text-moss">{{ SITE.phone }}</a>
       <a :href="`mailto:${SITE.email}`" class="block text-ink/80 hover:text-moss">Email Jon</a>
       <p class="text-ink/70">{{ SITE.city }} and nearby Hill Country towns.</p>
+      <p class="text-sm leading-relaxed text-ink/65">
+        Military, veterans, first responders, educators, CASA, and group homes: say so in the form.
+        Discounts for service families are available now. Charity labor for group homes is not a set program yet —
+        we still want the conversation.
+      </p>
     </aside>
 
     <div class="md:col-span-3 rounded-2xl bg-white p-8 shadow-sm">
@@ -50,6 +55,16 @@
           <input id="phone" v-model="phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3" />
         </div>
         <div>
+          <label class="text-sm font-medium" for="who">How should we think about this visit?</label>
+          <select id="who" v-model="who" name="who" class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3">
+            <option value="">Homeowner / remodel</option>
+            <option>Military, veteran, first responder, or educator</option>
+            <option>CASA or child-advocacy related</option>
+            <option>Group home or similar house — asking about discount or donated labor</option>
+            <option>Trade / contractor</option>
+          </select>
+        </div>
+        <div>
           <label class="text-sm font-medium" for="message">What's going on *</label>
           <textarea
             id="message"
@@ -58,7 +73,7 @@
             rows="5"
             required
             class="mt-1 w-full rounded-lg border border-sand bg-cream px-4 py-3"
-            placeholder="Neighborhood, the room, when you want to start."
+            placeholder="Neighborhood, the room, when you want to start. Mention CASA, a group home, or service status if that applies."
           />
         </div>
         <button type="submit" class="rounded-full bg-ink px-6 py-3 text-cream">Send it over</button>
@@ -75,6 +90,7 @@ const nextUrl = ref(`${SITE.url}/contact?sent=1`);
 const name = ref("");
 const email = ref("");
 const phone = ref("");
+const who = ref("");
 const message = ref("");
 const honey = ref("");
 
