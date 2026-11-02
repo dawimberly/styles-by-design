@@ -6,7 +6,8 @@
         <h1 class="font-serif text-4xl">Confirm funds and send to Divya</h1>
         <p class="mt-2 max-w-2xl text-ink/70">
           Paid Stripe checkouts wait here. Confirm funds, then send the work order to
-          dawimberly@gmail.com (temporary). Jon gets a copy.
+          dawimberly@gmail.com (temporary). Jon gets a copy. Partner catalog requests are unpaid designer-call leads —
+          invoice those from Design invoices after the call.
         </p>
         <p class="mt-3 flex flex-wrap gap-4">
           <NuxtLink to="/staff/invoices" class="text-sm font-medium text-moss hover:underline">

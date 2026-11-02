@@ -47,7 +47,9 @@ export default defineEventHandler(async (event) => {
     }
     case "invoice.paid": {
       const invoice = parsed.data.object as Stripe.Invoice;
-      if (invoice.metadata?.kind === "design_invoice" && !invoice.metadata?.staff_notified) {
+      const kind = invoice.metadata?.kind;
+      const billable = kind === "design_invoice" || kind === "referral_invoice" || kind === "retail_invoice";
+      if (billable && !invoice.metadata?.staff_notified) {
         try {
           await notifyDesignInvoicePaid(stripe, invoice);
         } catch (error) {
@@ -98,20 +100,24 @@ async function notifyFailedCheckout(session: Stripe.Checkout.Session) {
 
 async function notifyDesignInvoicePaid(stripe: Stripe, invoice: Stripe.Invoice) {
   const email = invoice.metadata?.email || invoice.customer_email || "";
-  await notifyOrderAlert("DESIGN INVOICE PAID", {
+  const referral = invoice.metadata?.referral_name || invoice.metadata?.referral || "";
+  const kind = invoice.metadata?.kind || "";
+  const label = kind === "referral_invoice" ? "PARTNER INVOICE PAID" : kind === "retail_invoice" ? "RETAIL INVOICE PAID" : "DESIGN INVOICE PAID";
+  await notifyOrderAlert(referral ? `${label} — ${referral}` : label, {
     paid: true,
     stripeSession: invoice.id,
     company: invoice.metadata?.company || "",
     name: invoice.metadata?.name || "",
     email,
     phone: invoice.metadata?.phone || "",
-    finish: "",
-    fulfillment: "Design invoice",
+    finish: invoice.metadata?.finish || "",
+    fulfillment: kind === "design_invoice" ? "Design invoice" : "Cabinet invoice",
     shipTo: invoice.metadata?.ship_to || "",
     notes: invoice.metadata?.notes || invoice.description || "",
     total: `$${((invoice.amount_paid || 0) / 100).toFixed(2)}`,
     skuLines: invoice.hosted_invoice_url || "",
-    statusLabel: "DESIGN INVOICE PAID",
+    statusLabel: label,
+    referral,
   });
   await stripe.invoices.update(invoice.id, {
     metadata: {

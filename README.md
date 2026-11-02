@@ -4,7 +4,23 @@ Interior design studio site (San Antonio). Contractors buy discounted stock cabi
 
 ## Contractor portal
 
-PIN is `CONTRACTOR_PIN`. Open `/contractors`.
+PIN is `CONTRACTOR_PIN`. Open `/contractors`. Trade checkout stays here, at 20% off list, and is separate from partner referrals.
+
+## Partner catalog (The Flip Fixer)
+
+Referred retail customers browse the full catalog at `/shop`. They cannot pay on that page. A designer call confirms fillers, toe kick, and baseboard, then staff invoice from `/staff/invoices`.
+
+Flip Fixer should send people to:
+
+```
+https://stylesbydesigntx.com/shop?ref=flipfixer
+```
+
+`www` redirects to the apex and keeps the query string. The `ref` value is stored in an httpOnly cookie (`sbd_ref`) for 90 days. Only codes in `server/utils/referrals.ts` change the price. `flipfixer` is 15% off list. A missing or unknown `ref` is full retail. The 15% rate does not stack with the contractor 20%.
+
+No new environment variables. Checkout for contractors and staff invoices still use this site’s Stripe keys (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`). The designer-call email goes to `Jon@TheFlipFixer.com` through the existing form inbox and does not need a Stripe key.
+
+After the call, staff price the final SKUs on `/staff/invoices` and choose The Flip Fixer. The server prices those lines. A typed dollar amount is ignored when SKU lines are present.
 
 ## Stripe (this site’s own account)
 
