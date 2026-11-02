@@ -1,0 +1,807 @@
+<template>
+  <div class="mx-auto max-w-6xl px-4 py-10">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-sm uppercase tracking-[0.2em] text-moss">{{ eyebrow }}</p>
+        <h1 class="font-serif text-4xl">{{ headline }}</h1>
+        <p class="mt-2 max-w-2xl text-ink/70">{{ subhead }}</p>
+      </div>
+      <button v-if="mode === 'contractor'" class="text-sm text-moss" type="button" @click="logout">Sign out</button>
+    </div>
+
+    <div class="mt-8 grid gap-3 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <div>
+        <input
+          v-model="q"
+          class="w-full rounded-lg border border-sand bg-white px-4 py-3"
+          placeholder="Search SKU or words (e.g. vanity, pantry)"
+          @keydown.enter.prevent="applySearch"
+        />
+        <p class="mt-1 text-xs text-ink/45">
+          {{ visibleItems.length }} of {{ catalog?.items?.length || 0 }} shown
+        </p>
+      </div>
+      <select v-model="group" class="rounded-lg border border-sand bg-white px-4 py-3">
+        <option value="">All categories</option>
+        <optgroup v-for="section in catalog?.sections || []" :key="section.id" :label="section.name">
+          <option v-for="g in section.groups" :key="g.id" :value="g.id">{{ g.name }}</option>
+        </optgroup>
+      </select>
+      <select v-model="finish" class="rounded-lg border border-sand bg-white px-4 py-3">
+        <option v-for="f in catalog?.finishes || []" :key="f" :value="f">{{ f }}</option>
+      </select>
+      <button class="rounded-full bg-ink px-5 py-3 text-cream" type="button" @click="applySearch">Search</button>
+    </div>
+
+    <div class="mt-4 flex flex-wrap gap-2">
+      <button
+        v-for="f in catalog?.finishes || []"
+        :key="f"
+        type="button"
+        class="flex items-center gap-2 rounded-full border px-2 py-1 text-left text-xs"
+        :class="f === finish ? 'border-ink bg-ink text-cream' : 'border-sand bg-white text-ink'"
+        @click="finish = f"
+      >
+        <img :src="finishPhotos(f).door" :alt="''" class="h-8 w-8 rounded-full object-cover" />
+        <span>{{ f }}</span>
+      </button>
+    </div>
+
+    <figure v-if="!q.trim()" class="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm">
+      <div class="grid gap-0 md:grid-cols-[minmax(0,1fr)_11rem]">
+        <img :src="selectedLook.room" :alt="`${finish} photo`" class="h-64 w-full object-cover md:h-80" />
+        <img :src="selectedLook.door" :alt="`${finish} sample`" class="h-40 w-full object-cover md:h-80" />
+      </div>
+      <figcaption class="border-t border-sand px-4 py-3 text-sm text-ink/70">
+        {{
+          isClosetFinish
+            ? `${finish} — closet line units, shelves, drawers, doors, and upgrades.`
+            : `${finish} — door sample and a kitchen in this finish. Catalog SKUs share this look.`
+        }}
+      </figcaption>
+    </figure>
+
+    <div class="mt-8 flex flex-wrap items-end gap-3 rounded-2xl border border-sand bg-white p-4 shadow-sm">
+      <div class="min-w-[12rem] flex-1">
+        <label class="mb-1 block text-xs uppercase tracking-[0.15em] text-ink/50" for="active-room">Add qty to room</label>
+        <select id="active-room" v-model="activeRoomId" class="w-full rounded-lg border border-sand bg-cream px-4 py-3">
+          <option v-for="room in rooms" :key="room.instanceId" :value="room.instanceId">
+            {{ roomLabel(rooms, room) }}
+          </option>
+        </select>
+      </div>
+      <div class="min-w-[10rem]">
+        <label class="mb-1 block text-xs uppercase tracking-[0.15em] text-ink/50" for="new-room-type">New room</label>
+        <select id="new-room-type" v-model="newRoomType" class="w-full rounded-lg border border-sand px-4 py-3">
+          <option v-for="t in ROOM_TYPES" :key="t.id" :value="t.id">{{ t.name }}</option>
+        </select>
+      </div>
+      <button class="rounded-full border border-ink px-5 py-3 text-sm" type="button" @click="addRoom">+ Add room</button>
+      <p class="w-full text-sm text-ink/60">
+        Same job can have Kitchen 1, Kitchen 2, Bedroom 1… Quantities go into the selected room.
+      </p>
+    </div>
+
+    <div class="mt-8 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <table class="min-w-full text-left text-sm">
+        <thead class="border-b border-sand text-ink/60">
+          <tr>
+            <th class="px-4 py-3">SKU</th>
+            <th class="px-4 py-3">Description</th>
+            <th class="px-4 py-3">Group</th>
+            <th class="px-4 py-3">MSRP</th>
+            <th class="px-4 py-3">{{ netColumn }}</th>
+            <th class="px-4 py-3">Save</th>
+            <th class="px-4 py-3 whitespace-nowrap">Qty in {{ activeRoomName }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in visibleItems" :key="item.sku" class="border-b border-sand/60">
+            <td class="px-4 py-3 font-medium whitespace-nowrap">{{ item.sku }}</td>
+            <td class="px-4 py-3 text-ink/70">{{ item.name }}</td>
+            <td class="px-4 py-3 text-ink/70">{{ item.groupName }}</td>
+            <td class="px-4 py-3 text-ink/50 line-through">${{ item.list.toFixed(2) }}</td>
+            <td class="px-4 py-3 text-moss">${{ item.net.toFixed(2) }}</td>
+            <td class="px-4 py-3">${{ item.save.toFixed(2) }}</td>
+            <td class="px-4 py-3">
+              <div class="inline-flex items-center rounded-full border border-sand bg-cream">
+                <button
+                  class="px-2.5 py-1 text-lg leading-none text-ink disabled:opacity-30"
+                  type="button"
+                  :disabled="qtyOf(item.sku) <= 0"
+                  :aria-label="`Decrease ${item.sku}`"
+                  @click="bump(item, -1)"
+                >
+                  −
+                </button>
+                <input
+                  class="w-14 border-x border-sand bg-white py-1 text-center tabular-nums outline-none"
+                  type="number"
+                  min="0"
+                  max="999"
+                  :value="qtyOf(item.sku)"
+                  :aria-label="`${item.sku} quantity`"
+                  @input="onQtyInput(item, $event)"
+                />
+                <button
+                  class="px-2.5 py-1 text-lg leading-none text-ink disabled:opacity-30"
+                  type="button"
+                  :disabled="qtyOf(item.sku) >= 999"
+                  :aria-label="`Increase ${item.sku}`"
+                  @click="bump(item, 1)"
+                >
+                  +
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-if="!(visibleItems.length)" class="px-4 py-8 text-center text-ink/55">
+        No cabinets match “{{ q || group || 'this filter' }}”. Clear search or pick another category.
+      </p>
+    </div>
+
+    <section class="mt-12 rounded-2xl bg-white p-8 shadow-sm">
+      <h2 class="font-serif text-3xl">Order cart by room</h2>
+      <p class="mt-2 max-w-2xl text-ink/70">{{ checkoutBlurb }}</p>
+      <p v-if="!cart.length" class="mt-4 text-ink/60">Set quantities to build an order.</p>
+      <div v-else class="mt-6 space-y-8">
+        <div v-for="block in cartByRoom" :key="block.instanceId">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-sand pb-2">
+            <h3 class="font-serif text-2xl">{{ block.label }}</h3>
+            <div class="flex flex-wrap items-center gap-2">
+              <p class="text-sm text-ink/60">${{ block.total.toFixed(2) }}</p>
+              <button
+                v-if="rooms.length > 1"
+                class="text-sm text-ink/50 hover:text-ink"
+                type="button"
+                @click="removeRoom(block.instanceId)"
+              >
+                Remove room
+              </button>
+            </div>
+          </div>
+          <ul class="space-y-3">
+            <li v-for="line in block.lines" :key="line.sku + line.roomInstanceId" class="flex items-center justify-between gap-4">
+              <span class="flex min-w-0 items-center gap-3">
+                <img :src="selectedLook.door" alt="" class="h-12 w-12 shrink-0 rounded object-cover" />
+                <span class="min-w-0">
+                  <span class="font-medium">{{ line.name }}</span>
+                  <span class="block truncate text-sm text-ink/60">SKU {{ line.sku }} · ${{ line.net.toFixed(2) }}</span>
+                </span>
+              </span>
+              <div class="flex shrink-0 items-center gap-2">
+                <select
+                  class="max-w-[9rem] rounded border border-sand px-2 py-1 text-sm"
+                  :value="line.roomInstanceId"
+                  :aria-label="`Move ${line.sku} to room`"
+                  @change="onMoveLine(line, $event)"
+                >
+                  <option v-for="room in rooms" :key="room.instanceId" :value="room.instanceId">
+                    {{ roomLabel(rooms, room) }}
+                  </option>
+                </select>
+                <input
+                  :value="line.qty"
+                  min="0"
+                  max="999"
+                  type="number"
+                  class="w-20 rounded border border-sand px-2 py-1"
+                  @input="setQtyFromCart(line.sku, line.roomInstanceId, $event)"
+                />
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p v-if="cart.length" class="mt-4 font-medium">{{ totalLabel }} ${{ cartTotal.toFixed(2) }}</p>
+
+      <form v-if="cart.length" class="mt-8 grid gap-4 md:grid-cols-2" @submit.prevent="submitQuote">
+        <input
+          v-if="mode === 'contractor'"
+          v-model="company"
+          required
+          class="rounded-lg border border-sand px-4 py-3"
+          placeholder="Company"
+        />
+        <input
+          v-model="name"
+          :required="mode === 'retail'"
+          class="rounded-lg border border-sand px-4 py-3"
+          placeholder="Your name"
+        />
+        <input v-model="email" type="email" required class="rounded-lg border border-sand px-4 py-3" placeholder="Email" />
+        <input
+          v-model="phone"
+          :required="mode === 'retail'"
+          class="rounded-lg border border-sand px-4 py-3"
+          :placeholder="mode === 'retail' ? 'Phone for the designer to call' : 'Phone'"
+        />
+        <input
+          v-if="mode === 'retail'"
+          v-model="company"
+          class="rounded-lg border border-sand px-4 py-3 md:col-span-2"
+          placeholder="Household or company (optional)"
+        />
+        <select v-if="mode === 'contractor'" v-model="fulfillment" required class="rounded-lg border border-sand px-4 py-3 md:col-span-2">
+          <option value="drop_ship">Drop-ship to this address (Cabinets To Go account)</option>
+          <option value="delivery">Deliver to this jobsite</option>
+        </select>
+        <input
+          v-model="zip"
+          :required="mode === 'contractor'"
+          maxlength="5"
+          inputmode="numeric"
+          pattern="[0-9]{5}"
+          class="rounded-lg border border-sand px-4 py-3"
+          :placeholder="mode === 'retail' ? 'ZIP (optional)' : 'ZIP'"
+          @input="clearVerified"
+          @blur="lookupPostal"
+        />
+        <select v-model="state" :required="mode === 'contractor'" class="rounded-lg border border-sand px-4 py-3" @change="clearVerified">
+          <option value="" disabled>State</option>
+          <option v-for="s in US_STATES" :key="s.code" :value="s.code">{{ s.name }}</option>
+        </select>
+        <input
+          v-model="city"
+          :required="mode === 'contractor'"
+          class="rounded-lg border border-sand px-4 py-3"
+          :placeholder="mode === 'retail' ? 'City (optional)' : 'City'"
+          @input="clearVerified"
+        />
+        <input
+          v-model="street"
+          :required="mode === 'contractor'"
+          class="rounded-lg border border-sand px-4 py-3 md:col-span-2"
+          :placeholder="mode === 'retail' ? 'Street (optional — confirm on the call)' : 'Ship-to street'"
+          @input="clearVerified"
+        />
+        <div class="md:col-span-2 flex flex-wrap items-center gap-3">
+          <button class="rounded-full border border-ink px-5 py-2 text-sm" type="button" :disabled="checkingAddress" @click="verifyAddress">
+            {{ checkingAddress ? "Checking postal address…" : "Verify postal address" }}
+          </button>
+          <p v-if="addressOk" class="text-sm text-moss">Verified: {{ addressOk }}</p>
+        </div>
+        <textarea v-model="notes" class="md:col-span-2 rounded-lg border border-sand px-4 py-3" rows="3" placeholder="Unit/apt, gate codes, unload notes, mixed finishes" />
+        <ol v-if="mode === 'contractor'" class="md:col-span-2 list-decimal space-y-1 pl-5 text-sm text-ink/70">
+          <li>Verify the ship-to ZIP and street.</li>
+          <li>Pay Styles by Design.</li>
+          <li>Staff confirm funds and send the work order to Divya.</li>
+        </ol>
+        <ol v-else class="md:col-span-2 list-decimal space-y-1 pl-5 text-sm text-ink/70">
+          <li>Add the cabinets you want. Prices on this page are not a payment.</li>
+          <li>Request a designer call. A designer confirms fillers, toe kick, and baseboard.</li>
+          <li>The studio emails an invoice after that call. Nothing is charged here.</li>
+        </ol>
+        <p v-if="quoteMsg" class="md:col-span-2 text-moss">{{ quoteMsg }}</p>
+        <button
+          class="rounded-full bg-ink px-6 py-3 text-cream disabled:opacity-50"
+          type="submit"
+          :disabled="paying || (mode === 'contractor' && !addressOk)"
+        >
+          {{ submitLabel }}
+        </button>
+        <p v-if="mode === 'contractor'" class="md:col-span-2 text-sm text-ink/50">
+          Card payment goes to Styles by Design. Stripe emails an invoice after payment. Staff then confirm funds and
+          email Divya the work order for drop-ship or delivery to this address.
+        </p>
+        <p v-else class="md:col-span-2 text-sm text-ink/50">
+          This page cannot take payment. Or call
+          <a :href="SITE.phoneHref" class="text-moss">{{ SITE.phone }}</a>
+          and the studio will price the same list.
+        </p>
+      </form>
+
+      <section v-if="mode === 'contractor' && checkoutOpen" class="mt-8 rounded-2xl border border-sand bg-cream p-6">
+        <h3 class="font-serif text-2xl">Pay securely</h3>
+        <p class="mt-2 text-sm text-ink/70">Enter card details below. Do not leave this page until payment finishes.</p>
+        <div id="checkout-form" class="mt-6"></div>
+        <p v-if="checkoutMsg" class="mt-4 text-sm text-moss">{{ checkoutMsg }}</p>
+        <button class="mt-4 text-sm text-moss underline" type="button" @click="cancelEmbeddedCheckout">Cancel</button>
+      </section>
+    </section>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { CLOSET_FINISH, finishPhotos } from "../utils/site";
+import {
+  ROOM_TYPES,
+  labelForInstance,
+  newRoomInstance,
+  roomLabel,
+  type CartRoom,
+} from "../utils/room-types";
+import { matchesCatalogGroup } from "../utils/catalog-categories";
+import { matchesSearchBlob } from "../utils/sku-search";
+
+const props = defineProps<{ mode: "contractor" | "retail" }>();
+
+const catalogEndpoint = props.mode === "contractor" ? "/api/contractors/catalog" : "/api/shop/catalog";
+const checkoutEndpoint = props.mode === "contractor" ? "/api/contractors/checkout" : "/api/shop/request";
+const addressEndpoint = props.mode === "contractor" ? "/api/contractors/address" : "/api/shop/address";
+
+const q = ref("");
+const group = ref("");
+const finish = ref("Elegant White (Shaker)");
+const company = ref("");
+const name = ref("");
+const email = ref("");
+const phone = ref("");
+const notes = ref("");
+const street = ref("");
+const city = ref("");
+const state = ref("");
+const zip = ref("");
+const fulfillment = ref<"drop_ship" | "delivery">("drop_ship");
+const quoteMsg = ref("");
+const paying = ref(false);
+const checkoutOpen = ref(false);
+const checkoutMsg = ref("");
+let checkoutFormMount: { unmount?: () => void } | null = null;
+const checkingAddress = ref(false);
+const addressOk = ref("");
+
+type Item = {
+  sku: string;
+  name: string;
+  groupId: string;
+  groupName: string;
+  searchText?: string;
+  list: number;
+  net: number;
+  save: number;
+};
+
+type CartLine = {
+  sku: string;
+  name: string;
+  net: number;
+  qty: number;
+  roomInstanceId: string;
+  roomLabel: string;
+};
+
+const firstRoom = newRoomInstance("kitchen");
+firstRoom.instanceId = "kitchen-1";
+const rooms = ref<CartRoom[]>([firstRoom]);
+const activeRoomId = ref(rooms.value[0].instanceId);
+const newRoomType = ref("kitchen");
+
+const cart = ref<CartLine[]>([]);
+
+const route = useRoute();
+const headers = useRequestHeaders(["cookie"]);
+const { data: catalog } = await useFetch(catalogEndpoint, {
+  headers,
+  credentials: "include",
+  query: computed(() => {
+    const query: Record<string, string> = { finish: finish.value };
+    if (props.mode === "retail") {
+      const ref = Array.isArray(route.query.ref) ? route.query.ref[0] : route.query.ref;
+      if (typeof ref === "string" && ref.trim()) query.ref = ref;
+    }
+    return query;
+  }),
+  watch: [finish, () => route.query.ref],
+});
+
+const partnerName = computed(() => catalog.value?.referral?.name || "");
+const discountPct = computed(() => Math.round(Number(catalog.value?.discount || 0) * 100));
+const eyebrow = computed(() => {
+  if (props.mode === "contractor") return "Contractor catalog";
+  if (partnerName.value) return "Partner pricing";
+  return "Cabinet catalog";
+});
+const headline = computed(() => {
+  if (props.mode === "contractor") return "Stock cabinets at trade price";
+  if (partnerName.value) return `Stock cabinets, ${discountPct.value}% off retail`;
+  return "Stock cabinets at retail";
+});
+const subhead = computed(() => {
+  const source = catalog.value?.source || "Estimator price list";
+  if (props.mode === "contractor") return `${source} · ${discountPct.value || 20}% off MSRP`;
+  if (partnerName.value) {
+    return `${source} · ${discountPct.value}% off list. A designer confirms the final order before anyone is charged.`;
+  }
+  return `${source} · Retail list price. Open this page from a partner link for partner pricing. Ordering is a designer call either way.`;
+});
+const netColumn = computed(() => {
+  if (props.mode === "contractor") return "Trade";
+  return partnerName.value ? "Partner" : "Price";
+});
+const totalLabel = computed(() => (props.mode === "contractor" ? "Trade total" : "Selection total"));
+const checkoutBlurb = computed(() => {
+  if (props.mode === "contractor") {
+    return "You pay Styles by Design. Trade prices are exclusive of tax. After Stripe confirms funds, studio staff confirm payment and send the Cabinets To Go work order to Divya at Dura Stone.";
+  }
+  if (partnerName.value) {
+    return `Partner prices are ${discountPct.value}% off list and are calculated on the server. You cannot pay on this page. Request a designer call so fillers, toe kick, and baseboard are confirmed before the studio invoices you.`;
+  }
+  return "These are retail list prices. You cannot pay on this page. Request a designer call and the studio will invoice after fillers, toe kick, and baseboard are confirmed.";
+});
+const submitLabel = computed(() => {
+  if (paying.value) return props.mode === "retail" ? "Sending request…" : "Preparing checkout…";
+  return props.mode === "retail" ? "Request a designer call to order" : "Pay Styles by Design";
+});
+
+/** Live filter — does not wait on another network round-trip. */
+const visibleItems = computed(() => {
+  const items = (catalog.value?.items || []) as Item[];
+  const needle = q.value.trim();
+  return items.filter((item) => {
+    if (needle) {
+      const blob = item.searchText || `${item.sku} ${item.name} ${item.groupName}`;
+      if (!matchesSearchBlob(blob, needle)) return false;
+      return true;
+    }
+    if (group.value && !matchesCatalogGroup(item.groupId, group.value)) return false;
+    return true;
+  });
+});
+
+function applySearch() {
+  // Bound to the same q ref — button/enter are explicit commits for users who expect them.
+  q.value = q.value.trim();
+}
+
+const cartTotal = computed(() => cart.value.reduce((sum, line) => sum + line.net * line.qty, 0));
+const selectedLook = computed(() => finishPhotos(finish.value));
+const isClosetFinish = computed(() => finish.value === CLOSET_FINISH);
+const activeRoomName = computed(() => labelForInstance(rooms.value, activeRoomId.value));
+
+const cartByRoom = computed(() =>
+  rooms.value
+    .map((room) => {
+      const lines = cart.value.filter((line) => line.roomInstanceId === room.instanceId);
+      return {
+        instanceId: room.instanceId,
+        label: roomLabel(rooms.value, room),
+        lines,
+        total: lines.reduce((sum, line) => sum + line.net * line.qty, 0),
+      };
+    })
+    .filter((block) => block.lines.length > 0),
+);
+
+watch(group, (value) => {
+  const closet = isClosetGroup(value);
+  if (closet && finish.value !== CLOSET_FINISH) finish.value = CLOSET_FINISH;
+  else if (value && !closet && finish.value === CLOSET_FINISH) {
+    finish.value = "Elegant White (Shaker)";
+  }
+});
+
+watch(finish, (value) => {
+  if (value === CLOSET_FINISH && !isClosetGroup(group.value)) group.value = "closet";
+  else if (value !== CLOSET_FINISH && isClosetGroup(group.value)) group.value = "";
+});
+
+function isClosetGroup(value: string) {
+  return value === "closet" || value.startsWith("closet-");
+}
+
+function refreshLineLabels() {
+  for (const line of cart.value) {
+    line.roomLabel = labelForInstance(rooms.value, line.roomInstanceId);
+  }
+}
+
+function addRoom() {
+  const room = newRoomInstance(newRoomType.value);
+  rooms.value = [...rooms.value, room];
+  activeRoomId.value = room.instanceId;
+  refreshLineLabels();
+}
+
+function removeRoom(instanceId: string) {
+  if (rooms.value.length <= 1) return;
+  const hasLines = cart.value.some((line) => line.roomInstanceId === instanceId);
+  if (hasLines && !window.confirm("Remove this room and its cart lines?")) return;
+  cart.value = cart.value.filter((line) => line.roomInstanceId !== instanceId);
+  rooms.value = rooms.value.filter((room) => room.instanceId !== instanceId);
+  if (activeRoomId.value === instanceId) activeRoomId.value = rooms.value[0].instanceId;
+  refreshLineLabels();
+}
+
+function moveLine(line: CartLine, targetRoomId: string) {
+  if (line.roomInstanceId === targetRoomId) return;
+  const existing = cart.value.find((entry) => entry.sku === line.sku && entry.roomInstanceId === targetRoomId);
+  if (existing) {
+    existing.qty = clampQty(existing.qty + line.qty);
+    cart.value = cart.value.filter((entry) => !(entry.sku === line.sku && entry.roomInstanceId === line.roomInstanceId));
+  } else {
+    line.roomInstanceId = targetRoomId;
+    line.roomLabel = labelForInstance(rooms.value, targetRoomId);
+  }
+  refreshLineLabels();
+}
+
+function onMoveLine(line: CartLine, event: Event) {
+  moveLine(line, (event.target as HTMLSelectElement).value);
+}
+
+let zipLookup = "";
+
+watch(zip, (value) => {
+  const code = digitsZip(value);
+  if (code !== value) {
+    zip.value = code;
+    return;
+  }
+  if (code.length !== 5) {
+    zipLookup = "";
+    addressOk.value = "";
+    return;
+  }
+  if (code !== zipLookup) addressOk.value = "";
+  lookupPostal();
+});
+
+const MAX_QTY = 999;
+
+function clampQty(value: number) {
+  if (!Number.isFinite(value) || value < 0) return 0;
+  return Math.min(MAX_QTY, Math.floor(value));
+}
+
+function qtyOf(sku: string) {
+  return cart.value.find((line) => line.sku === sku && line.roomInstanceId === activeRoomId.value)?.qty ?? 0;
+}
+
+function setQty(item: Item, qty: number) {
+  const next = clampQty(qty);
+  const roomId = activeRoomId.value;
+  const existing = cart.value.find((line) => line.sku === item.sku && line.roomInstanceId === roomId);
+  if (next === 0) {
+    cart.value = cart.value.filter((line) => !(line.sku === item.sku && line.roomInstanceId === roomId));
+    return;
+  }
+  if (existing) existing.qty = next;
+  else {
+    cart.value.push({
+      sku: item.sku,
+      name: item.name,
+      net: item.net,
+      qty: next,
+      roomInstanceId: roomId,
+      roomLabel: labelForInstance(rooms.value, roomId),
+    });
+  }
+}
+
+function bump(item: Item, delta: number) {
+  setQty(item, qtyOf(item.sku) + delta);
+}
+
+function onQtyInput(item: Item, event: Event) {
+  setQty(item, Number((event.target as HTMLInputElement).value));
+}
+
+function setQtyFromCart(sku: string, roomInstanceId: string, event: Event) {
+  const line = cart.value.find((entry) => entry.sku === sku && entry.roomInstanceId === roomInstanceId);
+  if (!line) return;
+  const next = clampQty(Number((event.target as HTMLInputElement).value));
+  if (next === 0) cart.value = cart.value.filter((entry) => !(entry.sku === sku && entry.roomInstanceId === roomInstanceId));
+  else line.qty = next;
+}
+
+async function logout() {
+  await $fetch("/api/contractors/logout", { method: "POST" });
+  await navigateTo("/contractors");
+}
+
+function clearVerified() {
+  addressOk.value = "";
+}
+
+async function lookupPostal() {
+  const code = digitsZip(zip.value);
+  zip.value = code;
+  if (code.length !== 5 || zipLookup === code) return;
+  zipLookup = code;
+  addressOk.value = "";
+  try {
+    const res = await $fetch<{ city: string; state: string; zip: string }>(addressEndpoint, {
+      method: "POST",
+      credentials: "include",
+      body: { mode: "zip", zip: code },
+    });
+    city.value = res.city;
+    state.value = res.state;
+    zip.value = res.zip;
+    zipLookup = res.zip;
+  } catch (error: unknown) {
+    zipLookup = "";
+    const err = error as { data?: { statusMessage?: string }; statusMessage?: string };
+    quoteMsg.value = err.data?.statusMessage || err.statusMessage || "ZIP could not be verified.";
+  }
+}
+
+async function verifyAddress() {
+  quoteMsg.value = "";
+  checkingAddress.value = true;
+  clearVerified();
+  try {
+    const res = await $fetch<{ matched: string; street: string; city: string; state: string; zip: string }>(
+      addressEndpoint,
+      {
+        method: "POST",
+        credentials: "include",
+        body: { street: street.value, city: city.value, state: state.value, zip: zip.value },
+      },
+    );
+    street.value = res.street;
+    city.value = res.city;
+    state.value = res.state;
+    zip.value = res.zip;
+    addressOk.value = res.matched;
+  } catch (error: unknown) {
+    const err = error as { data?: { statusMessage?: string }; statusMessage?: string };
+    quoteMsg.value = err.data?.statusMessage || err.statusMessage || "Address could not be verified.";
+  } finally {
+    checkingAddress.value = false;
+  }
+}
+
+
+async function loadStripeJs(): Promise<any> {
+  const w = window as any;
+  if (w.Stripe) return w.Stripe;
+  await new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector('script[data-stripe-dahlia]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', () => reject(new Error('Stripe.js failed to load')));
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/dahlia/stripe.js';
+    script.async = true;
+    script.dataset.stripeDahlia = 'true';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Stripe.js failed to load'));
+    document.head.appendChild(script);
+  });
+  if (!w.Stripe) throw new Error('Stripe.js unavailable');
+  return w.Stripe;
+}
+
+async function mountEmbeddedCheckout(clientSecret: string) {
+  const config = useRuntimeConfig();
+  const pk = String(config.public.stripePublishableKey || "").trim();
+  if (!pk.startsWith("pk_")) {
+    throw new Error("Missing STRIPE_PUBLISHABLE_KEY / NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.");
+  }
+  const StripeCtor = await loadStripeJs();
+  const stripe = StripeCtor(pk, { betas: ["custom_checkout_payment_form_1"] });
+  const appearance = {
+    theme: "stripe",
+    labels: "floating",
+    variables: {
+      colorPrimary: "#0570de",
+      colorBackground: "#ffffff",
+      colorText: "#30313d",
+      colorDanger: "#df1b41",
+      fontFamily: "Ideal Sans, system-ui, sans-serif",
+      spacingUnit: "4px",
+      borderRadius: "4px",
+    },
+  };
+  const checkout = stripe.initCheckoutFormSdk({ clientSecret, appearance });
+  const form = checkout.createForm({ layout: "expanded" });
+  await nextTick();
+  form.mount("#checkout-form");
+  checkoutFormMount = form;
+  const loadActionsResult = await checkout.loadActions();
+  if (loadActionsResult.type === "success") {
+    form.on("confirm", async (event: unknown) => {
+      try {
+        await loadActionsResult.actions.confirm({ formConfirmEvent: event });
+      } catch (error) {
+        console.error("Payment confirmation error:", error);
+        checkoutMsg.value = "Payment could not be confirmed. Try again.";
+      }
+    });
+  } else {
+    checkoutMsg.value = "Checkout form actions failed to load.";
+  }
+}
+
+function cancelEmbeddedCheckout() {
+  try {
+    checkoutFormMount?.unmount?.();
+  } catch {
+    /* ignore */
+  }
+  checkoutFormMount = null;
+  checkoutOpen.value = false;
+  checkoutMsg.value = '';
+  const el = document.getElementById('checkout-form');
+  if (el) el.innerHTML = '';
+}
+
+function selectionLines() {
+  refreshLineLabels();
+  return cart.value.map((line) => ({
+    sku: line.sku,
+    qty: line.qty,
+    roomLabel: line.roomLabel,
+  }));
+}
+
+async function submitCallRequest() {
+  const ref = Array.isArray(route.query.ref) ? route.query.ref[0] : route.query.ref;
+  const res = await $fetch<{ message: string }>(checkoutEndpoint, {
+    method: "POST",
+    credentials: "include",
+    body: {
+      company: company.value,
+      name: name.value,
+      email: email.value,
+      phone: phone.value,
+      finish: finish.value,
+      notes: notes.value,
+      street: street.value,
+      city: city.value,
+      state: state.value,
+      zip: zip.value,
+      ref: typeof ref === "string" ? ref : "",
+      lines: selectionLines(),
+    },
+  });
+  quoteMsg.value = res.message;
+  cart.value = [];
+}
+
+async function submitQuote() {
+  quoteMsg.value = '';
+  checkoutMsg.value = '';
+  if (props.mode === "contractor" && !addressOk.value) {
+    quoteMsg.value = 'Verify the postal address before paying.';
+    return;
+  }
+  paying.value = true;
+  refreshLineLabels();
+  try {
+    if (props.mode === "retail") {
+      await submitCallRequest();
+      return;
+    }
+    cancelEmbeddedCheckout();
+    const res = await $fetch<{ client_secret: string; session_id: string }>(checkoutEndpoint, {
+      method: 'POST',
+      credentials: 'include',
+      body: {
+        company: company.value,
+        name: name.value,
+        email: email.value,
+        phone: phone.value,
+        finish: finish.value,
+        notes: notes.value,
+        street: street.value,
+        city: city.value,
+        state: state.value,
+        zip: zip.value,
+        fulfillment: fulfillment.value,
+        lines: selectionLines(),
+      },
+    });
+    checkoutOpen.value = true;
+    quoteMsg.value = 'Checkout ready — complete payment below.';
+    await mountEmbeddedCheckout(res.client_secret);
+  } catch (error: unknown) {
+    const err = error as { data?: { statusMessage?: string }; statusMessage?: string; message?: string };
+    quoteMsg.value =
+      err.data?.statusMessage ||
+      err.statusMessage ||
+      err.message ||
+      (props.mode === "retail" ? "Could not send the request." : "Checkout failed. Stripe may not be connected yet.");
+  } finally {
+    paying.value = false;
+  }
+}
+
+useSeoMeta({ title: "Cabinet catalog" });
+</script>

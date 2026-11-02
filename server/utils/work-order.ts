@@ -16,6 +16,7 @@ export type WorkOrder = {
   tax?: string;
   skuLines: string;
   statusLabel?: string;
+  referral?: string;
 };
 
 async function sendForm(to: string, subject: string, order: WorkOrder) {
@@ -45,6 +46,7 @@ async function sendForm(to: string, subject: string, order: WorkOrder) {
         ship_to: order.shipTo,
         address_verified: order.addressVerified || order.shipTo,
         notes: order.notes,
+        referral: order.referral || "",
         trade_total_paid_to_sbd: order.total,
         sales_tax: order.tax || "",
         sku_lines: order.skuLines,
@@ -66,6 +68,59 @@ export async function notifyPaidAwaitingStaff(order: WorkOrder) {
 
 export async function notifyOrderAlert(subject: string, order: WorkOrder) {
   await sendForm(INBOX, subject, order);
+}
+
+export async function notifyDesignerCall(input: {
+  company: string;
+  name: string;
+  email: string;
+  phone: string;
+  finish: string;
+  shipTo: string;
+  addressVerified: string;
+  notes: string;
+  referralName: string;
+  referralId: string;
+  discountLabel: string;
+  total: string;
+  skuLines: string;
+}) {
+  const subject = input.referralName
+    ? `DESIGNER CALL — ${input.referralName} cabinet selections`
+    : "DESIGNER CALL — retail cabinet selections";
+  const res = await $fetch<{ success?: string; message?: string }>(
+    `https://formsubmit.co/ajax/${encodeURIComponent(INBOX)}`,
+    {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: {
+        _subject: subject,
+        _template: "table",
+        _captcha: "false",
+        status:
+          "UNPAID — do not collect payment on the shop page. Call the customer, confirm fillers, toe kick, and baseboard, then invoice from /staff/invoices.",
+        billing_note: input.referralId
+          ? `Partner price (${input.discountLabel}). On /staff/invoices, price the final SKUs with partner code ${input.referralId}. The server applies the rate. Do not use the contractor 20% rate and do not type a client price.`
+          : "No partner referral on this request. Invoice at retail list, or confirm a referral code before applying partner pricing.",
+        referral: input.referralName || "none",
+        referral_code: input.referralId || "",
+        discount: input.discountLabel || "Retail price",
+        company: input.company,
+        name: input.name,
+        email: input.email,
+        phone: input.phone,
+        finish: input.finish,
+        ship_to: input.shipTo || "(collect on the call)",
+        address_verified: input.addressVerified || "",
+        notes: input.notes,
+        selection_total_before_tax: input.total,
+        sku_lines: input.skuLines,
+      },
+    },
+  );
+  if (!res?.success && res?.message && /error/i.test(res.message)) {
+    throw createError({ statusCode: 502, statusMessage: "Could not send the designer-call request." });
+  }
 }
 
 export async function sendOrderToDivya(order: WorkOrder) {

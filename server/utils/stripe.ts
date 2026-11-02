@@ -113,6 +113,8 @@ export function checkoutIdempotencyKey(input: {
   fulfillment: string;
   shipTo: string;
   lines: PricedLine[];
+  channel?: string;
+  referral?: string;
 }) {
   const payload = JSON.stringify({
     company: input.company,
@@ -120,7 +122,9 @@ export function checkoutIdempotencyKey(input: {
     finish: input.finish,
     fulfillment: input.fulfillment,
     shipTo: input.shipTo,
-    lines: input.lines.map((line) => [line.sku, line.qty, line.roomLabel]),
+    channel: input.channel || "",
+    referral: input.referral || "",
+    lines: input.lines.map((line) => [line.sku, line.qty, line.net, line.roomLabel]),
   });
   return `sbd_co_${createHash("sha256").update(payload).digest("hex").slice(0, 32)}`;
 }

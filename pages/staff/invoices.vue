@@ -6,7 +6,8 @@
         <h1 class="font-serif text-4xl">Send a design invoice</h1>
         <p class="mt-2 max-w-2xl text-ink/70">
           Stripe emails a hosted invoice. Tax is calculated from the customer address if you have an active
-          registration in that state.
+          registration in that state. After a partner catalog call, price the final SKUs below — the server applies
+          the referral rate and ignores a typed amount.
         </p>
         <p class="mt-3 flex flex-wrap gap-4">
           <NuxtLink to="/staff/orders" class="text-sm font-medium text-moss hover:underline">Cabinet orders →</NuxtLink>
@@ -23,18 +24,42 @@
       <input v-model="phone" class="rounded-lg border border-sand px-4 py-3" placeholder="Phone" />
       <input
         v-model="description"
-        required
+        :required="!skuText.trim()"
         class="rounded-lg border border-sand px-4 py-3 md:col-span-2"
-        placeholder="What this invoice is for (design deposit, plans, etc.)"
+        :placeholder="skuText.trim() ? 'Optional note on the invoice (SKUs are the line items)' : 'What this invoice is for (design deposit, plans, etc.)'"
       />
+      <div class="md:col-span-2 rounded-xl border border-sand p-4">
+        <p class="text-sm font-medium">Cabinet SKUs</p>
+        <p class="mt-1 text-sm text-ink/60">
+          One line per cabinet, such as <span class="font-medium">2 B12 Kitchen</span>. Leave this blank for a design
+          invoice and type the amount instead. Partner lines are priced on the server and do not use the contractor 20%.
+        </p>
+        <div class="mt-3 grid gap-3 md:grid-cols-2">
+          <select v-model="finish" class="rounded-lg border border-sand px-4 py-3">
+            <option v-for="item in finishes" :key="item" :value="item">{{ item }}</option>
+          </select>
+          <select v-model="referral" class="rounded-lg border border-sand px-4 py-3">
+            <option value="">Retail list price</option>
+            <option v-for="partner in partners" :key="partner.id" :value="partner.id">
+              {{ partner.name }} — {{ Math.round(partner.discount * 100) }}% off list
+            </option>
+          </select>
+        </div>
+        <textarea
+          v-model="skuText"
+          class="mt-3 w-full rounded-lg border border-sand px-4 py-3"
+          rows="4"
+          placeholder="2 B12 Kitchen&#10;1 W1230 Bath"
+        />
+      </div>
       <input
         v-model="amount"
-        required
+        :required="!skuText.trim()"
         type="number"
         min="1"
         step="0.01"
         class="rounded-lg border border-sand px-4 py-3"
-        placeholder="Amount (USD, before tax)"
+        :placeholder="skuText.trim() ? 'Ignored — catalog lines set the amount' : 'Amount (USD, before tax)'"
       />
       <select v-model="daysUntilDue" class="rounded-lg border border-sand px-4 py-3">
         <option :value="7">Due in 7 days</option>
@@ -72,6 +97,7 @@
           <div>
             <p class="font-medium">{{ invoice.company || invoice.email || "Invoice" }} · {{ invoice.total }}</p>
             <p class="mt-1 text-sm text-ink/70">{{ invoice.description }}</p>
+            <p v-if="invoice.referral" class="mt-1 text-sm text-moss">Referred by {{ invoice.referral }}</p>
             <p class="mt-1 text-sm text-ink/50">{{ invoice.status }} · {{ invoice.email }}</p>
           </div>
           <a
@@ -101,6 +127,7 @@ type Invoice = {
   email: string;
   company: string;
   description: string;
+  referral?: string;
   hostedInvoiceUrl: string | null;
 };
 
@@ -112,6 +139,11 @@ const description = ref("");
 const amount = ref("");
 const daysUntilDue = ref(14);
 const notes = ref("");
+const skuText = ref("");
+const referral = ref("");
+const finish = ref("");
+const finishes = ref<string[]>([]);
+const partners = ref<{ id: string; name: string; discount: number }[]>([]);
 const street = ref("");
 const city = ref("");
 const state = ref("TX");
@@ -122,6 +154,18 @@ const error = ref(false);
 const invoices = ref<Invoice[]>([]);
 const pending = ref(true);
 const loadError = ref("");
+
+function parseSkuLines(text: string) {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const match = line.match(/^(\d+)\s*[x×]?\s*([A-Za-z0-9][A-Za-z0-9-]*)\s*(.*)$/);
+      if (!match) return { qty: 1, sku: line, roomLabel: "" };
+      return { qty: Number(match[1]), sku: match[2], roomLabel: (match[3] || "").trim() };
+    });
+}
 
 async function load() {
   pending.value = true;
@@ -141,6 +185,7 @@ async function send() {
   message.value = "";
   error.value = false;
   try {
+    const lines = parseSkuLines(skuText.value);
     const res = await $fetch<{ hostedInvoiceUrl?: string; total: string }>("/api/staff/invoices", {
       method: "POST",
       credentials: "include",
@@ -150,13 +195,16 @@ async function send() {
         email: email.value,
         phone: phone.value,
         description: description.value,
-        amount: Number(amount.value),
+        amount: lines.length ? undefined : Number(amount.value),
         daysUntilDue: daysUntilDue.value,
         notes: notes.value,
         street: street.value,
         city: city.value,
         state: state.value,
         zip: zip.value,
+        finish: finish.value,
+        referral: referral.value,
+        lines,
       },
     });
     message.value = `Invoice sent (${res.total}).`;
@@ -175,6 +223,20 @@ async function logout() {
   await navigateTo("/staff");
 }
 
-onMounted(load);
+onMounted(async () => {
+  try {
+    const meta = await $fetch<{
+      finishes: string[];
+      partners: { id: string; name: string; discount: number }[];
+    }>("/api/shop/meta");
+
+    finishes.value = meta.finishes;
+    partners.value = meta.partners;
+    if (!finish.value && meta.finishes[0]) finish.value = meta.finishes[0];
+  } catch {
+    finishes.value = [];
+  }
+  await load();
+});
 useSeoMeta({ title: "Staff invoices", robots: "noindex, nofollow" });
 </script>

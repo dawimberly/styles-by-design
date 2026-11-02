@@ -2,8 +2,7 @@ import catalog from "../data/cabinets.json";
 import { catalogCategoryId, catalogCategoryName } from "../../utils/catalog-categories";
 import { catalogItemDescription } from "../../utils/sku-plain";
 import { skuSearchBlob } from "../../utils/sku-search";
-
-export const CONTRACTOR_DISCOUNT = 0.2;
+import { applyListDiscount, CONTRACTOR_DISCOUNT } from "./referrals";
 
 export type CabinetOption = {
   sku: string;
@@ -38,7 +37,7 @@ export function listPrice(option: CabinetOption, finish: string) {
 export function contractorPrice(option: CabinetOption, finish: string) {
   const list = listPrice(option, finish);
   if (list == null) return null;
-  return Math.round(list * (1 - CONTRACTOR_DISCOUNT) * 100) / 100;
+  return applyListDiscount(list, CONTRACTOR_DISCOUNT);
 }
 
 export function flattenSkus() {
